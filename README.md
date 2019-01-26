@@ -1,2 +1,9 @@
-# SEPM_TeamH
-Software Engineering and Project Management Team H Repository
+# SEPM_Team-H
+Software Engineering and Project Management Team-H Repository
+
+### Development Team
+
+ * 
+ *
+ *
+ * Ross, Adam
