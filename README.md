@@ -5,5 +5,5 @@ Software Engineering and Project Management Team-H Repository
 
  * Pelle Ingvast
  *
- *
+ * Kerle, Laurin
  * Ross, Adam
