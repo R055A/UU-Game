@@ -3,7 +3,7 @@ Software Engineering and Project Management Team-H Repository
 
 ### Development Team
 
- * 
+ * Pelle Ingvast
  *
  *
  * Ross, Adam
