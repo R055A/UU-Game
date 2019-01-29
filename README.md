@@ -5,8 +5,8 @@ This is a game engine development project for Team-B of the Uppsala University 1
 ### Development Team
 
  * 
- * Gaide, Maxime
  * From, Gustav
+ * Gaide, Maxime
  * Ingvast, Pelle 
  * Kerle, Laurin
  * Ross, Adam
