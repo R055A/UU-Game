@@ -8,7 +8,7 @@ class Play:
     """
     The game play class
     Author: Adam Ross
-    Date:   30/01/2019
+    Date:   01/02/2019
     """
 
     def __init__(self):
@@ -23,8 +23,8 @@ class Play:
         """
         self.game.declare_available_pieces()  # prints game board status
         self.game.declare_board_status()  # prints available pieces status
-        self.selected_piece = self.current_player.choose_piece()
-        self.selected_piece = self.game.pieces.pop(self.selected_piece)
+        self.selected_piece = self.game.pieces.pop(self.current_player.
+                                                   choose_piece())
         self.declare_selected_piece()  # prints the selected piece
         self.current_player = self.change_player()  # swaps player turn
         self.declare_current_player()  # prints the current player turn
@@ -37,20 +37,19 @@ class Play:
         else:
             self.play_turn()  # plays the next turn
 
-    def init_players(self, game_mode):
+    def init_players(self, game_mode, p_one="Player One", p_two="Player Two"):
         """
         Initializes the two players for the game dependent on game mode
         """
-        pl_one, pl_two = "Player One", "Player Two"
         if game_mode == 1:  # if human player vs human player
-            self.players = [PlayerHuman(self.game, pl_one),
-                            PlayerHuman(self.game, pl_two)]
+            self.players = [PlayerHuman(self.game, p_one),
+                            PlayerHuman(self.game, p_two)]
         elif game_mode == 2:  # if human player vs AI player
-            self.players = [PlayerHuman(self.game, pl_one),
-                            PlayerAI(self.game, pl_two)]
+            self.players = [PlayerHuman(self.game, p_one),
+                            PlayerAI(self.game, p_two)]
         else:  # if AI player vs AI player
-            self.players = [PlayerAI(self.game, pl_one),
-                            PlayerAI(self.game, pl_two)]
+            self.players = [PlayerAI(self.game, p_one),
+                            PlayerAI(self.game, p_two)]
         self.current_player = choice(self.players)  # random starting player
         self.declare_current_player()  # prints the starting player turn
 
