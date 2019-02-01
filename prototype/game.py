@@ -12,7 +12,7 @@ class Game:
         Inits a 4x4 board and 16 unique pieces with 4-binary characteristics
         """
         self.pieces = dict({str(i): bin(i)[2:].zfill(self.N)
-                            for i in range(self.N * self.N)}.items())
+                            for i in range(2**self.N)}.items())
         self.board = [[None for i in range(self.N)] for j in range(self.N)]
 
     def has_won_game(self):

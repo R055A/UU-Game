@@ -31,7 +31,7 @@ class PlayerHuman(Player):
 
             try:
                 if self.is_selected_cell_valid(int(x), int(y)):
-                    self.game.board[x][y] = selected_piece
+                    self.game.board[int(x)][int(y)] = selected_piece
                     break
             except:
                 continue
