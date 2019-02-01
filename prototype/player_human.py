@@ -27,9 +27,9 @@ class PlayerHuman(Player):
         Prompts user to enter a board cell coords for placing selected piece
         """
         while True:
-            x, y = input("\nEnter 2 ints 0 - 3 separated by a space: ").split()
-
             try:
+                x, y = input("\nEnter 2 ints 0 - 3 separated by a space: ").split()
+
                 if self.is_selected_cell_valid(int(x), int(y)):
                     self.game.board[int(x)][int(y)] = selected_piece
                     break
