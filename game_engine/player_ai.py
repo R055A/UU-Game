@@ -15,14 +15,13 @@ class PlayerAI(Player):
     @abstractmethod
     def choose_piece(self):
         """
-        Temporary AI choose piece method - purely random choice
-        Could be abstract when implementing different difficulties
+        Abstract method for different difficulty AI piece choosing
         :return: the selected piece for placing on the board
         """
 
     @abstractmethod
     def place_piece(self, selected_piece):
         """
-        Temporary AI place piece on board method - purely random
-        Could be abstract when implementing different difficulties
+        Abstract method for different difficulty AI piece placing on board
+        :param selected_piece the piece selected for placing on board
         """
