@@ -4,8 +4,8 @@ from abc import abstractmethod
 class Player:
     """
     Abstract super class for human and AI players
-    Author: Adam Ross
-    Date:   30/01/2019
+    Author(s):      Adam Ross
+    Last-edit-date: 04/02/2019
     """
 
     def __init__(self, game, name):

@@ -1,11 +1,11 @@
-from play import Play
+from game_engine.play import Play
 
 
 class GameEngine:
     """
     This is temporary class for the CLI testing and presentation
-    Author: Adam Ross
-    Date:   30/01/2019
+    Author(s):      Adam Ross
+    Last-edit-date: 04/02/2019
     """
 
     def __init__(self):

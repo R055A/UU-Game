@@ -1,8 +1,8 @@
 class Game:
     """
-    Game Engine class example for Team-B members
-    Author: Adam Ross
-    Date:   30/01/2019
+    Game Engine entity class
+    Author(s):      Adam Ross
+    Last-edit-date: 04/02/2019
     """
 
     N = 4  # constant for n in the n * n size of the board

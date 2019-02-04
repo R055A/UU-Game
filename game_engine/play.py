@@ -1,14 +1,14 @@
-from game import Game
-from player_human import PlayerHuman
-from player_ai import PlayerAI
+from game_engine.game import Game
+from game_engine.player_human import PlayerHuman
+from game_engine.player_ai import PlayerAI
 from random import choice
 
 
 class Play:
     """
     The game play class
-    Author: Adam Ross
-    Date:   01/02/2019
+    Author(s):      Adam Ross
+    Last-edit-date: 04/02/2019
     """
 
     def __init__(self):
