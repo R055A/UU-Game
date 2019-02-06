@@ -1,6 +1,6 @@
 from game_engine.game import Game
 from game_engine.player_human import PlayerHuman
-from game_engine.player_medium_ai import PlayerMediumAI
+from game_engine.player_ai_medium import PlayerMediumAI
 from random import choice
 
 
