@@ -1,14 +1,14 @@
 from game_engine.game import Game
 from game_engine.player_human import PlayerHuman
-from game_engine.player_ai import PlayerAI
+from game_engine.player_medium_ai import PlayerMediumAI
 from random import choice
 
 
 class Play:
     """
     The game play class
-    Author(s):      Adam Ross
-    Last-edit-date: 04/02/2019
+    Author(s):      Adam Ross; Gustav From
+    Last-edit-date: 06/02/2019
     """
 
     def __init__(self):
@@ -37,19 +37,29 @@ class Play:
         else:
             self.play_turn()  # plays the next turn
 
-    def init_players(self, game_mode, p_one="Player One", p_two="Player Two"):
+    def init_players(self, mod, dif=0, p_one="Player One", p_two="Player Two"):
         """
         Initializes the two players for the game dependent on game mode
         """
-        if game_mode == 1:  # if human player vs human player
+        if mod == 1:  # if human player vs human player
             self.players = [PlayerHuman(self.game, p_one),
                             PlayerHuman(self.game, p_two)]
-        elif game_mode == 2:  # if human player vs AI player
-            self.players = [PlayerHuman(self.game, p_one),
-                            PlayerAI(self.game, p_two)]
+        elif mod == 2:  # if human player vs AI player
+            if dif == 1:  # if easy difficulty AI
+                pass
+            elif dif == 2:  # if medium difficulty AI
+                self.players = [PlayerHuman(self.game, p_one),
+                                PlayerMediumAI(self.game, p_two)]
+            else:  # if hard difficulty AI
+                pass
         else:  # if AI player vs AI player
-            self.players = [PlayerAI(self.game, p_one),
-                            PlayerAI(self.game, p_two)]
+            if dif == 1:  # if easy difficulty AI
+                pass
+            elif dif == 2:  # if medium difficulty AI
+                self.players = [PlayerMediumAI(self.game, p_one),
+                                PlayerMediumAI(self.game, p_two)]
+            else:  # if hard difficulty AI
+                pass
         self.current_player = choice(self.players)  # random starting player
         self.declare_current_player()  # prints the starting player turn
 
