@@ -21,7 +21,7 @@ class PlayerMediumAI(PlayerAI):
         Method for medium difficulty AI piece choosing
         :return: the selected piece for placing on the board
         """
-        return '1'
+        pass
 
     def place_piece(self, selected_piece):
         """

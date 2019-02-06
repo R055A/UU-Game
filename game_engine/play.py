@@ -31,7 +31,8 @@ class Play:
         self.current_player.place_piece(self.selected_piece)  # places piece
 
         if self.game.has_won_game():  # checks if game won - not implemented
-            pass
+            self.game.declare_board_status()  # prints final status of board
+            print("game won by " + self.current_player.name)
         elif not self.game.has_next_play():  # checks if play turns remaining
             self.game.declare_board_status()  # prints final status of board
         else:

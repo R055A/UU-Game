@@ -1,8 +1,8 @@
 class Game:
     """
-    Game Engine entity class
+    Game entity class
     Author(s):      Adam Ross
-    Last-edit-date: 04/02/2019
+    Last-edit-date: 06/02/2019
     """
 
     N = 4  # constant for n in the n * n size of the board
@@ -20,7 +20,18 @@ class Game:
         Checks if 4 pieces in a row on the board have similar characteristics
         :return: true if there are 4 similar pieces in a row, false otherwise
         """
-        pass  # To do
+        return True in ([len([[k for k in self.board[i][i] if k == self.board
+                [i][j][self.board[i][i].index(k)]] for j in range(self.N) if i
+                != j and self.board[i][j]]) == 3 or len([[k for k in self.board
+                [i][i] if k == self.board[j][i][self.board[i][i].index(k)]] for
+                j in range(self.N) if i != j and self.board[j][i]]) == 3 for i
+                in range(self.N) if self.board[i][i]]) or len([[k for k in
+                self.board[0][0] if k == self.board[0 + i][0 + i][self.board[0]
+                [0].index(k)] and self.board[0][0]] for i in range(self.N) if
+                self.board[i][i] and i != 0]) == 3 or len([[k for k in self.
+                board[0][3] if k == self.board[i][(i + i + 3) % 3][self.board
+                [0][3].index(k)] and self.board[i][(i + i + 3) % 3]] for i in
+                range(self.N) if self.board[i][(i + i + 3) % 3] and i != 0]) == 3
 
     def has_next_play(self):
         """
