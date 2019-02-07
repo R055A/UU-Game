@@ -16,7 +16,7 @@ class PlayerAI(Player):
         """
         super().__init__(game, name)
 
-    def characteristic_count(self, pce, y, x, d_y, d_x, dif):
+    def characteristic_count(self, pce, y, x, d_y, d_x, blc):
         """
         Counts the similarities found for each characteristic of a
         selected piece in a given direction from a given available
@@ -26,10 +26,10 @@ class PlayerAI(Player):
         :param x: the column position of the available/empty board cell
         :param d_y: the x-direction being checked for similarities (-1, 0, 1)
         :param d_x: the y-direction being checked for similarities (-1, 0, 1)
-        :param dif: the AI difficulty being played; either 1, 2, or 3 for hard
+        :param blc: the number of blocks being compared; either 1, 2, or 3
         :return: a list of similarity counts for each characteristic of a piece
         """
-        return [len([k for i in range(1, dif + 1) if self.game.board
+        return [len([k for i in range(1, blc + 1) if self.game.board
                 [(d_y * i + y) % self.game.N][(d_x * i + x) % self.game.N] and
                 self.game.board[(d_y * i + y) % self.game.N][(d_x * i + x) %
-                self.game.N][pce.index(k)] == k]) for k in pce]
+                self.game.N][j] == k]) for j, k in enumerate(pce)]
