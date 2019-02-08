@@ -2,7 +2,7 @@ class Game:
     """
     Game entity class
     Author(s):      Adam Ross
-    Last-edit-date: 06/02/2019
+    Last-edit-date: 08/02/2019
     """
 
     N = 4  # constant for n in the n * n size of the board
@@ -38,11 +38,11 @@ class Game:
         :return: true if there are 4 similar pieces in a row, false otherwise
         """
         return True in [max(self.bin_count(self.board[i][i], i, i, 0, 1, 3)) ==
-                        3 or max(self.bin_count(self.board[i][i], i, i, 1, 0, 3
-                        )) == 3 for i in range(self.N) if self.board[i][i]] or \
-                        (self.board[0][0] and max(self.bin_count(self.board[0]
-                        [0], 0, 0, 1, 1, 3)) == 3) or (self.board[0][3] and max
-                        (self.bin_count(self.board[0][3], 0, 3, 1, -1, 3)) == 3)
+                       3 or max(self.bin_count(self.board[i][i], i, i, 1, 0, 3
+                       )) == 3 for i in range(self.N) if self.board[i][i]] or \
+                       (self.board[0][0] and max(self.bin_count(self.board[0]
+                       [0], 0, 0, 1, 1, 3)) == 3) or (self.board[0][3] and max
+                       (self.bin_count(self.board[0][3], 0, 3, 1, -1, 3)) == 3)
 
     def has_next_play(self):
         """
@@ -54,7 +54,7 @@ class Game:
     def declare_available_pieces(self):
         """
         Declares to the players the pieces available for selection
-        Currently prints the available pieces for the CLI testing
+        Temporary for the CLI testing
         """
         print("\nGame pieces status:")
         print(list(self.pieces.items())[:int((len(self.pieces) + 1) / 2)])
@@ -65,7 +65,7 @@ class Game:
     def declare_board_status(self):
         """
         Declares to the players the current status of the game board
-        Currently prints the board status for the CLI testing
+        Temporary for the CLI testing
         """
         print("\nGame board status:")
         print(*(row for row in self.board), sep="\n")
