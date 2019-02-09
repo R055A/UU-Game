@@ -6,25 +6,49 @@ from random import choice
 
 class Play:
     """
-    The game play class
+    The Play class
     Author(s):      Adam Ross; Gustav From
-    Last-edit-date: 08/02/2019
+    Last-edit-date: 09/02/2019
     """
 
     def __init__(self):
-        self.game = Game()  # initiates an instance of the Game class
-        self.players = None  # initiates players list
-        self.current_player = None  # initiates current player turn
+        """
+        The Play class constructor
+        """
+        self.game = Game()  # initiates a Game class instance
+        self.players = []  # a list for players to be added to when initialised
+        self.current_player = None  # initiates current player during game play
         self.selected_piece = None  # initiates current selected piece
 
-    def play_turn(self):
+    def play_selection(self):
         """
-        Where the game turns are played
+        The selecting of a piece part of a game turn and
+        swapping of current player after a piece is selected
         """
         self.selected_piece = self.game.pieces.pop(self.current_player.
                                                    choose_piece())
         self.current_player = self.change_player()  # swaps player turn
+
+    def play_placement(self):
+        """
+        The placing of a selected piece on the board part of a game turn
+        """
         self.current_player.place_piece(self.selected_piece)  # places piece
+
+    def play_auto(self):
+        """
+        Where the game turns are played automatically until game won or drawn
+        :return: the winning player if game won, or None if game drawn
+        """
+        self.play_selection()  # current player selects a piece, play swaps
+        self.play_placement()  # the new current player places piece on board
+
+        if self.game.has_won_game():  # checks if the game is won
+            return self.current_player.name  # returns game winner name
+        elif not self.game.has_next_play():  # checks if play turns remain
+            return None  # returns no game winner
+        else:
+            self.play_auto()  # plays the next turn
 
     def init_players(self, mod, dif, p_one="Player One", p_two="Player Two"):
         """
