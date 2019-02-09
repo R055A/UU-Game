@@ -11,22 +11,22 @@ class PlayerHuman(Player):
     def __init__(self, game, name):
         super().__init__(game, name)
 
-    def choose_piece(self):
+    def choose_piece(self, slctd_pce=None):
         """
         Selects a piece for the other player to place on board
-        Temporarily prompts user to enter a value 0-15 for testing
+        -- Temporarily prompts user to enter a value 0-15 for testing --
         :return: the selected piece
         """
         while True:
-            selected_piece = input("\nEnter number 0-15 of piece selection: ")
+            slctd_pce = input("\nEnter number 0-15 of piece selection: ")
 
-            if selected_piece in self.game.pieces.keys():  # validate selection
-                return selected_piece
+            if slctd_pce in self.game.pieces.keys():  # validate selection
+                return slctd_pce
 
-    def place_piece(self, selected_piece):
+    def place_piece(self, slctd_pce, y=None, x=None):
         """
         Places a selected piece on the game board
-        Temporarily prompts user to enter a board cell position for testing
+        -- Temporarily prompts user to enter a board position for testing --
         """
         while True:
             try:
@@ -34,7 +34,7 @@ class PlayerHuman(Player):
                     split()
 
                 if self.is_cell_empty(int(x), int(y)):
-                    self.game.board[int(x)][int(y)] = selected_piece
+                    self.game.board[int(x)][int(y)] = slctd_pce
                     break
             except:
                 continue

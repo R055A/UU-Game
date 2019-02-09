@@ -50,22 +50,3 @@ class Game:
         :return: true if there are pieces available, false otherwise
         """
         return len(self.pieces) != 0
-
-    def declare_available_pieces(self):
-        """
-        Declares to the players the pieces available for selection
-        Temporary for the CLI testing
-        """
-        print("\nGame pieces status:")
-        print(list(self.pieces.items())[:int((len(self.pieces) + 1) / 2)])
-
-        if len(self.pieces) > 1:
-            print(list(self.pieces.items())[int((len(self.pieces) + 1) / 2):])
-
-    def declare_board_status(self):
-        """
-        Declares to the players the current status of the game board
-        Temporary for the CLI testing
-        """
-        print("\nGame board status:")
-        print(*(row for row in self.board), sep="\n")

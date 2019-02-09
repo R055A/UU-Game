@@ -8,7 +8,7 @@ class Play:
     """
     The game play class
     Author(s):      Adam Ross; Gustav From
-    Last-edit-date: 06/02/2019
+    Last-edit-date: 08/02/2019
     """
 
     def __init__(self):
@@ -21,24 +21,12 @@ class Play:
         """
         Where the game turns are played
         """
-        self.game.declare_available_pieces()  # prints game board status
-        self.game.declare_board_status()  # prints available pieces status
         self.selected_piece = self.game.pieces.pop(self.current_player.
                                                    choose_piece())
-        self.declare_selected_piece()  # prints the selected piece
         self.current_player = self.change_player()  # swaps player turn
-        self.declare_current_player()  # prints the current player turn
         self.current_player.place_piece(self.selected_piece)  # places piece
 
-        if self.game.has_won_game():  # checks if game won - not implemented
-            self.game.declare_board_status()  # prints final status of board
-            print("game won by " + self.current_player.name)
-        elif not self.game.has_next_play():  # checks if play turns remaining
-            self.game.declare_board_status()  # prints final status of board
-        else:
-            self.play_turn()  # plays the next turn
-
-    def init_players(self, mod, dif=0, p_one="Player One", p_two="Player Two"):
+    def init_players(self, mod, dif, p_one="Player One", p_two="Player Two"):
         """
         Initializes the two players for the game dependent on game mode
         """
@@ -62,7 +50,6 @@ class Play:
             else:  # if hard difficulty AI
                 pass
         self.current_player = choice(self.players)  # random starting player
-        self.declare_current_player()  # prints the starting player turn
 
     def change_player(self):
         """
@@ -70,15 +57,3 @@ class Play:
         :return: the new selected player for the current game play turn
         """
         return self.players[abs(self.players.index(self.current_player) - 1)]
-
-    def declare_current_player(self):
-        """
-        Temporary printing of current player for CLI testing and presenting
-        """
-        print("\nCurrent player is '" + self.current_player.name + "'")
-
-    def declare_selected_piece(self):
-        """
-        Temporary printing of selected piece for CLI testing and presenting
-        """
-        print("\nCurrent piece is " + self.selected_piece)
