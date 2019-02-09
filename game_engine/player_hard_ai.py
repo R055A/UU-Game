@@ -1,4 +1,5 @@
 from game_engine.player_ai import PlayerAI
+from game_engine.minimax import Minimax
 
 
 class PlayerHardAI(PlayerAI):
@@ -19,7 +20,8 @@ class PlayerHardAI(PlayerAI):
         Method for hard difficulty AI piece choosing
         :return: the selected piece for placing on the board
         """
-        pass
+        depth = 3
+        return Minimax(self.game, depth)
 
     def place_piece(self, selected_piece):
         """
