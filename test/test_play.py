@@ -30,7 +30,7 @@ class TestPlayClass(TestCase):
         Tests players array variable in Play class instance
         """
         test = Play()
-        self.assertEqual(test.players, None)
+        self.assertEqual(test.players, [])
         test.init_players(3, 2)
         self.assertEqual(len(test.players), 2)
 
