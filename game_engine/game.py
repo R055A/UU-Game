@@ -2,7 +2,7 @@ class Game:
     """
     Game entity class
     Author(s):      Adam Ross
-    Last-edit-date: 08/02/2019
+    Last-edit-date: 09/02/2019
     """
 
     N = 4  # constant for n in the n * n size of the board
@@ -11,7 +11,7 @@ class Game:
         """
         Inits a 4x4 board and 16 unique pieces with 4-binary characteristics
         """
-        self.pieces = dict({str(i): bin(i)[2:].zfill(self.N)
+        self.pieces = dict({str(i): bin(i)[2:].zfill(self.N)  # dictionary
                             for i in range(2**self.N)}.items())
         self.board = [[None for i in range(self.N)] for j in range(self.N)]
 

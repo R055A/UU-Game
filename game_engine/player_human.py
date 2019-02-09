@@ -5,17 +5,23 @@ class PlayerHuman(Player):
     """
     The human player class
     Author(s):      Adam Ross
-    Last-edit-date: 08/02/2019
+    Last-edit-date: 09/02/2019
     """
 
     def __init__(self, game, name):
+        """
+        The PlayerHuman class constructor
+        :param game: the Game class instance
+        :param name: the player's name
+        """
         super().__init__(game, name)
 
     def choose_piece(self, slctd_pce=None):
         """
-        Selects a piece for the other player to place on board
+        Selects and validates a piece for the other player to place on board
+        :param slctd_pce: the piece being selected for placing on the board
         -- Temporarily prompts user to enter a value 0-15 for testing --
-        :return: the selected piece
+        :return: the validated selected piece
         """
         while True:
             slctd_pce = input("\nEnter number 0-15 of piece selection: ")
@@ -27,6 +33,9 @@ class PlayerHuman(Player):
         """
         Places a selected piece on the game board
         -- Temporarily prompts user to enter a board position for testing --
+        :param slctd_pce: the piece selected for placing on the board
+        :param y: the row position of the board the piece is being placed
+        :param x: the column position of the board the piece is being placed
         """
         while True:
             try:

@@ -5,14 +5,14 @@ class PlayerMediumAI(PlayerAI):
     """
     The Medium difficulty AI class
     Author(s):      Gustav From; Adam Ross
-    Last-edit-date: 06/02/19
+    Last-edit-date: 09/02/19
     """
 
     def __init__(self, game, name):
         """
         Initialises the class variables
-        :param game: the game instance
-        :param name: the name of the player
+        :param game: the Game class instance
+        :param name: the player's name
         """
         super().__init__(game, name)
 

@@ -5,12 +5,15 @@ class GameEngine:
     """
     This is temporary class for the CLI testing and presentation
     Author(s):      Adam Ross; Gustav From
-    Last-edit-date: 06/02/2019
+    Last-edit-date: 09/02/2019
     """
 
     def __init__(self):
-        self.play = Play()
-        self.introduction()
+        """
+        The GameEngine CLI test class constructor
+        """
+        self.play = Play()  # initiates a Play class instance
+        self.introduction()  # Prints to terminal an introduction to the game
 
     def introduction(self):
         print("\n*** Welcome to GameEngine ***")
@@ -68,11 +71,12 @@ class GameEngine:
     def play_game(self):
         self.declare_available_pieces()  # prints game board status
         self.declare_board_status()  # prints available pieces status
-        self.play.play_turn()
-        # self.declare_selected_piece()  # prints the selected piece
-        # self.declare_current_player()  # prints the current player turn
+        self.play.play_selection()
+        self.declare_selected_piece()  # prints the selected piece
+        self.declare_current_player()  # prints the current player turn
+        self.play.play_placement()
 
-        if self.play.game.has_won_game():  # checks if game won - not implemented
+        if self.play.game.has_won_game():  # checks if game won
             self.play.game.declare_board_status()  # prints final status of board
             print("game won by " + self.play.current_player.name)
         elif not self.play.game.has_next_play():  # checks if play turns remaining
