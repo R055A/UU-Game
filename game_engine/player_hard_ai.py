@@ -27,27 +27,3 @@ class PlayerHardAI(PlayerAI):
         :param selected_piece the piece selected for placing on board
         """
         pass
-
-    def minimax(self, position, depth, alpha, beta, maximize):
-        if depth == 0:
-            if position.has_won_game():
-                return position.is_my_turn ? 1 : -1
-
-        if maximize:
-            maxEval = -inf
-            for possibleMove in position.possibleMoves:
-                eval = self.minimax(self, possibleMove, depth-1, alpha, beta, False)
-                maxEval = max(maxEval, eval)
-                alpha = max(alpha. eval)
-                if beta <= alpha:
-                    break
-            return maxEval
-        else:
-            minEval = inf
-            for possibleMove in position.possibleMoves:
-                eval = self.minimax(self, possibleMove, depth-1, alpha, beta, True)
-                minEval = max(minEval, eval)
-                alpha = max(alpha. eval)
-                if beta <= alpha:
-                    break
-            return minEval
