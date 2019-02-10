@@ -1,8 +1,8 @@
 class Game:
     """
-    Game Engine entity class
+    Game entity class
     Author(s):      Adam Ross
-    Last-edit-date: 04/02/2019
+    Last-edit-date: 09/02/2019
     """
 
     N = 4  # constant for n in the n * n size of the board
@@ -11,16 +11,38 @@ class Game:
         """
         Inits a 4x4 board and 16 unique pieces with 4-binary characteristics
         """
-        self.pieces = dict({str(i): bin(i)[2:].zfill(self.N)
+        self.pieces = dict({str(i): bin(i)[2:].zfill(self.N)  # dictionary
                             for i in range(2**self.N)}.items())
         self.board = [[None for i in range(self.N)] for j in range(self.N)]
+
+    def bin_count(self, pce, y, x, d_y, d_x, blc):
+        """
+        Counts the similarities found for each binary characteristic of a
+        selected piece in a given direction from a given available
+        position on the board for a given number of blocks/difficulty
+        :param pce: the selected piece for placing somewhere on the board
+        :param y: the row position of the available/empty board cell
+        :param x: the column position of the available/empty board cell
+        :param d_y: the x-direction being checked for similarities (-1, 0, 1)
+        :param d_x: the y-direction being checked for similarities (-1, 0, 1)
+        :param blc: the number of blocks being compared; either 1, 2, or 3
+        :return: a list of similarity counts for each characteristic of a piece
+        """
+        return [len([k for i in range(1, blc + 1) if self.board[(d_y*i + y) %
+                self.N][(d_x*i + x) % self.N] and self.board[(d_y*i + y) % self
+                .N][(d_x*i + x) % self.N][j] == k]) for j, k in enumerate(pce)]
 
     def has_won_game(self):
         """
         Checks if 4 pieces in a row on the board have similar characteristics
         :return: true if there are 4 similar pieces in a row, false otherwise
         """
-        pass  # To do
+        return True in [max(self.bin_count(self.board[i][i], i, i, 0, 1, 3)) ==
+                       3 or max(self.bin_count(self.board[i][i], i, i, 1, 0, 3
+                       )) == 3 for i in range(self.N) if self.board[i][i]] or \
+                       (self.board[0][0] and max(self.bin_count(self.board[0]
+                       [0], 0, 0, 1, 1, 3)) == 3) or (self.board[0][3] and max
+                       (self.bin_count(self.board[0][3], 0, 3, 1, -1, 3)) == 3)
 
     def has_next_play(self):
         """
@@ -28,22 +50,3 @@ class Game:
         :return: true if there are pieces available, false otherwise
         """
         return len(self.pieces) != 0
-
-    def declare_available_pieces(self):
-        """
-        Declares to the players the pieces available for selection
-        Currently prints the available pieces for the CLI testing
-        """
-        print("\nGame pieces status:")
-        print(list(self.pieces.items())[:int((len(self.pieces) + 1) / 2)])
-
-        if len(self.pieces) > 1:
-            print(list(self.pieces.items())[int((len(self.pieces) + 1) / 2):])
-
-    def declare_board_status(self):
-        """
-        Declares to the players the current status of the game board
-        Currently prints the board status for the CLI testing
-        """
-        print("\nGame board status:")
-        print(*(row for row in self.board), sep="\n")
