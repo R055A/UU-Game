@@ -15,13 +15,16 @@ class PlayerHardAI(PlayerAI):
         """
         super().__init__(game, name)
         self.depth = 3
+        self.chosen_piece = None
 
     def choose_piece(self):
         """
         Method for hard difficulty AI piece choosing
         :return: the selected piece for placing on the board
         """
-        pass
+        if len(self.game.get_remaining_pieces()) == 16:
+            return 0  # Pick random piece
+        return self.chosen_piece
 
     def place_piece(self, selected_piece):
         """
@@ -30,7 +33,7 @@ class PlayerHardAI(PlayerAI):
         """
         minimax = Minimax(self.game, self.depth)
         best_move = minimax.get_move()
-
-        # place_piece(best_move.get_cell())
+        self.chosen_piece = best_move.get_passed_piece()
+        return best_move.get_cell()
 
         # pass_piece(best_move.get_passed_piece())

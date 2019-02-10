@@ -29,7 +29,11 @@ class Minimax:
         for i in range(len(remaining_spots)):
             for j in range(len(remaining_pieces)):
                 root_nodes.append(
-                    self.build_evaluation_tree(passed_piece, remaining_spots[i], remaining_pieces[j], True, self.game,
+                    self.build_evaluation_tree(passed_piece,
+                                               remaining_spots[i],
+                                               remaining_pieces[j],
+                                               True,
+                                               self.game,
                                                self.depth))
 
         best_move = 0
@@ -64,11 +68,6 @@ class Minimax:
             node.set_is_leaf()
             return node
 
-        if is_my_turn:
-            is_my_turn = False
-        else:
-            is_my_turn = True
-
         new_board_state.pass_piece(next_piece)
         remaining_spots = new_board_state.get_remaining_spots()
         remaining_pieces = new_board_state.get_remaining_pieces()
@@ -76,12 +75,20 @@ class Minimax:
             if len(remaining_pieces) > 0:
                 for j in range(len(remaining_pieces)):
                     node.add_child(
-                        self.build_evaluation_tree(next_piece, remaining_spots[i], remaining_pieces[j], is_my_turn,
+                        self.build_evaluation_tree(next_piece,
+                                                   remaining_spots[i],
+                                                   remaining_pieces[j],
+                                                   not is_my_turn,
                                                    new_board_state,
                                                    depth - 1))
             else:
                 node.add_child(
-                    self.build_evaluation_tree(next_piece, remaining_spots[i], 16, is_my_turn, new_board_state, depth - 1))
+                    self.build_evaluation_tree(next_piece,
+                                               remaining_spots[i],
+                                               16,
+                                               not is_my_turn,
+                                               new_board_state,
+                                               depth - 1))
         return node
 
     def minimax(self, node, alpha, beta):
