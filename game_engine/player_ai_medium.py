@@ -1,11 +1,12 @@
 from game_engine.player_ai import PlayerAI
+from random import choice
 
 
 class PlayerMediumAI(PlayerAI):
     """
     The Medium difficulty AI class
     Author(s):      Gustav From; Adam Ross
-    Last-edit-date: 09/02/19
+    Last-edit-date: 10/02/19
     """
 
     def __init__(self, game, name):
@@ -21,11 +22,17 @@ class PlayerMediumAI(PlayerAI):
         Method for medium difficulty AI piece choosing
         :return: the selected piece for placing on the board
         """
-        pass
+        return choice([i for i in self.game.pieces.keys()])
 
-    def place_piece(self, selected_piece):
+    def place_piece(self, slctd_pce):
         """
         Method for medium difficulty AI piece placing on board
-        :param selected_piece the piece selected for placing on board
+        :param slctd_pce the piece selected for placing on board
         """
-        pass
+        move = choice([self.hard(slctd_pce), self.easy(slctd_pce)])
+
+        while not move:
+            move = choice([self.hard(slctd_pce), self.easy(slctd_pce)])
+        print(move)
+        y, x = move[0]
+        self.game.board[y][x] = slctd_pce
