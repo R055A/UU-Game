@@ -42,7 +42,7 @@ class PlayerHuman(Player):
                 x, y = input("\nEnter 2 ints 0 - 3 separated by a space: ").\
                     split()
 
-                if self.is_cell_empty(int(x), int(y)):
+                if self.is_spot_empty(int(x), int(y)):
                     self.game.board[int(x)][int(y)] = slctd_pce
                     break
             except:

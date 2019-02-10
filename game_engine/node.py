@@ -1,76 +1,44 @@
 class Node:
     """
-    A node in the evaluation tree
+    A node in the evaluation tree used in the Minimax algorithm
+    Author(s): Viktor Enzell
+    Last-edit-date: 10/02/2019
     """
 
-    def __init__(self, is_my_turn, passed_piece, cell):
+    def __init__(self, is_my_turn, passed_piece, spot):
         """
         Initialises the class variables
-        :param ...: ...
+        :param is_my_turn: True if it is the turn of the ai making the tree False otherwise
+        :param passed_piece: the piece chosen by the opponent
+        :param spot: the spot of the board where to place the passed piece
         """
-        self.cell = cell
+        self.spot = spot
         self.passed_piece = passed_piece
         self.is_my_turn = is_my_turn
-        self.children = []
+        self.children = []  # The child nodes
         self.is_leaf = False
         self.has_won = False
 
     def add_child(self, child):
         """
-        :param child:
+        :param child: node to add as child
         """
         self.children.append(child)
 
-    def get_children(self):
-        """
-        :return:
-        """
-        return self.children
-
     def get_string(self):
         """
-        :return:
+        :return: a string for printing the node
         """
-        return "My turn: " + str(self.is_my_turn) + "'s turn. Leaf: " + str(self.is_leaf)
-
-    def is_leaf(self):
-        """
-        :return:
-        """
-        return self.is_leaf
+        return "| My turn: " + str(self.is_my_turn) + ". Leaf: " + str(self.is_leaf)
 
     def set_is_leaf(self):
         """
-        :return:
+        Mark node as leaf
         """
         self.is_leaf = True
 
-    def is_my_turn(self):
-        """
-        :return:
-        """
-        return self.is_my_turn
-
     def set_has_won(self):
         """
-        :return:
+        Indicate that the node represents a winning state
         """
         self.has_won = True
-
-    def has_won(self):
-        """
-        :return:
-        """
-        return self.has_won
-
-    def get_cell(self):
-        """
-        :return:
-        """
-        return self.cell
-
-    def get_passed_piece(self):
-        """
-        :return:
-        """
-        return self.passed_piece
