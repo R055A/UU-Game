@@ -5,33 +5,45 @@ class PlayerHuman(Player):
     """
     The human player class
     Author(s):      Adam Ross
-    Last-edit-date: 04/02/2019
+    Last-edit-date: 09/02/2019
     """
 
     def __init__(self, game, name):
+        """
+        The PlayerHuman class constructor
+        :param game: the Game class instance
+        :param name: the player's name
+        """
         super().__init__(game, name)
 
-    def choose_piece(self):
+    def choose_piece(self, slctd_pce=None):
         """
-        Prompts user to select a piece for the other player to place on board
-        :return: the selected piece
+        Selects and validates a piece for the other player to place on board
+        :param slctd_pce: the piece being selected for placing on the board
+        -- Temporarily prompts user to enter a value 0-15 for testing --
+        :return: the validated selected piece
         """
         while True:
-            selected_piece = input("\nEnter number 0-15 of piece selection: ")
+            slctd_pce = input("\nEnter number 0-15 of piece selection: ")
 
-            if selected_piece in self.game.pieces.keys():  # validate selection
-                return selected_piece
+            if slctd_pce in self.game.pieces.keys():  # validate selection
+                return slctd_pce
 
-    def place_piece(self, selected_piece):
+    def place_piece(self, slctd_pce, y=None, x=None):
         """
-        Prompts user to enter a board cell coords for placing selected piece
+        Places a selected piece on the game board
+        -- Temporarily prompts user to enter a board position for testing --
+        :param slctd_pce: the piece selected for placing on the board
+        :param y: the row position of the board the piece is being placed
+        :param x: the column position of the board the piece is being placed
         """
         while True:
             try:
-                x, y = input("\nEnter 2 ints 0 - 3 separated by a space: ").split()
+                x, y = input("\nEnter 2 ints 0 - 3 separated by a space: ").\
+                    split()
 
-                if self.is_selected_cell_valid(int(x), int(y)):
-                    self.game.board[int(x)][int(y)] = selected_piece
+                if self.is_cell_empty(int(x), int(y)):
+                    self.game.board[int(x)][int(y)] = slctd_pce
                     break
             except:
                 continue
