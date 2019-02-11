@@ -78,7 +78,7 @@ class TestInitPlayers(TestCase):
         human vs AI game play at hard difficulty
         """
         test, count = Play(), 0
-        test.init_players(2, 2, "Pete")
+        test.init_players(2, 3, "Pete")
 
         for i in range(2):
             if test.current_player.name == "Pete":
@@ -98,7 +98,7 @@ class TestInitPlayers(TestCase):
         AI vs AI game play at hard difficulty
         """
         test, count = Play(), 0
-        test.init_players(3, 2)
+        test.init_players(3, 3)
 
         for i in range(2):
             if test.current_player.name == "Player One":
