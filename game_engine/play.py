@@ -1,6 +1,7 @@
 from game_engine.game import Game
 from game_engine.player_human import PlayerHuman
 from game_engine.player_ai_medium import PlayerMediumAI
+from game_engine.player_hard_ai import PlayerHardAI
 from random import choice
 
 
@@ -64,7 +65,8 @@ class Play:
                 self.players = [PlayerHuman(self.game, p_one),
                                 PlayerMediumAI(self.game, p_two)]
             else:  # if hard difficulty AI
-                pass
+                self.players = [PlayerHuman(self.game, p_one),
+                                PlayerHardAI(self.game, p_two)]
         else:  # if AI player vs AI player
             if dif == 1:  # if easy difficulty AI
                 pass
@@ -72,7 +74,8 @@ class Play:
                 self.players = [PlayerMediumAI(self.game, p_one),
                                 PlayerMediumAI(self.game, p_two)]
             else:  # if hard difficulty AI
-                pass
+                self.players = [PlayerHardAI(self.game, p_one),
+                                PlayerHardAI(self.game, p_two)]
         self.current_player = choice(self.players)  # random starting player
 
     def change_player(self):

@@ -2,13 +2,14 @@ from unittest import TestCase
 from game_engine.play import Play
 from game_engine.player_human import PlayerHuman
 from game_engine.player_ai_medium import PlayerMediumAI
+from game_engine.player_hard_ai import PlayerHardAI
 
 
 class TestInitPlayers(TestCase):
     """
     Tests the init_players() method in the Play class
-    Author(s): Adam Ross; Gustav From
-    Date: 09/02/19
+    Author(s): Adam Ross; Gustav From; Laurin Kerle
+    Date: 10/02/19
     """
 
     def test_human_vs_human(self):
@@ -66,6 +67,47 @@ class TestInitPlayers(TestCase):
             elif test.current_player.name == "Player Two":
                 self.assertTrue(isinstance(test.current_player,
                                            PlayerMediumAI))
+                count += 1
+            test.change_player()
+        self.assertEqual(len(test.players), 2)
+        self.assertEqual(count, 2)
+
+    def test_hard_difficulty_human_vs_ai(self):
+        """
+        Tests initialisation of human and AI players in
+        human vs AI game play at hard difficulty
+        """
+        test, count = Play(), 0
+        test.init_players(2, 2, "Pete")
+
+        for i in range(2):
+            if test.current_player.name == "Pete":
+                self.assertTrue(isinstance(test.current_player, PlayerHuman))
+                count += 1
+            elif test.current_player.name == "Player Two":
+                self.assertTrue(isinstance(test.current_player,
+                                           PlayerHardAI))
+                count += 1
+            test.change_player()
+        self.assertEqual(len(test.players), 2)
+        self.assertEqual(count, 2)
+
+    def test_hard_difficulty_ai_vs_ai(self):
+        """
+        Tests initialisation of two AI players in
+        AI vs AI game play at hard difficulty
+        """
+        test, count = Play(), 0
+        test.init_players(3, 2)
+
+        for i in range(2):
+            if test.current_player.name == "Player One":
+                self.assertTrue(isinstance(test.current_player,
+                                           PlayerHardAI))
+                count += 1
+            elif test.current_player.name == "Player Two":
+                self.assertTrue(isinstance(test.current_player,
+                                           PlayerHardAI))
                 count += 1
             test.change_player()
         self.assertEqual(len(test.players), 2)

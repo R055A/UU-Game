@@ -6,7 +6,7 @@ from random import randint
 class PlayerHardAI(PlayerAI):
     """
     The Hard difficulty AI class
-    Author(s): Viktor Enzell
+    Author(s): Viktor Enzell, Laurin Kerle
     Last-edit-date: 10/02/2019
     """
 
@@ -27,7 +27,7 @@ class PlayerHardAI(PlayerAI):
         Otherwise a piece chosen by the Minimax algorithm
         """
         if len(self.game.get_num_remaining_pieces()) == 16:
-            return randint(0, 16)
+            return randint(0, 15)
         return self.chosen_piece
 
     def place_piece(self, selected_piece):
