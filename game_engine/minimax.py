@@ -26,7 +26,7 @@ class Minimax:
         :return: the root node of the evaluation tree with the highest cost
         """
         remaining_spots = self.board_state.get_remaining_spots()
-        remaining_pieces = self.board_state.get_remaining_pieces()
+        remaining_pieces = list(self.board_state.pieces.keys())
         root_nodes = []
 
         for i in range(len(remaining_spots)):
@@ -73,9 +73,9 @@ class Minimax:
             node.set_is_leaf()
             return node
 
-        new_board_state.pass_piece(next_piece)
+        new_board_state.pieces.pop(next_piece)
         remaining_spots = new_board_state.get_remaining_spots()
-        remaining_pieces = new_board_state.get_remaining_pieces()
+        remaining_pieces = new_board_state.pieces.keys()
         for i in range(len(remaining_spots)):
             if len(remaining_pieces) > 0:
                 for j in range(len(remaining_pieces)):

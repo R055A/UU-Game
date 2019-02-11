@@ -26,7 +26,7 @@ class PlayerHardAI(PlayerAI):
         :return: a random piece if it is the first round
         Otherwise a piece chosen by the Minimax algorithm
         """
-        if len(self.game.get_num_remaining_pieces()) == 16:
+        if len(self.game.pieces.keys()) == 16:
             return randint(0, 15)
         return self.chosen_piece
 

@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 class Game:
     """
     Game entity class
@@ -57,25 +60,21 @@ class Game:
         without altering the game state
         :return: a new instance of a game with the same state as this one
         """
-        pass
-
-    def get_num_remaining_pieces(self):
-        """
-        :return: number of remaining pieces that can be played
-        """
-        pass
+        game_clone = Game()
+        game_clone.pieces = deepcopy(self.pieces.copy)  # make sure the references are removed here
+        game_clone.board = deepcopy(self.board.copy)    # make sure the references are removed here
+        return game_clone
 
     def get_remaining_spots(self):
         """
         :return: a list of the spots with no piece in it
         """
-        pass
-
-    def get_remaining_pieces(self):
-        """
-        :return: a list of the remaining pieces that can be played
-        """
-        pass
+        remaining_spots = []
+        for i in range(self.N):
+            for j in range(self.N):
+                if self.board[i][j] is None:
+                    remaining_spots.append(i*4+j)
+        return remaining_spots
 
     def place_piece(self, spot, piece):
         """
@@ -83,11 +82,7 @@ class Game:
         :param spot: spot to place the piece
         :param piece: piece to place in spot
         """
-        pass
-
-    def pass_piece(self, piece):
-        """
-        Removes piece from pieces for ai to calculate different outcomes
-        :param piece: piece to be removed
-        """
-        pass
+        row = int(spot/self.N)
+        col = spot % self.N
+        self.board[row][col] = self.pieces[piece]
+        self.pieces.pop(piece)
