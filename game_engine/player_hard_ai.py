@@ -1,9 +1,13 @@
 from game_engine.player_ai import PlayerAI
+from game_engine.minimax import Minimax
+from random import randint
 
 
 class PlayerHardAI(PlayerAI):
     """
     The Hard difficulty AI class
+    Author(s): Viktor Enzell
+    Last-edit-date: 10/02/2019
     """
 
     def __init__(self, game, name):
@@ -13,17 +17,26 @@ class PlayerHardAI(PlayerAI):
         :param name: the name of the player
         """
         super().__init__(game, name)
+        self.depth = 3  # The depth at which the Minimax algorithm should stop
+        self.chosen_piece = None  # The piece chosen by the Minimax algorithm
 
     def choose_piece(self):
         """
         Method for hard difficulty AI piece choosing
-        :return: the selected piece for placing on the board
+        :return: a random piece if it is the first round
+        Otherwise a piece chosen by the Minimax algorithm
         """
-        pass
+        if len(self.game.get_num_remaining_pieces()) == 16:
+            return randint(0, 16)
+        return self.chosen_piece
 
     def place_piece(self, selected_piece):
         """
-        Method for hard difficulty AI piece placing on board
+        Method for hard difficulty AI piece placing on board.
+        Selects where to place piece and saves piece chosen by Minimax algorithm
         :param selected_piece the piece selected for placing on board
         """
-        pass
+        minimax = Minimax(self.game, self.depth, selected_piece)
+        best_move = minimax.get_move()
+        self.chosen_piece = best_move.passed_piece
+        self.game.place_piece(best_move.spot)

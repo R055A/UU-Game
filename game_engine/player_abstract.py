@@ -27,13 +27,13 @@ class Player:
     @abstractmethod
     def place_piece(self, selected_piece):
         """
-        Abstract method for selecting a cell on the board for placing piece
+        Abstract method for selecting a spot on the board for placing piece
         :param selected_piece: the selected piece
         """
 
-    def is_cell_empty(self, x, y):
+    def is_spot_empty(self, x, y):
         """
-        Validates that the selected cell is available for placing a piece
-        :return: true if the selected cell is empty, false otherwise
+        Validates that the selected spot is available for placing a piece
+        :return: true if the selected spot is empty, false otherwise
         """
-        return not self.game.board[x][y]  # checks if a board cell is empty
+        return not self.game.board[x][y]  # checks if a board spot is empty

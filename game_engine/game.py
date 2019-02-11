@@ -21,8 +21,8 @@ class Game:
         selected piece in a given direction from a given available
         position on the board for a given number of blocks/difficulty
         :param pce: the selected piece for placing somewhere on the board
-        :param y: the row position of the available/empty board cell
-        :param x: the column position of the available/empty board cell
+        :param y: the row position of the available/empty board spot
+        :param x: the column position of the available/empty board spot
         :param d_y: the x-direction being checked for similarities (-1, 0, 1)
         :param d_x: the y-direction being checked for similarities (-1, 0, 1)
         :param blc: the number of blocks being compared; either 1, 2, or 3
@@ -50,3 +50,44 @@ class Game:
         :return: true if there are pieces available, false otherwise
         """
         return len(self.pieces) != 0
+
+    def clone_game(self):
+        """
+        Clones the current game instance in order for ai to try different moves
+        without altering the game state
+        :return: a new instance of a game with the same state as this one
+        """
+        pass
+
+    def get_num_remaining_pieces(self):
+        """
+        :return: number of remaining pieces that can be played
+        """
+        pass
+
+    def get_remaining_spots(self):
+        """
+        :return: a list of the spots with no piece in it
+        """
+        pass
+
+    def get_remaining_pieces(self):
+        """
+        :return: a list of the remaining pieces that can be played
+        """
+        pass
+
+    def place_piece(self, spot, piece):
+        """
+        Places piece on the board in spot
+        :param spot: spot to place the piece
+        :param piece: piece to place in spot
+        """
+        pass
+
+    def pass_piece(self, piece):
+        """
+        Removes piece from pieces for ai to calculate different outcomes
+        :param piece: piece to be removed
+        """
+        pass
