@@ -53,6 +53,10 @@ class Play:
     def init_players(self, mod, dif, p_one="Player One", p_two="Player Two"):
         """
         Initializes the two players for the game dependent on game mode
+        :param mod: the game mode being played; human vs human, AI vs AI, ...
+        :param dif: the difficulty being played when playing AI
+        :param p_one: the name for player one; default: Player One
+        :param p_two: the name for player two; default: Player Two
         """
         if mod == 1:  # if human player vs human player
             self.players = [PlayerHuman(self.game, p_one),

@@ -5,7 +5,7 @@ class PlayerHuman(Player):
     """
     The human player class
     Author(s):      Adam Ross
-    Last-edit-date: 09/02/2019
+    Last-edit-date: 11/02/2019
     """
 
     def __init__(self, game, name):
@@ -42,7 +42,7 @@ class PlayerHuman(Player):
                 x, y = input("\nEnter 2 ints 0 - 3 separated by a space: ").\
                     split()
 
-                if self.is_cell_empty(int(x), int(y)):
+                if self.game.is_cell_empty(int(x), int(y)):
                     self.game.board[int(x)][int(y)] = slctd_pce
                     break
             except:

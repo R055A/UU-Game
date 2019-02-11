@@ -2,7 +2,7 @@ class Game:
     """
     Game entity class
     Author(s):      Adam Ross
-    Last-edit-date: 10/02/2019
+    Last-edit-date: 11/02/2019
     """
 
     N = 4  # constant for n in the n * n size of the board
@@ -14,6 +14,15 @@ class Game:
         self.pieces = dict({str(i): bin(i)[2:].zfill(self.N)  # dictionary
                             for i in range(2**self.N)}.items())
         self.board = [[None for i in range(self.N)] for j in range(self.N)]
+
+    def is_cell_empty(self, y, x):
+        """
+        Validates that the selected cell is available for placing a piece
+        :param y: the row position of the multidimensional array game board
+        :param x: the column position of the multidimensional array game board
+        :return: true if the selected cell is empty, false otherwise
+        """
+        return not self.board[y][x]  # checks if a board cell is empty
 
     def bin_count(self, pce, y, x, d_y, d_x, blc=3):
         """
@@ -28,9 +37,10 @@ class Game:
         :param blc: the number of blocks being compared; either 1, 2, or 3
         :return: a list of similarity counts for each characteristic of a piece
         """
-        return [len([k for i in range(1, blc + 1) if self.board[(d_y*i + y) %
-                self.N][(d_x*i + x) % self.N] and self.board[(d_y*i + y) % self
-                .N][(d_x*i + x) % self.N][j] == k]) for j, k in enumerate(pce)]
+        return [len([k for i in range(1, blc + 1) if not self.
+                is_cell_empty((d_y * i + y) % self.N, (d_x * i + x) % self.N)
+                and self.board[(d_y * i + y) % self.N][(d_x * i + x) % self.N]
+                [j] == k]) for j, k in enumerate(pce)]
 
     def has_won_game(self):
         """
@@ -39,10 +49,11 @@ class Game:
         """
         return True in [max(self.bin_count(self.board[i][i], i, i, 0, 1)) == 3
                         or max(self.bin_count(self.board[i][i], i, i, 1, 0)) ==
-                        3 for i in range(self.N) if self.board[i][i]] or (self.
-                        board[0][0] and max(self.bin_count(self.board[0][0], 0,
-                        0, 1, 1)) == 3) or (self.board[0][3] and max(self.
-                        bin_count(self.board[0][3], 0, 3, 1, -1)) == 3)
+                        3 for i in range(self.N) if not self.is_cell_empty(i,
+                        i)] or (not self.is_cell_empty(0, 0) and max(self.
+                        bin_count(self.board[0][0], 0, 0, 1, 1)) == 3) or (not
+                        self.is_cell_empty(0, 3) and max(self.bin_count(self.
+                        board[0][3], 0, 3, 1, -1)) == 3)
 
     def has_next_play(self):
         """

@@ -5,7 +5,7 @@ class Player:
     """
     Abstract super class for human and AI players
     Author(s):      Adam Ross
-    Last-edit-date: 09/02/2019
+    Last-edit-date: 11/02/2019
     """
 
     def __init__(self, game, name):
@@ -25,15 +25,8 @@ class Player:
         """
 
     @abstractmethod
-    def place_piece(self, selected_piece):
+    def place_piece(self, slctd_pce):
         """
         Abstract method for selecting a cell on the board for placing piece
-        :param selected_piece: the selected piece
+        :param slctd_pce: the selected piece
         """
-
-    def is_cell_empty(self, x, y):
-        """
-        Validates that the selected cell is available for placing a piece
-        :return: true if the selected cell is empty, false otherwise
-        """
-        return not self.game.board[x][y]  # checks if a board cell is empty
