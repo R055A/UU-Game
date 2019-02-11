@@ -60,7 +60,7 @@ class Minimax:
         :param depth: the depth of the node
         :return: the root node of the tree
         """
-        node = Node(is_my_turn, passed_piece, spot)
+        node = Node(is_my_turn, next_piece, spot)
         new_board_state = board_state.clone_game()
         new_board_state.place_piece(spot, passed_piece)
 
@@ -75,7 +75,7 @@ class Minimax:
 
         new_board_state.pieces.pop(next_piece)
         remaining_spots = new_board_state.get_remaining_spots()
-        remaining_pieces = new_board_state.pieces.keys()
+        remaining_pieces = list(new_board_state.pieces.keys())
         for i in range(len(remaining_spots)):
             if len(remaining_pieces) > 0:
                 for j in range(len(remaining_pieces)):

@@ -27,8 +27,8 @@ class PlayerHardAI(PlayerAI):
         Otherwise a piece chosen by the Minimax algorithm
         """
         if len(self.game.pieces.keys()) == 16:
-            return randint(0, 15)
-        return self.chosen_piece
+            return str(randint(0, 15))
+        return str(self.chosen_piece)
 
     def place_piece(self, selected_piece):
         """
@@ -36,7 +36,10 @@ class PlayerHardAI(PlayerAI):
         Selects where to place piece and saves piece chosen by Minimax algorithm
         :param selected_piece the piece selected for placing on board
         """
-        minimax = Minimax(self.game, self.depth, selected_piece)
+        game_clone = self.game.clone_game()                         # temporary solution since minimax needs the
+        game_clone.pieces[int(selected_piece, 2)] = selected_piece  # selected piece still among the pieces
+
+        minimax = Minimax(game_clone, self.depth, int(selected_piece, 2))
         best_move = minimax.get_move()
         self.chosen_piece = best_move.passed_piece
         self.game.place_piece(best_move.spot)

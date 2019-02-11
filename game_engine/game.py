@@ -61,8 +61,9 @@ class Game:
         :return: a new instance of a game with the same state as this one
         """
         game_clone = Game()
-        game_clone.pieces = deepcopy(self.pieces.copy)  # make sure the references are removed here
-        game_clone.board = deepcopy(self.board.copy)    # make sure the references are removed here
+        game_clone.pieces = dict({i for i in self.pieces.items()})
+        game_clone.board = [i.copy() for i in self.board]
+
         return game_clone
 
     def get_remaining_spots(self):
@@ -84,5 +85,5 @@ class Game:
         """
         row = int(spot/self.N)
         col = spot % self.N
-        self.board[row][col] = self.pieces[piece]
+        self.board[row][col] = self.pieces.get(piece)
         self.pieces.pop(piece)
