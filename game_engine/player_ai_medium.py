@@ -1,11 +1,12 @@
 from game_engine.player_ai import PlayerAI
+from random import choice
 
 
 class PlayerMediumAI(PlayerAI):
     """
     The Medium difficulty AI class
     Author(s):      Gustav From; Adam Ross
-    Last-edit-date: 11/02/19
+    Last-edit-date: 12/02/19
     """
 
     def __init__(self, game, name):
@@ -16,14 +17,35 @@ class PlayerMediumAI(PlayerAI):
         """
         super().__init__(game, name)
 
+    @staticmethod
+    def select(tpl, dif):
+        """
+        Searches for and selects a preferred piece based on chosen difficulty
+        :param tpl: tuples for every possible move ((pos), similarities, count)
+        :param dif: randomly chosen difficulty; hard or easy - True or False
+        :return: the selected piece for placing on the board
+        """
+        slctd = [(l, m, n) for l, m, n in list(tpl.values()) if (dif and m ==
+                 min([j for i, j, k in list(tpl.values())])) or m == max([j
+                 for i, j, k in list(tpl.values())])]  # preferred similarities
+        return str(list(tpl.keys())[list(tpl.values()).index(choice([(i, j, k)
+                   for i, j, k in slctd if (dif and k == min([n for l, m, n in
+                   slctd])) or k == max([n for l, m, n in slctd])]))])
+
     def choose_piece(self):
         """
         Method for medium difficulty AI piece choosing
+        Randomly implements either easy or hard AI algorithms
         :return: the selected piece for placing on the board
         """
+        return self.select(dict({str(pce): self.easy(self.game.pieces[pce]) for
+                pce in self.game.pieces}.items()), True) if choice([True,
+                False]) else self.select(dict({str(pce): self.hard(self.game.
+                pieces[pce]) for pce in self.game.pieces}.items()), False)
 
-    def place_piece(self, slctd_pce):
+    def place_piece(self, pce):
         """
         Method for medium difficulty AI piece placing on board
-        :param slctd_pce the piece selected for placing on board
+        Randomly implements either easy or hard AI algorithms
+        :param pce the piece selected for placing on board
         """
