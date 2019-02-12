@@ -25,8 +25,8 @@ class Player:
         """
 
     @abstractmethod
-    def place_piece(self, slctd_pce):
+    def place_piece(self, pce):
         """
         Abstract method for selecting a cell on the board for placing piece
-        :param slctd_pce: the selected piece
+        :param pce: the selected piece
         """

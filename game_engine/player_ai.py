@@ -6,7 +6,7 @@ class PlayerAI(Player):
     """
     AI player abstract class - super class for AI difficulty classes
     Author(s):      Adam Ross; Gustav From
-    Last-edit-date: 11/02/2019
+    Last-edit-date: 12/02/2019
     """
 
     def __init__(self, game, name):
@@ -36,13 +36,15 @@ class PlayerAI(Player):
                 game.N) if self.game.is_cell_empty(i, j)]]
 
     @staticmethod
-    def select_max_similarity_occurrence_count(prfrd_sims):
+    def select_max_similarity_occurrence_count(prfrd_sims, diff):
         """
         Selects randomly from a list of identical best/worst possible moves
         :param prfrd_sims: list of identical best/worst possible next moves
+        :param diff: boolean to determine if searching for the min or max count
         :return: a single tuple containing ((pos: y, x), similarities, count)
         """
-        return choice([(i, j, k) for i, j, k in prfrd_sims if k == max([n for
+        return choice([(i, j, k) for i, j, k in prfrd_sims if (diff and k ==
+                       max([n for l, m, n in prfrd_sims])) or k == min([n for
                        l, m, n in prfrd_sims])])
 
     def easy(self, pce):
@@ -59,7 +61,7 @@ class PlayerAI(Player):
                 k in sims if (j == 2 and 2 in [m for l, m, n in sims]) or j ==
                 min([m for l, m, n in sims])] if len(self.game.pieces) < 13
                 else [choice([((y, x), 1, 1) for x in range(self.game.N) for y
-                in range(self.game.N) if self.game.is_cell_empty(y, x)])])
+                in range(self.game.N) if self.game.is_cell_empty(y, x)])], 0)
 
     def hard(self, pce):
         """
@@ -76,4 +78,4 @@ class PlayerAI(Player):
                 == max([m for l, m, n in sims if m != 2])) or j == max([m for
                 l, m, n in sims])] if len(self.game.pieces) < 15 else [choice([
                 ((y, x), 0, 0) for x in range(self.game.N) for y in range(self.
-                game.N) if self.game.is_cell_empty(y, x)])])
+                game.N) if self.game.is_cell_empty(y, x)])], 1)

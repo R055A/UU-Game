@@ -16,10 +16,10 @@ class PlayerHuman(Player):
         """
         super().__init__(game, name)
 
-    def choose_piece(self, slctd_pce=None):
+    def choose_piece(self, pce=None):
         """
         Selects and validates a piece for the other player to place on board
-        :param slctd_pce: the piece being selected for placing on the board
+        :param pce: the piece being selected for placing on the board
         -- Temporarily prompts user to enter a value 0-15 for testing --
         :return: the validated selected piece
         """
@@ -29,11 +29,11 @@ class PlayerHuman(Player):
             if slctd_pce in self.game.pieces.keys():  # validate selection
                 return slctd_pce
 
-    def place_piece(self, slctd_pce, y=None, x=None):
+    def place_piece(self, pce, y=None, x=None):
         """
         Places a selected piece on the game board
         -- Temporarily prompts user to enter a board position for testing --
-        :param slctd_pce: the piece selected for placing on the board
+        :param pce: the piece selected for placing on the board
         :param y: the row position of the board the piece is being placed
         :param x: the column position of the board the piece is being placed
         """
@@ -43,7 +43,7 @@ class PlayerHuman(Player):
                     split()
 
                 if self.game.is_cell_empty(int(x), int(y)):
-                    self.game.board[int(x)][int(y)] = slctd_pce
+                    self.game.board[int(x)][int(y)] = pce
                     break
             except:
                 continue
