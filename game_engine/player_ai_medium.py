@@ -49,3 +49,5 @@ class PlayerMediumAI(PlayerAI):
         Randomly implements either easy or hard AI algorithms
         :param pce the piece selected for placing on board
         """
+        y, x = self.hard(pce)[0] if choice([True, False]) else self.easy(pce)[0]
+        self.game.board[y][x] = pce  # sets the selected piece to a board pos
