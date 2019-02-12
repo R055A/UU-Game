@@ -26,8 +26,11 @@ class PlayerHardAI(PlayerAI):
         :return: a random piece if it is the first round
         Otherwise a piece chosen by the Minimax algorithm
         """
-        if len(self.game.pieces.keys()) == 16:
-            return str(randint(0, 15))
+        if len(self.game.pieces.keys()) > 12:           # limit has to be the same as for place_piece
+            while True:
+                random_piece = str(randint(0, 15))
+                if random_piece in self.game.pieces.keys():  # validate selection
+                    return random_piece
         return str(self.chosen_piece)
 
     def place_piece(self, selected_piece):
@@ -36,10 +39,23 @@ class PlayerHardAI(PlayerAI):
         Selects where to place piece and saves piece chosen by Minimax algorithm
         :param selected_piece the piece selected for placing on board
         """
-        game_clone = self.game.clone_game()                         # temporary solution since minimax needs the
-        game_clone.pieces[int(selected_piece, 2)] = selected_piece  # selected piece still among the pieces
 
-        minimax = Minimax(game_clone, self.depth, int(selected_piece, 2))
-        best_move = minimax.get_move()
-        self.chosen_piece = best_move.passed_piece
-        self.game.place_piece(best_move.spot)
+        if len(self.game.pieces) > 12:                  # limit has to be the same as for choose_piece
+            while True:
+                x = randint(0, 3)
+                y = randint(0, 3)
+                if self.is_spot_empty(int(x), int(y)):
+                    self.game.board[int(x)][int(y)] = selected_piece
+                    break
+        else:
+            if len(self.game.pieces) > 8:
+                self.depth = 1
+            else:
+                self.depth = 1
+            game_clone = self.game.clone_game()                         # temporary solution since minimax needs the
+            game_clone.pieces[int(selected_piece, 2)] = selected_piece  # selected piece still among the pieces
+
+            minimax = Minimax(game_clone, self.depth, int(selected_piece, 2))
+            best_move = minimax.get_move()
+            self.chosen_piece = best_move.passed_piece
+            self.game.place_piece(best_move.spot, best_move.passed_piece)
