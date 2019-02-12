@@ -64,7 +64,7 @@ class GameEngine:
                     self.play.init_players(int(n), int(d))  # initializes play
                     break
             elif n == "1":
-                self.play.init_players(int(n), None)  # initializes the game players
+                self.play.init_players(int(n), None)  # initializes players
                 break
         self.declare_current_player()  # prints the starting player turn
 
@@ -76,10 +76,10 @@ class GameEngine:
         self.declare_current_player()  # prints the current player turn
         self.play.play_placement()
 
-        if self.play.game.has_won_game():  # checks if game won
+        if self.play.game.has_won_game(self.play.selected_piece):
             self.declare_board_status()  # prints final status of board
             print("game won by " + self.play.current_player.name)
-        elif not self.play.game.has_next_play():  # checks if play turns remaining
+        elif not self.play.game.has_next_play():  # checks if turns remaining
             self.declare_board_status()  # prints final status of board
         else:
             self.play_game()  # plays the next turn

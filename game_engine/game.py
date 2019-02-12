@@ -42,18 +42,18 @@ class Game:
                 and self.board[(d_y * i + y) % self.N][(d_x * i + x) % self.N]
                 [j] == k]) for j, k in enumerate(pce)]
 
-    def has_won_game(self):
+    def has_won_game(self, pce):
         """
         Checks if 4 pieces in a row on the board have similar characteristics
+        :param pce the game piece most recently placed on the board
         :return: true if there are 4 similar pieces in a row, false otherwise
         """
-        return True in [max(self.bin_count(self.board[i][i], i, i, 0, 1)) == 3
-                        or max(self.bin_count(self.board[i][i], i, i, 1, 0)) ==
-                        3 for i in range(self.N) if not self.is_cell_empty(i,
-                        i)] or (not self.is_cell_empty(0, 0) and max(self.
-                        bin_count(self.board[0][0], 0, 0, 1, 1)) == 3) or (not
-                        self.is_cell_empty(0, 3) and max(self.bin_count(self.
-                        board[0][3], 0, 3, 1, -1)) == 3)
+        return True in [max(self.bin_count(pce, i, j, 0, 1)) == 3 or max(self.
+                        bin_count(pce, i, j, 1, 0)) == 3 or (i + j == 3 and
+                        max(self.bin_count(pce, i, j, 1, -1)) == 3) or (i == j
+                        and max(self.bin_count(pce, i, j, 1, 1)) == 3) for j in
+                        range(self.N) for i in range(self.N) if self.
+                        board[i][j] == pce]
 
     def has_next_play(self):
         """

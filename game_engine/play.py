@@ -43,7 +43,7 @@ class Play:
         self.play_selection()  # current player selects a piece, play swaps
         self.play_placement()  # the new current player places piece on board
 
-        if self.game.has_won_game():  # checks if the game is won
+        if self.game.has_won_game(self.selected_piece):  # checks if the game is won
             return self.current_player.name  # returns game winner name
         elif not self.game.has_next_play():  # checks if play turns remain
             return None  # returns no game winner
