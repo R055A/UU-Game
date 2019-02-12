@@ -1,6 +1,3 @@
-from copy import deepcopy
-
-
 class Game:
     """
     Game entity class
@@ -17,6 +14,15 @@ class Game:
         self.pieces = dict({str(i): bin(i)[2:].zfill(self.N)  # dictionary
                             for i in range(2**self.N)}.items())
         self.board = [[None for i in range(self.N)] for j in range(self.N)]
+
+    def is_cell_empty(self, y, x):
+        """
+        Validates that the selected cell is available for placing a piece
+        :param y: the row position of the multidimensional array game board
+        :param x: the column position of the multidimensional array game board
+        :return: true if the selected cell is empty, false otherwise
+        """
+        return not self.board[y][x]  # checks if a board cell is empty
 
     def bin_count(self, pce, y, x, d_y, d_x, blc):
         """
@@ -63,7 +69,6 @@ class Game:
         game_clone = Game()
         game_clone.pieces = dict({i for i in self.pieces.items()})
         game_clone.board = [i.copy() for i in self.board]
-
         return game_clone
 
     def get_remaining_spots(self):
@@ -76,13 +81,3 @@ class Game:
                 if self.board[i][j] is None:
                     remaining_spots.append(i*4+j)
         return remaining_spots
-
-    def place_piece(self, spot, piece):
-        """
-        Places piece on the board in spot
-        :param spot: spot to place the piece
-        :param piece: piece to place in spot
-        """
-        row = int(spot/self.N)
-        col = spot % self.N
-        self.board[row][col] = self.pieces.get(piece)

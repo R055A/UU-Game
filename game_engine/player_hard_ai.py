@@ -17,8 +17,7 @@ class PlayerHardAI(PlayerAI):
         :param name: the name of the player
         """
         super().__init__(game, name)
-        self.depth = 3  # The depth at which the Minimax algorithm should stop
-        self.chosen_piece = None  # The piece chosen by the Minimax algorithm
+        self.chosen_piece = None  # the piece chosen by the Minimax algorithm
 
     def choose_piece(self):
         """
@@ -26,7 +25,7 @@ class PlayerHardAI(PlayerAI):
         :return: a random piece if it is the first round
         Otherwise a piece chosen by the Minimax algorithm
         """
-        if len(self.game.pieces.keys()) > 12:           # limit has to be the same as for place_piece
+        if len(self.game.pieces.keys()) > 12:  # limit has to be the same as for place_piece
             while True:
                 random_piece = str(randint(0, 15))
                 if random_piece in self.game.pieces.keys():  # validate selection
@@ -39,23 +38,39 @@ class PlayerHardAI(PlayerAI):
         Selects where to place piece and saves piece chosen by Minimax algorithm
         :param selected_piece the piece selected for placing on board
         """
-
-        if len(self.game.pieces) > 12:                  # limit has to be the same as for choose_piece
+        # Place at random the first few draws
+        if len(self.game.pieces) > 12:  # limit has to be the same as for choose_piece
             while True:
                 x = randint(0, 3)
                 y = randint(0, 3)
-                if self.is_spot_empty(int(x), int(y)):
+                if self.game.is_cell_empty(int(x), int(y)):
                     self.game.board[int(x)][int(y)] = selected_piece
                     break
+        # if there is only one spot left
+        elif len(self.game.pieces) == 0:
+            spot = self.game.get_remaining_spots()[0]
+            x = int(spot / 4)
+            y = spot % 4
+            if self.game.is_cell_empty(int(x), int(y)):
+                self.game.board[int(x)][int(y)] = selected_piece
         else:
-            if len(self.game.pieces) > 8:
-                self.depth = 1
+            # Search more steps forward towards the end of the game
+            if len(self.game.pieces) > 7:
+                depth = 1
+            elif len(self.game.pieces) > 5:
+                depth = 2
+            elif len(self.game.pieces) > 4:
+                depth = 3
             else:
-                self.depth = 1
-            game_clone = self.game.clone_game()                         # temporary solution since minimax needs the
-            game_clone.pieces[int(selected_piece, 2)] = selected_piece  # selected piece still among the pieces
+                depth = 16
 
-            minimax = Minimax(game_clone, self.depth, int(selected_piece, 2))
+            minimax = Minimax(self.game, depth, int(selected_piece, 2))
             best_move = minimax.get_move()
             self.chosen_piece = best_move.passed_piece
-            self.game.place_piece(best_move.spot, best_move.passed_piece)
+
+            spot = best_move.spot
+            x = int(spot / 4)
+            y = spot % 4
+
+            if self.game.is_cell_empty(int(x), int(y)):
+                self.game.board[int(x)][int(y)] = selected_piece

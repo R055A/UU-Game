@@ -18,6 +18,7 @@ class Node:
         self.children = []  # The child nodes
         self.is_leaf = False
         self.has_won = False
+        self.tree_cost = None  # Cost added to root node when evaluated
 
     def add_child(self, child):
         """

@@ -1,5 +1,4 @@
 from game_engine.node import Node
-import math
 
 
 class Minimax:
@@ -18,6 +17,7 @@ class Minimax:
         self.board_state = game
         self.depth = depth
         self.passed_piece = passed_piece
+        self.all_pieces = dict({str(i): bin(i)[2:].zfill(4) for i in range(2**4)}.items())
 
     def get_move(self):
         """
@@ -28,24 +28,27 @@ class Minimax:
         remaining_spots = self.board_state.get_remaining_spots()
         remaining_pieces = list(self.board_state.pieces.keys())
         root_nodes = []
-
         for i in range(len(remaining_spots)):
             for j in range(len(remaining_pieces)):
-                root_nodes.append(
-                    self.build_evaluation_tree(self.passed_piece,
-                                               remaining_spots[i],
-                                               remaining_pieces[j],
-                                               True,
-                                               self.board_state,
-                                               self.depth))
+                root = self.build_evaluation_tree(self.passed_piece,
+                                                  remaining_spots[i],
+                                                  remaining_pieces[j],
+                                                  True,
+                                                  self.board_state,
+                                                  self.depth)
+                root.tree_cost = self.minimax(root)
+                if root.tree_cost > 0:
+                    return root
+                else:
+                    root_nodes.append(root)
 
-        best_move = 0
-
+        # If no good move is found, pick an average move
         for root in root_nodes:
-            current_move = self.minimax(root, -math.inf, math.inf)
-            if current_move > best_move:
-                best_move = root
-        return root_nodes[best_move]
+            if root.tree_cost == 0:
+                return root
+        # If there are only bad moves, pick a bad move
+        if len(root_nodes) > 0:
+            return root_nodes[0]
 
     def build_evaluation_tree(self, passed_piece, spot, next_piece, is_my_turn, board_state, depth):
         """
@@ -62,7 +65,13 @@ class Minimax:
         """
         node = Node(is_my_turn, next_piece, spot)
         new_board_state = board_state.clone_game()
-        new_board_state.place_piece(spot, passed_piece)
+
+        # Place piece
+        row = int(spot/4)
+        col = spot % 4
+        new_board_state.board[row][col] = self.all_pieces.get(str(passed_piece))
+        if new_board_state.pieces.get(str(passed_piece)) is not None:
+            new_board_state.pieces.pop(str(passed_piece))
 
         if new_board_state.has_won_game():
             node.set_is_leaf()
@@ -73,7 +82,6 @@ class Minimax:
             node.set_is_leaf()
             return node
 
-        new_board_state.pieces.pop(next_piece)
         remaining_spots = new_board_state.get_remaining_spots()
         remaining_pieces = list(new_board_state.pieces.keys())
         for i in range(len(remaining_spots)):
@@ -96,14 +104,11 @@ class Minimax:
                                                depth - 1))
         return node
 
-    def minimax(self, node, alpha, beta):
+    def minimax(self, node):
         """
-        Minimax algorithm with alpha beta pruning.
-        The method is recursively called for the children of node
-        and the leaves are evaluated.
+        Minimax algorithm. The method is recursively called for the children of node
+        and the leaves are evaluated and passed to the root.
         :param node: the node to evaluate
-        :param alpha: -infinity if no pruning occurs otherwise the cost of the most likely move
-        :param beta: infinity if no pruning occurs otherwise the cost of the most likely move
         :return: the cost of the tree
         """
         if node.is_leaf:
@@ -112,34 +117,11 @@ class Minimax:
             else:
                 return 0
 
-        if node.is_my_turn:
-            max_eval = -math.inf
-            for child in node.children:
-                eval = self.minimax(child, alpha, beta)
-                max_eval = max(max_eval, eval)
-                alpha = max(alpha, eval)
-                if beta <= alpha:
-                    break
-            return max_eval
-        else:
-            min_eval = math.inf
-            for child in node.children:
-                eval = self.minimax(child, alpha, beta)
-                min_eval = min(min_eval, eval)
-                alpha = min(beta, eval)
-                if beta <= alpha:
-                    break
-            return min_eval
-
-    def print_tree(self, node):
-        """
-        Recursively prints tree
-        :param node: root node
-        """
-        print(node.get_string())
-        child_string = ""
+        cost = 0
         for child in node.children:
-            child_string += child.get_string()
-        print(child_string)
-        for child in node.children:
-            self.print_tree(child)
+            child_cost = self.minimax(child)
+            if node.is_my_turn:
+                cost = min(cost, child_cost)
+            else:
+                cost = max(cost, child_cost)
+        return cost
