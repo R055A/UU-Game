@@ -21,27 +21,23 @@ class TestPlayerAIMediumClass(TestCase):
 
     def test_player_ai_medium_play(self):
         """
-        Tests PlayerMediumAI game play average player one wins 50% +/- 10%
+        Tests average PlayerMediumAI player wins 50% +/- 10% in non-drawn games
         """
         p_one, p_two, count, wins = "Player One", "Player Two", 0, 0
+        samples = 100  # the number of samples of won games in each test
+        tests = 5  # the number of tests
 
-        for i in range(100):
-            while count < 100:
+        for i in range(tests):
+            while count < samples:
                 test = Play()
                 test.players = [PlayerMediumAI(test.game, p_one),
                                 PlayerMediumAI(test.game, p_two)]
-                test.current_player = choice(test.players)  # random starting player
+                test.current_player = choice(test.players)
 
-                while True:
-                    test.play_selection()
-                    test.play_placement()
+                if test.play_auto():
+                    count += 1
 
-                    if test.game.has_won_game():  # checks if game won
-                        count += 1
-
-                        if test.current_player.name == p_one:
-                            wins += 1
-                        break
-                    elif not test.game.has_next_play():  # checks if play turns remaining
-                        break
+                    if test.current_player.name == p_one:
+                        wins += 1
             self.assertTrue((40 <= wins <= 60))
+            count, wins = 0, 0

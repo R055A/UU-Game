@@ -40,15 +40,14 @@ class Play:
         Where the game turns are played automatically until game won or drawn
         :return: the winning player if game won, or None if game drawn
         """
-        self.play_selection()  # current player selects a piece, play swaps
-        self.play_placement()  # the new current player places piece on board
+        while True:
+            self.play_selection()  # current player selects a piece, play swaps
+            self.play_placement()  # new current player places piece on board
 
-        if self.game.has_won_game(self.selected_piece):  # checks if the game is won
-            return self.current_player.name  # returns game winner name
-        elif not self.game.has_next_play():  # checks if play turns remain
-            return None  # returns no game winner
-        else:
-            self.play_auto()  # plays the next turn
+            if self.game.has_won_game(self.selected_piece):  # if game is won
+                return self.current_player.name  # returns game winner name
+            elif not self.game.has_next_play():  # checks if play turns remain
+                return None  # returns no game winner
 
     def init_players(self, mod, dif, p_one="Player One", p_two="Player Two"):
         """
