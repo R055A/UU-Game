@@ -77,10 +77,10 @@ class GameEngine:
         self.play.play_placement()
 
         if self.play.game.has_won_game():  # checks if game won
-            self.play.game.declare_board_status()  # prints final status of board
+            self.declare_board_status()  # prints final status of board
             print("game won by " + self.play.current_player.name)
         elif not self.play.game.has_next_play():  # checks if play turns remaining
-            self.play.game.declare_board_status()  # prints final status of board
+            self.declare_board_status()  # prints final status of board
         else:
             self.play_game()  # plays the next turn
 

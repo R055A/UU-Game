@@ -86,4 +86,3 @@ class Game:
         row = int(spot/self.N)
         col = spot % self.N
         self.board[row][col] = self.pieces.get(piece)
-        self.pieces.pop(piece)
