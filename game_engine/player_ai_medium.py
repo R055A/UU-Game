@@ -17,27 +17,6 @@ class PlayerMediumAI(PlayerAI):
         """
         super().__init__(game, name)
 
-    @staticmethod
-    def get_best(best, dif):
-        """
-        Selects a preferred piece based on provided difficulty (dif) from a
-        provided list of preferred board cells (best). Determines which from
-        preference list is best based on the occurrence of the preference. Eg.
-        An input list has three cells with equal similarity counts, but one has
-        a greater/lesser occurrence of similarities in a combination of
-        horizontal, and vertical (and maybe diagonal) rows. Depending on which
-        difficulty, the method will return greater (easy) / lesser (hard).
-        :param best: list of tuples for preferred moves ((pos), sims, count)
-        :param dif: randomly chosen difficulty; hard or easy - True or False
-        :return: the selected piece for placing on the board
-        """
-        sims = [(l, m, n) for l, m, n in list(best.values()) if (dif and m ==
-                 min([j for i, j, k in list(best.values())])) or (not dif and m
-                 == max([j for i, j, k in list(best.values())]))]  # similarity
-        return list(best.keys())[list(best.values()).index(choice([(i, j, k)
-                for i, j, k in sims if (dif and k == min([n for l, m, n in
-                sims])) or (not dif and k == max([n for l, m, n in sims]))]))]
-
     def choose_piece(self):
         """
         Method for medium difficulty AI piece choosing. Implements get_best()
