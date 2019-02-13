@@ -24,10 +24,10 @@ class PlayerHuman(Player):
         :return: the validated selected piece
         """
         while True:
-            slctd_pce = input("\nEnter number 0-15 of piece selection: ")
+            pce = input("\nEnter number 0-15 of piece selection: ")
 
-            if slctd_pce in self.game.pieces.keys():  # validate selection
-                return slctd_pce
+            if pce in self.game.pieces.keys():  # validate selection
+                return pce
 
     def place_piece(self, pce, y=None, x=None):
         """
