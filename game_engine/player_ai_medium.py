@@ -25,12 +25,12 @@ class PlayerMediumAI(PlayerAI):
         :param dif: randomly chosen difficulty; hard or easy - True or False
         :return: the selected piece for placing on the board
         """
-        slctd = [(l, m, n) for l, m, n in list(tpl.values()) if (dif and m ==
-                 min([j for i, j, k in list(tpl.values())])) or m == max([j
-                 for i, j, k in list(tpl.values())])]  # preferred similarities
-        return str(list(tpl.keys())[list(tpl.values()).index(choice([(i, j, k)
-                   for i, j, k in slctd if (dif and k == min([n for l, m, n in
-                   slctd])) or k == max([n for l, m, n in slctd])]))])
+        sims = [(l, m, n) for l, m, n in list(tpl.values()) if (dif and m ==
+                 min([j for i, j, k in list(tpl.values())])) or (not dif and m
+                 == max([j for i, j, k in list(tpl.values())]))]
+        return list(tpl.keys())[list(tpl.values()).index(choice([(i, j, k) for
+                i, j, k in sims if (dif and k == min([n for l, m, n in sims]))
+                or (not dif and k == max([n for l, m, n in sims]))]))]
 
     def choose_piece(self):
         """
