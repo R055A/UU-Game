@@ -81,6 +81,7 @@ class GameEngine:
             print("game won by " + self.play.current_player.name)
         elif not self.play.game.has_next_play():  # checks if play turns remaining
             self.declare_board_status()  # prints final status of board
+            print("game ends in a draw")
         else:
             self.play_game()  # plays the next turn
 
