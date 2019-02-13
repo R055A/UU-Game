@@ -44,8 +44,8 @@ class PlayerAI(Player):
         :return: a single tuple containing ((pos: y, x), similarities, count)
         """
         return choice([(i, j, k) for i, j, k in prfrd_sims if (diff and k ==
-                       max([n for l, m, n in prfrd_sims])) or k == min([n for
-                       l, m, n in prfrd_sims])])
+                       max([n for l, m, n in prfrd_sims])) or (not diff and k
+                       == min([n for l, m, n in prfrd_sims]))])
 
     def easy(self, pce):
         """
