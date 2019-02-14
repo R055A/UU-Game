@@ -8,7 +8,7 @@ class Play:
     """
     The Play class
     Author(s):      Adam Ross; Gustav From
-    Last-edit-date: 09/02/2019
+    Last-edit-date: 14/02/2019
     """
 
     def __init__(self):
@@ -20,20 +20,34 @@ class Play:
         self.current_player = None  # initiates current player during game play
         self.selected_piece = None  # initiates current selected piece
 
-    def play_selection(self):
+    def play_selection(self, pce=None):
         """
         The selecting of a piece part of a game turn and
         swapping of current player after a piece is selected
+        :param pce: the piece being selected for placing on the board
         """
-        self.selected_piece = self.game.pieces.pop(self.current_player.
-                                                   choose_piece())
-        self.current_player = self.change_player()  # swaps player turn
+        if isinstance(self.current_player, PlayerHuman):
+            self.selected_piece = self.current_player.choose_piece(pce)
 
-    def play_placement(self):
+            if self.selected_piece:
+                self.selected_piece = self.game.pieces.pop(self.selected_piece)
+        else:
+            self.selected_piece = self.game.pieces.pop(self.current_player.
+                                                       choose_piece())
+        if self.selected_piece:
+            self.current_player = self.change_player()  # swaps player turn
+        return self.selected_piece
+
+    def play_placement(self, y=None, x=None):
         """
         The placing of a selected piece on the board part of a game turn
+        :param y: the board row position the piece is being placed for human
+        :param x: the board column position the piece is being placed for human
         """
-        self.current_player.place_piece(self.selected_piece)  # places piece
+        if isinstance(self.current_player, PlayerHuman):
+            return self.current_player.place_piece(self.selected_piece, y, x)
+        else:
+            self.current_player.place_piece(self.selected_piece)  # place piece
 
     def play_auto(self):
         """

@@ -5,7 +5,7 @@ class PlayerHuman(Player):
     """
     The human player class
     Author(s):      Adam Ross
-    Last-edit-date: 11/02/2019
+    Last-edit-date: 14/02/2019
     """
 
     def __init__(self, game, name):
@@ -20,30 +20,22 @@ class PlayerHuman(Player):
         """
         Selects and validates a piece for the other player to place on board
         :param pce: the piece being selected for placing on the board
-        -- Temporarily prompts user to enter a value 0-15 for testing --
-        :return: the validated selected piece
+        :return: either the validated piece, or None to confirm invalidity
         """
-        while True:
-            pce = input("\nEnter number 0-15 of piece selection: ")
-
-            if pce in self.game.pieces.keys():  # validate selection
-                return pce
+        return pce if pce in self.game.pieces.keys() else None
 
     def place_piece(self, pce, y=None, x=None):
         """
-        Places a selected piece on the game board
-        -- Temporarily prompts user to enter a board position for testing --
+        Selects and validates a game board cell for placing a selected piece
         :param pce: the piece selected for placing on the board
         :param y: the row position of the board the piece is being placed
         :param x: the column position of the board the piece is being placed
+        :return: either True if valid placement, or False to confirm invalidity
         """
-        while True:
-            try:
-                x, y = input("\nEnter 2 ints 0 - 3 separated by a space: ").\
-                    split()
-
-                if self.game.is_cell_empty(int(x), int(y)):
-                    self.game.board[int(x)][int(y)] = pce
-                    break
-            except:
-                continue
+        try:
+            if y and x and self.game.is_cell_empty(int(y), int(x)):
+                self.game.board[int(y)][int(x)] = pce
+                return True
+            return False
+        except:
+            return False
