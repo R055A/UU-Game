@@ -5,7 +5,7 @@ class Player:
     """
     Abstract super class for human and AI players
     Author(s):      Adam Ross
-    Last-edit-date: 09/02/2019
+    Last-edit-date: 11/02/2019
     """
 
     def __init__(self, game, name):
@@ -25,8 +25,8 @@ class Player:
         """
 
     @abstractmethod
-    def place_piece(self, selected_piece):
+    def place_piece(self, pce):
         """
-        Abstract method for selecting a spot on the board for placing piece
-        :param selected_piece: the selected piece
+        Abstract method for selecting a cell on the board for placing piece
+        :param pce: the selected piece
         """

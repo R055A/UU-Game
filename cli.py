@@ -1,11 +1,12 @@
 from game_engine.play import Play
+from game_engine.player_human import PlayerHuman
 
 
 class GameEngine:
     """
     This is temporary class for the CLI testing and presentation
     Author(s):      Adam Ross; Gustav From
-    Last-edit-date: 09/02/2019
+    Last-edit-date: 14/02/2019
     """
 
     def __init__(self):
@@ -64,24 +65,43 @@ class GameEngine:
                     self.play.init_players(int(n), int(d))  # initializes play
                     break
             elif n == "1":
-                self.play.init_players(int(n), None)  # initializes the game players
+                self.play.init_players(int(n), None)  # initializes players
                 break
         self.declare_current_player()  # prints the starting player turn
 
     def play_game(self):
         self.declare_available_pieces()  # prints game board status
         self.declare_board_status()  # prints available pieces status
-        self.play.play_selection()
+
+        if isinstance(self.play.current_player, PlayerHuman):
+            while True:
+                pce = input("\nEnter number 0-15 of piece selection: ")
+
+                if self.play.play_selection(pce):
+                    break
+        else:
+            self.play.play_selection()
         self.declare_selected_piece()  # prints the selected piece
         self.declare_current_player()  # prints the current player turn
-        self.play.play_placement()
 
-        if self.play.game.has_won_game():  # checks if game won
+        if isinstance(self.play.current_player, PlayerHuman):
+            while True:
+                try:
+                    y, x = input("\nEnter 2 ints 0-3 separated by a space: ").\
+                        split()
+
+                    if self.play.play_placement(y, x):
+                        break
+                except:
+                    continue
+        else:
+            self.play.play_placement()
+
+        if self.play.game.has_won_game(self.play.selected_piece):
             self.declare_board_status()  # prints final status of board
             print("game won by " + self.play.current_player.name)
-        elif not self.play.game.has_next_play():  # checks if play turns remaining
+        elif not self.play.game.has_next_play():  # checks if turns remaining
             self.declare_board_status()  # prints final status of board
-            print("game ends in a draw")
         else:
             self.play_game()  # plays the next turn
 

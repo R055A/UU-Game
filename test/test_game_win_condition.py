@@ -6,16 +6,8 @@ class TestWinCondition(TestCase):
     """
     Tests the win_condition() method in the Game class
     Author: Adam Ross
-    Date: 07/02/19
+    Date: 12/02/19
     """
-
-    def test_empty_board(self):
-        """
-        Tests an empty board does not result in a game win declaration
-        """
-        test = Game()
-        test.board = [[None for i in range(test.N)] for j in range(test.N)]
-        self.assertFalse(test.has_won_game())
 
     def test_most_pieces_wins(self):
         """
@@ -26,7 +18,7 @@ class TestWinCondition(TestCase):
                       ['1110', '0001', '0010', '0111'],
                       ['1001', '1100', '1110', '1011'],
                       ['0100', '0110', '0011', '1111']]
-        self.assertTrue(test.has_won_game())
+        self.assertTrue(test.has_won_game('1110'))
 
     def test_most_pieces_loses(self):
         """
@@ -37,7 +29,7 @@ class TestWinCondition(TestCase):
                       ['1110', '0001', '0010', '0111'],
                       ['1001', None, '1110', '1011'],
                       ['0100', '0110', '0011', '1111']]
-        self.assertFalse(test.has_won_game())
+        self.assertFalse(test.has_won_game('1111'))
 
     def test_top_row_wins(self):
         """
@@ -48,7 +40,7 @@ class TestWinCondition(TestCase):
                       [None, None, None, None],
                       [None, None, None, None],
                       [None, None, None, None]]
-        self.assertTrue(test.has_won_game())
+        self.assertTrue(test.has_won_game('0011'))
 
     def test_top_row_loses(self):
         """
@@ -59,7 +51,7 @@ class TestWinCondition(TestCase):
                       [None, None, None, None],
                       [None, None, None, None],
                       [None, None, None, None]]
-        self.assertFalse(test.has_won_game())
+        self.assertFalse(test.has_won_game('1010'))
 
     def test_second_row_wins(self):
         """
@@ -70,7 +62,7 @@ class TestWinCondition(TestCase):
                       ['1110', '1010', '1100', '0100'],
                       [None, None, None, None],
                       [None, None, None, None]]
-        self.assertTrue(test.has_won_game())
+        self.assertTrue(test.has_won_game('1100'))
 
     def test_second_row_loses(self):
         """
@@ -81,7 +73,7 @@ class TestWinCondition(TestCase):
                       ['1110', '1010', '1101', '0100'],
                       [None, None, None, None],
                       [None, None, None, None]]
-        self.assertFalse(test.has_won_game())
+        self.assertFalse(test.has_won_game('0100'))
 
     def test_third_row_wins(self):
         """
@@ -92,7 +84,7 @@ class TestWinCondition(TestCase):
                       [None, None, None, None],
                       ['0000', '1000', '0100', '0010'],
                       [None, None, None, None]]
-        self.assertTrue(test.has_won_game())
+        self.assertTrue(test.has_won_game('0000'))
 
     def test_third_row_loses(self):
         """
@@ -103,7 +95,7 @@ class TestWinCondition(TestCase):
                       [None, None, None, None],
                       ['0000', '1000', '0101', '0010'],
                       [None, None, None, None]]
-        self.assertFalse(test.has_won_game())
+        self.assertFalse(test.has_won_game('0101'))
 
     def test_fourth_row_wins(self):
         """
@@ -114,7 +106,7 @@ class TestWinCondition(TestCase):
                       [None, None, None, None],
                       [None, None, None, None],
                       ['1111', '1000', '1100', '1010']]
-        self.assertTrue(test.has_won_game())
+        self.assertTrue(test.has_won_game('1010'))
 
     def test_fourth_row_loses(self):
         """
@@ -125,7 +117,7 @@ class TestWinCondition(TestCase):
                       [None, None, None, None],
                       [None, None, None, None],
                       ['1111', '1000', '0100', '1010']]
-        self.assertFalse(test.has_won_game())
+        self.assertFalse(test.has_won_game('1111'))
 
     def test_first_column_wins(self):
         """
@@ -136,7 +128,7 @@ class TestWinCondition(TestCase):
                       ['1100', None, None, None],
                       ['1000', None, None, None],
                       ['1111', None, None, None]]
-        self.assertTrue(test.has_won_game())
+        self.assertTrue(test.has_won_game('1111'))
 
     def test_first_column_loses(self):
         """
@@ -147,7 +139,7 @@ class TestWinCondition(TestCase):
                       ['1100', None, None, None],
                       ['0010', None, None, None],
                       ['1111', None, None, None]]
-        self.assertFalse(test.has_won_game())
+        self.assertFalse(test.has_won_game('1111'))
 
     def test_second_column_wins(self):
         """
@@ -158,7 +150,7 @@ class TestWinCondition(TestCase):
                       [None, '1100', None, None],
                       [None, '1000', None, None],
                       [None, '1111', None, None]]
-        self.assertTrue(test.has_won_game())
+        self.assertTrue(test.has_won_game('1111'))
 
     def test_second_column_loses(self):
         """
@@ -169,7 +161,7 @@ class TestWinCondition(TestCase):
                       [None, '0100', None, None],
                       [None, '1000', None, None],
                       [None, '1111', None, None]]
-        self.assertFalse(test.has_won_game())
+        self.assertFalse(test.has_won_game('0100'))
 
     def test_third_column_wins(self):
         """
@@ -180,7 +172,7 @@ class TestWinCondition(TestCase):
                       [None, None, '1100', None],
                       [None, None, '1000', None],
                       [None, None, '1111', None]]
-        self.assertTrue(test.has_won_game())
+        self.assertTrue(test.has_won_game('1010'))
 
     def test_third_column_loses(self):
         """
@@ -191,7 +183,7 @@ class TestWinCondition(TestCase):
                       [None, None, '0100', None],
                       [None, None, '1010', None],
                       [None, None, '1111', None]]
-        self.assertFalse(test.has_won_game())
+        self.assertFalse(test.has_won_game('1111'))
 
     def test_fourth_column_wins(self):
         """
@@ -202,7 +194,7 @@ class TestWinCondition(TestCase):
                       [None, None, None, '1100'],
                       [None, None, None, '1000'],
                       [None, None, None, '1111']]
-        self.assertTrue(test.has_won_game())
+        self.assertTrue(test.has_won_game('1000'))
 
     def test_fourth_column_loses(self):
         """
@@ -213,7 +205,7 @@ class TestWinCondition(TestCase):
                       [None, None, None, '1100'],
                       [None, None, None, '1000'],
                       [None, None, None, '1111']]
-        self.assertFalse(test.has_won_game())
+        self.assertFalse(test.has_won_game('0010'))
 
     def test_horizontal_one_wins(self):
         """
@@ -224,7 +216,7 @@ class TestWinCondition(TestCase):
                       [None, '1100', None, None],
                       [None, None, '1000', None],
                       [None, None, None, '1111']]
-        self.assertTrue(test.has_won_game())
+        self.assertTrue(test.has_won_game('1100'))
 
     def test_horizontal_one_loses(self):
         """
@@ -235,7 +227,7 @@ class TestWinCondition(TestCase):
                       [None, '0100', None, None],
                       [None, None, '1000', None],
                       [None, None, None, '1111']]
-        self.assertFalse(test.has_won_game())
+        self.assertFalse(test.has_won_game('1111'))
 
     def test_horizontal_two_wins(self):
         """
@@ -246,7 +238,7 @@ class TestWinCondition(TestCase):
                       [None, None, '1100', None],
                       [None, '1000', None, None],
                       ['1111', None, None, None]]
-        self.assertTrue(test.has_won_game())
+        self.assertTrue(test.has_won_game('1000'))
 
     def test_horizontal_two_loses(self):
         """
@@ -257,4 +249,4 @@ class TestWinCondition(TestCase):
                       [None, None, '0100', None],
                       [None, '1000', None, None],
                       ['1111', None, None, None]]
-        self.assertFalse(test.has_won_game())
+        self.assertFalse(test.has_won_game('1010'))
