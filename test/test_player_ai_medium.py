@@ -5,6 +5,8 @@ from game_engine.player_ai_medium import PlayerMediumAI
 from game_engine.player_easy_ai import PlayerEasyAI
 from random import choice
 
+from game_engine.player_hard_ai import PlayerHardAI
+
 
 class TestPlayerAIMediumClass(TestCase):
     """
@@ -85,15 +87,15 @@ class TestPlayerAIMediumClass(TestCase):
 
     def test_player_ai_medium_vs_ai_easy_play(self):
         """
-        Tests average player wins 15% +/- 10% in non-drawn games
+        Tests average MediumAI player wins >= 85% +/- 10% in non-drawn games
         """
         p_one, p_two, count, wins = "Player One", "Player Two", 0, 0
         samples = 100  # the number of samples of won games in each test
 
         while count < samples:
             test = Play()
-            test.players = [PlayerEasyAI(test.game, p_one),
-                            PlayerMediumAI(test.game, p_two)]
+            test.players = [PlayerMediumAI(test.game, p_one),
+                            PlayerEasyAI(test.game, p_two)]
             test.current_player = choice(test.players)
 
             if test.play_auto():
@@ -101,5 +103,24 @@ class TestPlayerAIMediumClass(TestCase):
 
                 if test.current_player.name == p_one:
                     wins += 1
-        self.assertTrue(wins < 25)
+        self.assertTrue(wins >= 75)
 
+    def test_player_ai_medium_vs_ai_hard_play(self):
+        """
+        Tests average MediumAI player wins <= 15% +/- 10% in non-drawn games
+        """
+        p_one, p_two, count, wins = "Player One", "Player Two", 0, 0
+        samples = 100  # the number of samples of won games in each test
+
+        while count < samples:
+            test = Play()
+            test.players = [PlayerMediumAI(test.game, p_one),
+                            PlayerHardAI(test.game, p_two)]
+            test.current_player = choice(test.players)
+
+            if test.play_auto():
+                count += 1
+
+                if test.current_player.name == p_one:
+                    wins += 1
+        self.assertTrue(wins <= 25)
