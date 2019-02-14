@@ -1,5 +1,6 @@
 from game_engine.game import Game
 from game_engine.player_human import PlayerHuman
+from game_engine.player_easy_ai import PlayerEasyAI
 from game_engine.player_ai_medium import PlayerMediumAI
 from random import choice
 
@@ -62,7 +63,8 @@ class Play:
                             PlayerHuman(self.game, p_two)]
         elif mod == 2:  # if human player vs AI player
             if dif == 1:  # if easy difficulty AI
-                pass
+                self.players = [PlayerHuman(self.game, p_one),
+                                PlayerEasyAI(self.game, p_two)]
             elif dif == 2:  # if medium difficulty AI
                 self.players = [PlayerHuman(self.game, p_one),
                                 PlayerMediumAI(self.game, p_two)]
@@ -70,7 +72,9 @@ class Play:
                 pass
         else:  # if AI player vs AI player
             if dif == 1:  # if easy difficulty AI
-                pass
+                self.players = [PlayerEasyAI(self.game, p_one),
+                                PlayerEasyAI(self.game, p_two)]
+
             elif dif == 2:  # if medium difficulty AI
                 self.players = [PlayerMediumAI(self.game, p_one),
                                 PlayerMediumAI(self.game, p_two)]
