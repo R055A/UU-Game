@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9e7dea5e-76ad-4751-b092-79833b040800" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/game_engine/play.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_engine/play.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_play_init_players.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_play_init_players.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_player_ai_medium.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_player_ai_medium.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,11 +12,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/test_play_init_players.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="338">
+            <state relative-caret-position="428">
               <caret line="100" column="30" selection-start-line="100" selection-start-column="30" selection-end-line="100" selection-end-column="30" />
+              <folding>
+                <element signature="e#0#29#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/test/test_player_ai_medium.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="173">
+              <caret line="85" column="26" lean-forward="true" selection-start-line="85" selection-start-column="26" selection-end-line="85" selection-end-column="26" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -41,7 +51,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/test_player_ai.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="533">
+            <state relative-caret-position="3750">
               <caret line="253" selection-start-line="253" selection-end-line="253" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
@@ -53,8 +63,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game_engine/player_easy_ai.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" column="78" selection-start-line="22" selection-start-column="78" selection-end-line="22" selection-end-column="78" />
+            <state relative-caret-position="270">
+              <caret line="18" column="52" lean-forward="true" selection-start-line="18" selection-start-column="52" selection-end-line="18" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -78,13 +88,13 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/test/test_player_ai_medium.py" />
         <option value="$PROJECT_DIR$/game_engine/player_easy_ai.py" />
         <option value="$PROJECT_DIR$/test/test_play_init_players.py" />
+        <option value="$PROJECT_DIR$/test/test_player_ai_medium.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="114" />
     <option name="width" value="1910" />
     <option name="height" value="789" />
@@ -228,9 +238,6 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Unittests_for_test_play_init_players_TestInitPlayers_test_easy_difficulty_ai_vs_ai - 2019.02.13 at 21h 34m 01s.xml">
-      <configuration name="Unittests for test_play_init_players.TestInitPlayers.test_easy_difficulty_ai_vs_ai" configurationId="tests" />
-    </history-entry>
     <history-entry file="Unittests_for_test_play_init_players_TestInitPlayers_test_easy_difficulty_ai_vs_ai - 2019.02.13 at 21h 34m 02s.xml">
       <configuration name="Unittests for test_play_init_players.TestInitPlayers.test_easy_difficulty_ai_vs_ai" configurationId="tests" />
     </history-entry>
@@ -258,17 +265,20 @@
     <history-entry file="Unittests_for_test_play_init_players_TestInitPlayers_test_easy_difficulty_ai_vs_ai - 2019.02.13 at 21h 35m 27s.xml">
       <configuration name="Unittests for test_play_init_players.TestInitPlayers.test_easy_difficulty_ai_vs_ai" configurationId="tests" />
     </history-entry>
+    <history-entry file="Unittests_for_test_play_init_players_TestInitPlayers_test_easy_difficulty_ai_vs_ai - 2019.02.14 at 10h 10m 29s.xml">
+      <configuration name="Unittests for test_play_init_players.TestInitPlayers.test_easy_difficulty_ai_vs_ai" configurationId="tests" />
+    </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="27" width="1920" height="1053" extended-state="7" />
+    <frame x="0" y="27" width="1920" height="1053" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24986821" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24986821" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3293348" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3293348" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3991276" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -302,19 +312,16 @@
     </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/test/test_player_ai_medium.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="57" lean-forward="true" selection-start-line="20" selection-start-column="57" selection-end-line="20" selection-end-column="57" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game_engine/player_human.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-262" />
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python3.7/unittest/case.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="691" selection-start-line="691" selection-end-line="692" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/test_play.py">
@@ -327,10 +334,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python3.7/unittest/case.py">
+    <entry file="file://$PROJECT_DIR$/test/test_player_ai.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="691" selection-start-line="691" selection-end-line="692" />
+        <state relative-caret-position="3750">
+          <caret line="253" selection-start-line="253" selection-end-line="253" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -343,27 +353,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/test_player_ai.py">
+    <entry file="file://$PROJECT_DIR$/game_engine/player_easy_ai.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="533">
-          <caret line="253" selection-start-line="253" selection-end-line="253" />
+        <state relative-caret-position="270">
+          <caret line="18" column="52" lean-forward="true" selection-start-line="18" selection-start-column="52" selection-end-line="18" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test_play_init_players.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="428">
+          <caret line="100" column="30" selection-start-line="100" selection-start-column="30" selection-end-line="100" selection-end-column="30" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game_engine/player_easy_ai.py">
+    <entry file="file://$PROJECT_DIR$/test/test_player_ai_medium.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="78" selection-start-line="22" selection-start-column="78" selection-end-line="22" selection-end-column="78" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/test_play_init_players.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="338">
-          <caret line="100" column="30" selection-start-line="100" selection-start-column="30" selection-end-line="100" selection-end-column="30" />
+        <state relative-caret-position="173">
+          <caret line="85" column="26" lean-forward="true" selection-start-line="85" selection-start-column="26" selection-end-line="85" selection-end-column="26" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>

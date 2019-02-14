@@ -85,7 +85,7 @@ class TestPlayerAIMediumClass(TestCase):
 
     def test_player_ai_medium_vs_ai_easy_play(self):
         """
-        Tests average player wins 50% +/- 10% in non-drawn games
+        Tests average player wins 15% +/- 10% in non-drawn games
         """
         p_one, p_two, count, wins = "Player One", "Player Two", 0, 0
         samples = 100  # the number of samples of won games in each test
