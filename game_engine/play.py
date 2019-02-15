@@ -65,7 +65,7 @@ class Play:
             elif not self.game.has_next_play():  # checks if play turns remain
                 return None  # returns no game winner
 
-    def init_players(self, mod, dif, p_one="Player One", p_two="Player Two"):
+    def init_players(self, mod, dif=0, p_one="Player One", p_two="Player Two"):
         """
         Initializes the two players for the game dependent on game mode
         :param mod: the game mode being played; human vs human, AI vs AI, ...
