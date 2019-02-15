@@ -20,7 +20,7 @@ class PlayerEasyAI(PlayerAI):
         :return: the selected piece for placing on the board
         """
         return self.get_best(dict({str(pce): self.hard(self.game.pieces[pce])
-                                   for pce in self.game.pieces}.items()), False)
+                                   for pce in self.game.pieces}.items()), True)
 
     def place_piece(self, selected_piece):
         """

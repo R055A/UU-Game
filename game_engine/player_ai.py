@@ -50,11 +50,11 @@ class PlayerAI(Player):
         :return: the selected piece for placing on the board
         """
         sims = [(l, m, n) for l, m, n in list(best.values()) if (dif and m ==
-                min([j for i, j, k in list(best.values())])) or (not dif and m
-                == max([j for i, j, k in list(best.values())]))]  # similarity
+                max([j for i, j, k in list(best.values())])) or (not dif and m
+                == min([j for i, j, k in list(best.values())]))]  # similarity
         return list(best.keys())[list(best.values()).index(choice([(i, j, k)
-                for i, j, k in sims if (dif and k == min([n for l, m, n in
-                sims])) or (not dif and k == max([n for l, m, n in sims]))]))]
+                for i, j, k in sims if (dif and k == max([n for l, m, n in
+                sims])) or (not dif and k == min([n for l, m, n in sims]))]))]
 
     @staticmethod
     def select_max_similarity_occurrence_count(prfrd_sims, diff):
