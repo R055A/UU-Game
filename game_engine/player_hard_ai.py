@@ -1,9 +1,9 @@
-from game_engine.player_ai import PlayerAI
+from game_engine.player_abstract import Player
 from game_engine.minimax import Minimax
 from random import randint
 
 
-class PlayerHardAI(PlayerAI):
+class PlayerHardAI(Player):
     """
     The Hard difficulty AI class
     Author(s): Viktor Enzell, Laurin Kerle
