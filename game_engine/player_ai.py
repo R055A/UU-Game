@@ -80,7 +80,7 @@ class PlayerAI(Player):
         sims = self.max_similarities(pce)  # max similarities & their counts
         return self.select_max_similarity_occurrence_count([(i, j, k) for i, j,
                 k in sims if (j == 2 and 2 in [m for l, m, n in sims]) or j ==
-                min([m for l, m, n in sims])] if len(self.game.pieces) < 13
+                min([m for l, m, n in sims])] if len(self.game.pieces) < 14
                 else [choice([((y, x), 1, 1) for x in range(self.game.N) for y
                 in range(self.game.N) if self.game.is_cell_empty(y, x)])], 0)
 
