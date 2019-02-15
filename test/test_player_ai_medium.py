@@ -12,7 +12,7 @@ class TestPlayerAIMediumClass(TestCase):
     """
     Tests the PlayerMediumAI class
     Author(s): Adam Ross; Gustav From
-    Date: 13/02/19
+    Date: 15/02/19
     """
 
     def test_player_ai_medium(self):
@@ -32,13 +32,14 @@ class TestPlayerAIMediumClass(TestCase):
                            ['1001', None, '1111', '1011'],
                            ['0100', '0110', '0011', '1110']]
         test.game.pieces = {'10': '1010', '12': '1100', '13': '1101'}
-        self.assertTrue(test.choose_piece() in ['10', '12', '13'])
+        self.assertTrue(test.choose_piece() != '13' and test.choose_piece()
+                        in ['10', '12'])
         self.assertEqual('10', test.get_best(dict({str(pce): test.easy(test.
                          game.pieces[pce]) for pce in test.game.pieces}.
-                                                  items()), True))
-        self.assertEqual('12', test.get_best(dict({str(pce): test.easy(test.
-                         game.pieces[pce]) for pce in test.game.pieces}.
                                                   items()), False))
+        self.assertEqual('10', test.get_best(dict({str(pce): test.hard(test.
+                         game.pieces[pce]) for pce in test.game.pieces}.
+                                                  items()), True))
 
     def test_place_piece(self):
         """
@@ -83,11 +84,11 @@ class TestPlayerAIMediumClass(TestCase):
 
                 if test.current_player.name == p_one:
                     wins += 1
-        self.assertTrue((40 <= wins <= 60))
+        self.assertTrue((40 <= (wins / samples * 100) <= 60))
 
     def test_player_ai_medium_vs_ai_easy_play(self):
         """
-        Tests average MediumAI player wins >= 85% +/- 10% in non-drawn games
+        Tests average MediumAI player wins >= 75% +/- 5%
         """
         p_one, p_two, count, wins = "Player One", "Player Two", 0, 0
         samples = 100  # the number of samples of won games in each test
@@ -98,16 +99,14 @@ class TestPlayerAIMediumClass(TestCase):
                             PlayerEasyAI(test.game, p_two)]
             test.current_player = choice(test.players)
 
-            if test.play_auto():
-                count += 1
-
-                if test.current_player.name == p_one:
-                    wins += 1
-        self.assertTrue(wins >= 75)
+            if test.play_auto() and test.current_player.name == p_one:
+                wins += 1
+            count += 1
+        self.assertTrue((wins / samples * 100) >= 70)
 
     def test_player_ai_medium_vs_ai_hard_play(self):
         """
-        Tests average MediumAI player wins <= 15% +/- 10% in non-drawn games
+        Tests average MediumAI player wins/draws <= 25% +/- 5%
         """
         p_one, p_two, count, wins = "Player One", "Player Two", 0, 0
         samples = 100  # the number of samples of won games in each test
@@ -118,9 +117,7 @@ class TestPlayerAIMediumClass(TestCase):
                             PlayerHardAI(test.game, p_two)]
             test.current_player = choice(test.players)
 
-            if test.play_auto():
-                count += 1
-
-                if test.current_player.name == p_one:
-                    wins += 1
-        self.assertTrue(wins <= 25)
+            if test.play_auto() and test.current_player.name == p_two:
+                wins += 1
+            count += 1
+        self.assertTrue((samples - (wins / samples * 100)) <= 30)
