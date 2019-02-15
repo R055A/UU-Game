@@ -73,7 +73,7 @@ class Minimax:
         if new_board_state.pieces.get(str(passed_piece)) is not None:
             new_board_state.pieces.pop(str(passed_piece))
 
-        if new_board_state.has_won_game(str(passed_piece)):
+        if new_board_state.has_won_game(self.all_pieces.get(str(passed_piece))):
             node.set_is_leaf()
             node.set_has_won()
             return node
