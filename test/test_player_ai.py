@@ -151,24 +151,24 @@ class TestPlayerAIClass(TestCase):
                 ((3, 1), 0, 16), ((0, 2), 1, 4), ((1, 2), 1, 1),
                 ((3, 2), 1, 1), ((0, 3), 1, 3), ((1, 3), 0, 16),
                 ((2, 3), 1, 1), ((3, 3), 1, 4)]
-        self.assertEqual(4, test.select_max_similarity_occurrence_count([(i, j,
+        self.assertEqual(4, test.select_best_sim_count([(i, j,
                 k) for i, j, k in sims if (len([m for l, m, n in sims if m != 2
                 ]) > 0 and j == max([m for l, m, n in sims if m != 2])) or j ==
                 max([m for l, m, n in sims])] if len(test.game.pieces) < 15
                 else [choice([((y, x), 0, 0) for x in range(test.game.N) for y
-                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 1)
+                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 1, '1111')
                 [2])
         sims = [((1, 0), 1, 3), ((2, 0), 1, 4), ((3, 0), 1, 3),
                 ((0, 1), 1, 3), ((1, 1), 1, 4), ((2, 1), 1, 1),
                 ((3, 1), 0, 16), ((0, 2), 1, 4), ((1, 2), 1, 1),
                 ((3, 2), 1, 1), ((0, 3), 1, 3), ((1, 3), 0, 16),
                 ((2, 3), 1, 1), ((3, 3), 1, 4)]
-        self.assertEqual(4, test.select_max_similarity_occurrence_count([(i, j,
+        self.assertEqual(4, test.select_best_sim_count([(i, j,
                 k) for i, j, k in sims if (len([m for l, m, n in sims if m != 2
                 ]) > 0 and j == max([m for l, m, n in sims if m != 2])) or j ==
                 max([m for l, m, n in sims])] if len(test.game.pieces) < 15
                 else [choice([((y, x), 0, 0) for x in range(test.game.N) for y
-                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 1)
+                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 1, '1111')
                 [2])
 
     def test_select_max_similarity_occurrence_count_two(self):
@@ -179,12 +179,12 @@ class TestPlayerAIClass(TestCase):
         test = PlayerAI(Game(), "Test")
         test.game.pieces = dict()
         sims = [((0, 0), 2, 4), ((1, 0), 2, 2), ((2, 1), 3, 2)]
-        self.assertEqual(2, test.select_max_similarity_occurrence_count([(i, j,
+        self.assertEqual(2, test.select_best_sim_count([(i, j,
                 k) for i, j, k in sims if(len([m for l, m, n in sims if m != 2
                 ]) > 0 and j == max([m for l, m, n in sims if m != 2])) or j ==
                 max([m for l, m, n in sims])] if len(test.game.pieces) < 15
                 else [choice([((y, x), 0, 0) for x in range(test.game.N) for y
-                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 1)
+                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 1, '1111')
                 [2])
 
     def test_select_max_similarity_occurrence_count_three(self):
@@ -195,12 +195,12 @@ class TestPlayerAIClass(TestCase):
         test = PlayerAI(Game(), "Test")
         test.game.pieces = dict()
         sims = [((0, 2), 3, 1)]
-        self.assertEqual(1, test.select_max_similarity_occurrence_count([(i, j,
+        self.assertEqual(1, test.select_best_sim_count([(i, j,
                 k) for i, j, k in sims if(len([m for l, m, n in sims if m != 2
                 ]) > 0 and j == max([m for l, m, n in sims if m != 2])) or j ==
                 max([m for l, m, n in sims])] if len(test.game.pieces) < 15
                 else [choice([((y, x), 0, 0) for x in range(test.game.N) for y
-                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 1)
+                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 1, '1111')
                 [2])
 
     def test_select_max_similarity_occurrence_count_four(self):
@@ -215,24 +215,24 @@ class TestPlayerAIClass(TestCase):
                 ((3, 1), 0, 16), ((0, 2), 1, 4), ((1, 2), 1, 1),
                 ((3, 2), 1, 1), ((0, 3), 1, 3), ((1, 3), 0, 16),
                 ((2, 3), 1, 1), ((3, 3), 1, 4)]
-        self.assertEqual(1, test.select_max_similarity_occurrence_count([(i, j,
+        self.assertEqual(1, test.select_best_sim_count([(i, j,
                 k) for i, j, k in sims if(len([m for l, m, n in sims if m != 2
                 ]) > 0 and j == max([m for l, m, n in sims if m != 2])) or j ==
                 max([m for l, m, n in sims])] if len(test.game.pieces) < 15
                 else [choice([((y, x), 0, 0) for x in range(test.game.N) for y
-                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 0)
+                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 0, '1111')
                 [2])
         sims = [((1, 0), 1, 3), ((2, 0), 1, 4), ((3, 0), 1, 3),
                 ((0, 1), 1, 3), ((1, 1), 1, 4), ((2, 1), 1, 1),
                 ((3, 1), 0, 16), ((0, 2), 1, 4), ((1, 2), 1, 1),
                 ((3, 2), 1, 1), ((0, 3), 1, 3), ((1, 3), 0, 16),
                 ((2, 3), 1, 1), ((3, 3), 1, 4)]
-        self.assertEqual(1, test.select_max_similarity_occurrence_count([(i, j,
+        self.assertEqual(1, test.select_best_sim_count([(i, j,
                 k) for i, j, k in sims if(len([m for l, m, n in sims if m != 2
                 ]) > 0 and j == max([m for l, m, n in sims if m != 2])) or j ==
                 max([m for l, m, n in sims])] if len(test.game.pieces) < 15
                 else [choice([((y, x), 0, 0) for x in range(test.game.N) for y
-                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 0)
+                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 0, '1111')
                 [2])
 
     def test_select_max_similarity_occurrence_count_five(self):
@@ -243,12 +243,12 @@ class TestPlayerAIClass(TestCase):
         test = PlayerAI(Game(), "Test")
         test.game.pieces = dict()
         sims = [((0, 0), 2, 4), ((1, 0), 2, 2), ((2, 1), 3, 2)]
-        self.assertEqual(2, test.select_max_similarity_occurrence_count([(i, j,
+        self.assertEqual(2, test.select_best_sim_count([(i, j,
                 k) for i, j, k in sims if (len([m for l, m, n in sims if m != 2
                 ]) > 0 and j == max([m for l, m, n in sims if m != 2])) or j ==
                 max([m for l, m, n in sims])] if len(test.game.pieces) < 15
                 else [choice([((y, x), 0, 0) for x in range(test.game.N) for y
-                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 0)
+                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 0, '1111')
                 [2])
 
     def test_select_max_similarity_occurrence_count_six(self):
@@ -259,10 +259,10 @@ class TestPlayerAIClass(TestCase):
         test = PlayerAI(Game(), "Test")
         test.game.pieces = dict()
         sims = [((0, 2), 3, 1)]
-        self.assertEqual(1, test.select_max_similarity_occurrence_count([(i, j,
+        self.assertEqual(1, test.select_best_sim_count([(i, j,
                 k) for i, j, k in sims if (len([m for l, m, n in sims if m != 2
                 ]) > 0 and j == max([m for l, m, n in sims if m != 2])) or j ==
                 max([m for l, m, n in sims])] if len(test.game.pieces) < 15
                 else [choice([((y, x), 0, 0) for x in range(test.game.N) for y
-                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 0)
+                in range(test.game.N) if test.game.is_cell_empty(y, x)])], 0, '1111')
                 [2])

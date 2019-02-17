@@ -2,8 +2,8 @@ from unittest import TestCase
 from game_engine.play import Play
 from game_engine.player_human import PlayerHuman
 from game_engine.player_ai_medium import PlayerMediumAI
-from game_engine.player_easy_ai import PlayerEasyAI
-from game_engine.player_hard_ai import PlayerHardAI
+from game_engine.player_ai_easy import PlayerEasyAI
+from game_engine.player_ai_hard import PlayerHardAI
 
 
 class TestInitPlayers(TestCase):

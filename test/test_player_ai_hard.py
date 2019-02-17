@@ -70,17 +70,16 @@ class TestPlayerAIHardClass(TestCase):
 
     def test_player_ai_hard_vs_ai_easy_play(self):
         """
-        Test HardAI for average wins against EasyAI being >= 5%
+        Test HardAI for average wins against EasyAI being >= 95%
         """
-        average = 0
+        average, p_one, p_two = 0, "Player One", "Player Two"
 
         for i in range(100):
             test = Play()
-            test.players = [PlayerHardAI(test.game, "Player One"),
-                            PlayerEasyAI(test.game, "Player Two")]
+            test.players = [PlayerHardAI(test.game, p_one),
+                            PlayerEasyAI(test.game, p_two)]
             test.current_player = choice(test.players)
 
-            if test.play_auto() and test.current_player == "Player One":
+            if test.play_auto() and test.current_player == p_one:
                 average += 1
-        print(average)
-        self.assertTrue(average >= 5)
+        self.assertTrue(average >= 95)

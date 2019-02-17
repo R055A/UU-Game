@@ -91,7 +91,7 @@ class TestPlayerAIMediumClass(TestCase):
         """
         Tests average MediumAI player wins against EasyAI >= 10%
         """
-        p_one, p_two, count, wins = "Player One", "Player Two", 0, 0
+        p_one, p_two, wins = "Player One", "Player Two", 0
         samples = 100  # the number of samples of won games in each test
 
         for i in range(samples):
@@ -108,7 +108,7 @@ class TestPlayerAIMediumClass(TestCase):
         """
         Tests average MediumAI player wins against HardAI <= 10%
         """
-        p_one, p_two, count, wins = "Player One", "Player Two", 0, 0
+        p_one, p_two, wins = "Player One", "Player Two", 0
         samples = 100  # the number of samples of won games in each test
 
         for i in range(samples):
@@ -119,5 +119,4 @@ class TestPlayerAIMediumClass(TestCase):
 
             if test.play_auto() and test.current_player.name == p_two:
                 wins += 1
-        print(wins)
         self.assertTrue(((samples - wins) / samples * 100) <= 10)

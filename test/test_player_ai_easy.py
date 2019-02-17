@@ -45,7 +45,6 @@ class TestPlayerAIEasyClass(TestCase):
                            ['0100', '0110', '0011', '1110']]
         test.game.pieces = {'10': '1010', '12': '1100', '13': '1101'}
         test.place_piece('1010')
-        print(test.game.board)
         self.assertTrue((test.game.board == [[None, '1000', '0001', '0101'],
                            ['1010', '0000', '0010', '0111'],
                            ['1001', None, '1111', '1011'],
@@ -60,7 +59,7 @@ class TestPlayerAIEasyClass(TestCase):
         """
         Tests average EasyAI player wins against MediumAI player <= 10%
         """
-        p_one, p_two, count, wins = "Player One", "Player Two", 0, 0
+        p_one, p_two, wins = "Player One", "Player Two", 0
         samples = 100  # the number of samples of won games in each test
 
         for i in range(samples):
@@ -77,7 +76,7 @@ class TestPlayerAIEasyClass(TestCase):
         """
         Tests average EasyAI player wins against HardAI player <= 5%
         """
-        p_one, p_two, count, wins = "Player One", "Player Two", 0, 0
+        p_one, p_two, wins = "Player One", "Player Two", 0
         samples = 100  # the number of samples of won games in each test
 
         for i in range(samples):
