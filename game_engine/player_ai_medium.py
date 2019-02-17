@@ -23,10 +23,13 @@ class PlayerMediumAI(PlayerAI):
         Implements either easy or hard AI algorithms by random 50/50 selection
         :return: the selected piece for placing on the board
         """
-        return self.get_best(dict({str(pce): self.easy(self.game.pieces[pce])
-                for pce in self.game.pieces}.items()), True) if choice([True,
-                False]) else self.get_best(dict({str(pce): self.hard(self.game.
-                pieces[pce]) for pce in self.game.pieces}.items()), False)
+        return self.get_best(dict({str(pce): self.select_best_sim_count(self.
+                hard(self.game.pieces[pce]), True, self.game.pieces[pce]) for
+                pce in self.game.pieces}.items()), True) if choice([True,
+                False]) else self.get_best(dict({str(pce): self.
+                select_best_sim_count(self.hard(self.game.pieces[pce]), True,
+                self.game.pieces[pce]) for pce in self.game.pieces}.items()),
+                True)
 
     def place_piece(self, pce):
         """
@@ -34,5 +37,7 @@ class PlayerMediumAI(PlayerAI):
         Implements either easy or hard AI algorithms by random 50/50 selection
         :param pce the piece selected for placing on board
         """
-        y, x = self.hard(pce)[0] if choice([True, False]) else self.easy(pce)[0]
+        y, x = self.select_best_sim_count(self.hard(pce), True, pce)[0] if \
+            choice([True, False]) else \
+            self.select_best_sim_count(self.easy(pce), False, pce)[0]
         self.game.board[y][x] = pce  # sets the selected piece to a board pos
