@@ -70,6 +70,7 @@ class TestPlayerAIMediumClass(TestCase):
     def test_player_ai_medium_play(self):
         """
         Tests average PlayerMediumAI player wins 50% +/- 15% in non-drawn games
+        Usually between 40-60% win rate, but can by chance be just below/over
         """
         p_one, p_two, count, wins = "Player One", "Player Two", 0, 0
         samples = 100  # the number of samples of won games in each test
@@ -89,7 +90,8 @@ class TestPlayerAIMediumClass(TestCase):
 
     def test_player_ai_medium_vs_ai_easy_play(self):
         """
-        Tests average MediumAI player wins against EasyAI >= 10%
+        Tests average MediumAI player wins against EasyAI >= 15%
+        Is usually above 90% win rate, but can by chance be just below 90%
         """
         p_one, p_two, wins = "Player One", "Player Two", 0
         samples = 100  # the number of samples of won games in each test
@@ -100,13 +102,14 @@ class TestPlayerAIMediumClass(TestCase):
                             PlayerEasyAI(test.game, p_two)]
             test.current_player = choice(test.players)
 
-            if test.play_auto() and test.current_player.name == p_two:
+            if test.play_auto() and test.current_player.name == p_one:
                 wins += 1
-        self.assertTrue(((samples - wins) / samples * 100) >= 90)
+        self.assertTrue((wins / samples * 100) >= 85)
 
     def test_player_ai_medium_vs_ai_hard_play(self):
         """
         Tests average MediumAI player wins against HardAI <= 10%
+        Theoretically, should never win against the hard (minimax) AI
         """
         p_one, p_two, wins = "Player One", "Player Two", 0
         samples = 100  # the number of samples of won games in each test
