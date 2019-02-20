@@ -27,9 +27,9 @@ class PlayerMediumAI(PlayerAI):
                 hard(self.game.pieces[pce]), True, self.game.pieces[pce]) for
                 pce in self.game.pieces}.items()), True) if choice([True,
                 False]) else self.get_best(dict({str(pce): self.
-                select_best_sim_count(self.hard(self.game.pieces[pce]), True,
+                select_best_sim_count(self.easy(self.game.pieces[pce]), False,
                 self.game.pieces[pce]) for pce in self.game.pieces}.items()),
-                True)
+                False)
 
     def place_piece(self, pce):
         """
