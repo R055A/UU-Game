@@ -4,6 +4,8 @@ HORIZONTAL = 'snow'  # the colour of the horizontal line
 VERTICAL = 'snow'  # the colour of the vertical line
 SIZE = 70  # size of each shape height and width
 BORDER = 2  # size of each shape border outline
+SHAPE_MARGIN = 15  # the margin surrounding the object from x and/or y coords
+LINE_MARGIN = 30  # the margin from the x and/or y coord that the line starts
 
 
 class Piece:
@@ -16,11 +18,11 @@ class Piece:
     def __init__(self, canvas, pce):
         """
         Initializes the piece with binary values for each characteristic
-        :param canvas:
+        :param canvas: widget for drawing objects
         :param pce: a string of binary values for each characteristic of piece
         """
         self.canvas = canvas
-        self.x_pos, self.y_pos = self.get_coords(int(pce, 2))
+        self.x_pos, self.y_pos = self.set_coords(int(pce, 2))
         self.colour = COLOUR_TRUE if int(pce[0]) else COLOUR_FALSE
 
         if int(pce[1]):  # if first characteristic is circle or square
@@ -35,13 +37,13 @@ class Piece:
             self.draw_vertical()
 
     @staticmethod
-    def get_coords(pce):
+    def set_coords(pce):
         """
-
+        Sets the coordinates of the piece object at initialization
         :param pce: the piece converted to an integer value
         :return: the x and y coordinates for the placement of the piece object
         """
-        return pce + 15, pce + 15  # temporary prior to the add 16 pieces task
+        return pce + SHAPE_MARGIN, pce + SHAPE_MARGIN
 
     def draw_circle(self):
         """
@@ -63,16 +65,16 @@ class Piece:
         """
         Draws a horizontal line through a piece object
         """
-        self.canvas.create_rectangle(self.x_pos, self.y_pos + 30, self.x_pos +
-                                     SIZE, self.y_pos + SIZE - 30,
-                                     outline=HORIZONTAL, fill=HORIZONTAL,
-                                     width=BORDER)
+        self.canvas.create_rectangle(self.x_pos, self.y_pos + LINE_MARGIN,
+                                     self.x_pos + SIZE, self.y_pos + SIZE -
+                                     LINE_MARGIN, outline=HORIZONTAL,
+                                     fill=HORIZONTAL, width=BORDER)
 
     def draw_vertical(self):
         """
         Draws a vertical line through a piece object
         """
-        self.canvas.create_rectangle(self.x_pos + 30, self.y_pos, self.x_pos +
-                                     SIZE - 30, self.y_pos + SIZE,
-                                     outline=VERTICAL, fill=VERTICAL,
-                                     width=BORDER)
+        self.canvas.create_rectangle(self.x_pos + LINE_MARGIN, self.y_pos,
+                                     self.x_pos + SIZE - LINE_MARGIN,
+                                     self.y_pos + SIZE, outline=VERTICAL,
+                                     fill=VERTICAL, width=BORDER)
