@@ -1,54 +1,78 @@
-COLOUR_TRUE = 'red'
-COLOUR_FALSE = 'gray1'
-SHAPE_TRUE = None
-SHAPE_FALSE = None
-SOLID_TRUE = None
-SOLID_FALSE = None
-LINE_TRUE = None
-LINE_FALSE = None
+COLOUR_TRUE = 'red'  # the colour of the true first characteristic
+COLOUR_FALSE = 'gray1'  # the colour of the false first characteristic
+HORIZONTAL = 'snow'  # the colour of the horizontal line
+VERTICAL = 'snow'  # the colour of the vertical line
+SIZE = 70  # size of each shape height and width
+BORDER = 2  # size of each shape border outline
 
 
 class Piece:
     """
-    Creates a piece image for displaying on the game platform GUI
+    Creates a piece object for displaying on the game platform GUI
     Author(s): Adam Ross
-    Last-edit-date: 20/02/2019
+    Last-edit-date: 21/02/2019
     """
 
-    def __init__(self, pce):
+    def __init__(self, canvas, pce):
         """
         Initializes the piece with binary values for each characteristic
+        :param canvas:
         :param pce: a string of binary values for each characteristic of piece
         """
-        self.x_pos = int(pce, 2)  # example - converts binary to int
-        self.y_pos = 0 if int(pce, 2) < 8 else 1  # example
-        self.char_one = pce[0]  # the first characteristic binary value of the piece
-        self.char_two = pce[1]  # the second characteristic binary value of the piece
-        self.char_three = pce[2]  # the third characteristic binary value of the piece
-        self.char_four = pce[3]  # the fourth characteristic binary value of the piece
-        self.create_pce()  # creates the piece image for displaying
+        self.canvas = canvas
+        self.x_pos, self.y_pos = self.get_coords(int(pce, 2))
+        self.colour = COLOUR_TRUE if int(pce[0]) else COLOUR_FALSE
 
-    def create_pce(self):
+        if int(pce[1]):  # if first characteristic is circle or square
+            self.draw_circle()
+        else:
+            self.draw_square()
+
+        if int(pce[2]):  # if second characteristic is horizontal line or not
+            self.draw_horizontal()
+
+        if int(pce[3]):  # if third characteristic is vertical line or not
+            self.draw_vertical()
+
+    @staticmethod
+    def get_coords(pce):
         """
-        Sets the displayed attributes for the piece
+
+        :param pce: the piece converted to an integer value
+        :return: the x and y coordinates for the placement of the piece object
         """
+        return pce + 15, pce + 15  # temporary prior to the add 16 pieces task
 
-        if self.char_one:
-            self.char_one = COLOUR_TRUE
-        else:
-            self.char_one = COLOUR_FALSE
+    def draw_circle(self):
+        """
+        Draws a circle shaped piece
+        """
+        self.canvas.create_oval(self.x_pos, self.y_pos, self.x_pos + SIZE,
+                                self.y_pos + SIZE, outline=self.colour,
+                                fill=self.colour, width=BORDER)
 
-        if self.char_two:
-            self.char_two = SHAPE_TRUE
-        else:
-            self.char_two = SHAPE_FALSE
+    def draw_square(self):
+        """
+        Draws a square shaped piece
+        """
+        self.canvas.create_rectangle(self.x_pos, self.y_pos, self.x_pos + SIZE,
+                                     self.y_pos + SIZE, outline=self.colour,
+                                     fill=self.colour, width=BORDER)
 
-        if self.char_three:
-            self.char_three = SOLID_TRUE
-        else:
-            self.char_three = SOLID_FALSE
+    def draw_horizontal(self):
+        """
+        Draws a horizontal line through a piece object
+        """
+        self.canvas.create_rectangle(self.x_pos, self.y_pos + 30, self.x_pos +
+                                     SIZE, self.y_pos + SIZE - 30,
+                                     outline=HORIZONTAL, fill=HORIZONTAL,
+                                     width=BORDER)
 
-        if self.char_four:
-            self.char_four = LINE_TRUE
-        else:
-            self.char_four = LINE_FALSE
+    def draw_vertical(self):
+        """
+        Draws a vertical line through a piece object
+        """
+        self.canvas.create_rectangle(self.x_pos + 30, self.y_pos, self.x_pos +
+                                     SIZE - 30, self.y_pos + SIZE,
+                                     outline=VERTICAL, fill=VERTICAL,
+                                     width=BORDER)
