@@ -13,6 +13,7 @@ class tc:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+
 def make_header(title):
     """
     Sig:    string ==> string
@@ -29,8 +30,10 @@ def make_header(title):
     header = ""
     width = 50
     color_length = 9
-    if len(title) % 2 == 0: tmp = len(title) / 2
-    else: tmp = (len(title) - 1) / 2
+    if len(title) % 2 == 0:
+        tmp = len(title) / 2
+    else:
+        tmp = (len(title) - 1) / 2
     difference = int(24 - tmp)
     title = color("P", title)
 
@@ -49,6 +52,7 @@ def make_header(title):
         header += "-"
 
     print(header)
+
 
 def color(color, text):
     """

@@ -2,6 +2,7 @@ import sys
 import random
 import time as t
 
+
 def local_vs(players, humans):
     """
     Simulates a local game.
@@ -11,21 +12,21 @@ def local_vs(players, humans):
         List of booleans, representing whether players are human or NPC
     """
     if humans[0]:
-        tmp = "tmp" # Make player 1 NPC
+        tmp = "tmp"  # Make player 1 NPC
     elif humans[1]:
-        tmp = "tmp" # Make player 2 NPC
-
- 
+        tmp = "tmp"  # Make player 2 NPC
 
     print("Simulating local game...")
     t.sleep(2)
     outcome = random.randrange(2)
     if outcome == 1:
         return "DRAW"
-    outcome = random.randrange(2)    
+    outcome = random.randrange(2)
     if outcome == 1:
         return players[0]
-    else: return players[1]
+    else:
+        return players[1]
+
 
 def online_vs(nick, c, human, server):
     """
@@ -46,12 +47,12 @@ def online_vs(nick, c, human, server):
     """
     starting_player = None
     if not human:
-        tmp = "tmp" # Make this player NPC
+        tmp = "tmp"  # Make this player NPC
 
     t.sleep(2)
     # Decide starting player
     if server:
-        i = random.randint(0,1)
+        i = random.randint(0, 1)
         if i == 1:
             starting_player = True
             c.send("WAIT")
@@ -83,8 +84,8 @@ def online_vs(nick, c, human, server):
     win_limit = 30
 
     while i < 9:
-        score += random.randint(1,5)
-        side = random.randint(0,1)
+        score += random.randint(1, 5)
+        side = random.randint(0, 1)
         game_state[side] += score
 
         # Determine after game state update if this player has won, send game state to \

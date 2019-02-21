@@ -4,6 +4,7 @@ import socket as s
 import time as t
 import pickle
 
+
 class Peer:
     """
     A class which acts as a either a server or client.
@@ -114,4 +115,4 @@ class Peer:
 
 
 if __name__ == "__main__":
-	Peer(False)
+    Peer(False)

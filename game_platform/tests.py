@@ -7,6 +7,7 @@ import tournament as tour
 from threading import Thread
 import time
 
+
 class TestPeer(unittest.TestCase):
     def test_data_integrity(self):
         s = peer.Peer(True)
@@ -15,7 +16,7 @@ class TestPeer(unittest.TestCase):
         time.sleep(0.2)
         s.accept_client()
 
-        data_orig = [1,2,3]
+        data_orig = [1, 2, 3]
         s.send(data_orig)
         data = s.receive()
         self.assertEqual(data, data_orig)
@@ -38,20 +39,20 @@ class TestPeer(unittest.TestCase):
 
         g.make_header("test")
         self.assertNotEqual("test", terminal_text.getvalue())
-        self.assertGreaterEqual(len(terminal_text.getvalue()), expected_length-1)
-        self.assertLessEqual(len(terminal_text.getvalue()), expected_length+1)
+        self.assertGreaterEqual(len(terminal_text.getvalue()), expected_length - 1)
+        self.assertLessEqual(len(terminal_text.getvalue()), expected_length + 1)
         terminal_text.truncate(0)
         terminal_text.seek(0)
 
         g.make_header("")
-        self.assertGreaterEqual(len(terminal_text.getvalue()), expected_length-1)
-        self.assertLessEqual(len(terminal_text.getvalue()), expected_length+1)
+        self.assertGreaterEqual(len(terminal_text.getvalue()), expected_length - 1)
+        self.assertLessEqual(len(terminal_text.getvalue()), expected_length + 1)
         terminal_text.truncate(0)
         terminal_text.seek(0)
 
         g.make_header("testtesttesttesttest")
-        self.assertGreaterEqual(len(terminal_text.getvalue()), expected_length-1)
-        self.assertLessEqual(len(terminal_text.getvalue()), expected_length+1)
+        self.assertGreaterEqual(len(terminal_text.getvalue()), expected_length - 1)
+        self.assertLessEqual(len(terminal_text.getvalue()), expected_length + 1)
 
         sys.stdout = sys.__stdout__
 
@@ -68,10 +69,10 @@ class TestPeer(unittest.TestCase):
         with self.assertRaises(Exception):
             tour.Tournament(player_list)
 
-        player_list = [[],[],[]]
+        player_list = [[], [], []]
         with self.assertRaises(Exception):
             tour.Tournament(player_list)
-        
+
         player_list = ["Erik", "Johan", "Fredrik", "Ilda", "Emma", "Sandra", "Davide", "Viktor"]
         t8 = tour.Tournament(player_list)
         initial_bracket = t8.get_scoreboard()
@@ -180,6 +181,7 @@ class TestPeer(unittest.TestCase):
         players = t3.opponents
         self.assertEqual(0, len(players))
 
+
 def run_client():
     c = peer.Peer(False)
     c.connect_to_server()
@@ -191,6 +193,7 @@ def run_client():
     c.send(data)
     c.teardown()
     return
+
 
 if __name__ == "__main__":
     unittest.main()

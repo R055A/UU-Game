@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-#import time as t
+# import time as t
 import random
 import game, peer
 import graphics as g
@@ -17,6 +17,7 @@ def main():
     menu_options()
     g.make_header("Thanks for playing!")
 
+
 def menu_options():
     """
     Sig:    None
@@ -26,14 +27,14 @@ def menu_options():
     playing = True
     while playing:
         g.make_header("Welcome to <game>!")
-        print("You have the following options:\n 1[" + g.color("G", "v")\
-              + "]s1\n["  + g.color("G", "T") + "]ournament\n[" + g.color("R", "Q") + "]uit ")
+        print("You have the following options:\n 1[" + g.color("G", "v") \
+              + "]s1\n[" + g.color("G", "T") + "]ournament\n[" + g.color("R", "Q") + "]uit ")
         choice = input("Please make your " + g.color("G", "choice: "))
 
         # 1 vs 1 game
         if choice == "V" or choice == "v":
             while True:
-                print("Do you wish to play [" + g.color("G", "L") + "]ocal or [" + g.color("G", "O") + "]nline?\n["\
+                print("Do you wish to play [" + g.color("G", "L") + "]ocal or [" + g.color("G", "O") + "]nline?\n[" \
                       + g.color("R", "R") + "]eturn to previous options\n[" + g.color("R", "Q") + "]uit ")
                 choice = input("Please make your " + g.color("G", "choice: "))
 
@@ -55,12 +56,13 @@ def menu_options():
                 elif choice == "Q" or choice == "q":
                     sys.exit()
 
-                else: print("Invalid choice, try again")
+                else:
+                    print("Invalid choice, try again")
 
         # Tournament game
         elif choice == "T" or choice == "t":
             while True:
-                print("Do you wish to play [" + g.color("G", "L") + "]ocal or [" + g.color("G", "O") + "]nline?\n["\
+                print("Do you wish to play [" + g.color("G", "L") + "]ocal or [" + g.color("G", "O") + "]nline?\n[" \
                       + g.color("R", "R") + "]eturn to previous options\n[" + g.color("R", "Q") + "]uit ")
                 choice = input("Please make your " + g.color("G", "choice: "))
 
@@ -82,12 +84,14 @@ def menu_options():
                 elif choice == "Q" or choice == "q":
                     sys.exit()
 
-                else: print("Invalid choice, try again")
+                else:
+                    print("Invalid choice, try again")
 
         elif choice == "Q" or choice == "q":
             sys.exit()
 
-        else: print("Invalid choice, try again")
+        else:
+            print("Invalid choice, try again")
 
 
 def local_vs():
@@ -129,7 +133,8 @@ def online_vs():
                     g.make_header("Game draw! Replay game")
             if win == name:
                 g.make_header("You've won!")
-            else: g.make_header("You've lost!")
+            else:
+                g.make_header("You've lost!")
             c.teardown()
             break
 
@@ -147,14 +152,16 @@ def online_vs():
             # Name, peer, Human = True, Server = False
             if win == name:
                 g.make_header("You've won!")
-            else: g.make_header("You've lost!")
+            else:
+                g.make_header("You've lost!")
             c.teardown()
             break
 
         elif choice == "Q" or choice == "q":
             sys.exit()
 
-        else: print("Invalid choice, try again")
+        else:
+            print("Invalid choice, try again")
 
 
 def local_tour_play():
@@ -175,7 +182,7 @@ def local_tour_play():
         print(t.get_scoreboard())
         end = t.winner_state
         players = t.opponents
-        if end == 1: # Last game already played
+        if end == 1:  # Last game already played
             break
         else:
             g.make_header("Up next: " + players[0] + " vs " + players[1])
@@ -186,7 +193,7 @@ def local_tour_play():
                     break
                 else:
                     g.make_header("Draw game! Replaying game")
-            t.next_game(winner) # Set winner of current game
+            t.next_game(winner)  # Set winner of current game
             g.make_header(winner + " has advanced to the next round!")
 
     g.make_header(winner + " has won the tournament!")
@@ -202,7 +209,7 @@ def online_tour_play():
     g.make_header("Tournament play!")
 
     while True:
-        choice = input("Are you the first to start the game? [" + g.color("G", "Y") + "]es ["\
+        choice = input("Are you the first to start the game? [" + g.color("G", "Y") + "]es [" \
                        + g.color("R", "N") + "]no\n[" + g.color("R", "Q") + "]uit ")
         if choice == "Y" or choice == "y":
             server_side_tournament()
@@ -213,7 +220,9 @@ def online_tour_play():
         elif choice == "Q" or choice == "q":
             sys.exit()
 
-        else: print("Invalid choice, try again")
+        else:
+            print("Invalid choice, try again")
+
 
 def server_side_tournament():
     """
@@ -240,15 +249,15 @@ def server_side_tournament():
     remote_human_dict = c.receive()
     human_dict.update(remote_human_dict)
     c.send(human_dict)
-    c.receive()                         # Block needed here to ensure clients are synced
+    c.receive()  # Block needed here to ensure clients are synced
 
     # Create tournament and setup instructions
     t = tour.Tournament(player_list)
-    data = {}                           # Dictionary containing various data needed by remote peer
-    data["instruction"] = None          # Instructions in the form of strings
-    data["players"] = None              # players to play next game
-    data["tour"] = t.get_scoreboard()   # String representing current tournament bracket
-    c.send(data)                        # Send initial tournament bracket
+    data = {}  # Dictionary containing various data needed by remote peer
+    data["instruction"] = None  # Instructions in the form of strings
+    data["players"] = None  # players to play next game
+    data["tour"] = t.get_scoreboard()  # String representing current tournament bracket
+    c.send(data)  # Send initial tournament bracket
     winner = ""
 
     while True:
@@ -282,15 +291,16 @@ def server_side_tournament():
                 else:
                     g.make_header("Game draw! Replay game")
 
-            if winner == players[0]: # If local player won
+            if winner == players[0]:  # If local player won
                 winners.append(winner)
                 g.make_header(winner + " has advanced to the next round!")
-            else:                    # If remote player won
-                winner = players[1] 
+            else:  # If remote player won
+                winner = players[1]
                 winners.append(winner)
                 g.make_header(winner + " has advanced to the next round!")
 
         t.next_game(winner)
+
 
 def client_side_tournament():
     """
@@ -308,8 +318,8 @@ def client_side_tournament():
     player_list = c.receive()
     c.send(human_dict)
     human_dict = c.receive()
-    c.send("ACK")                      # Sync with remote
-    data = c.receive()                 # Get initial tournament bracket
+    c.send("ACK")  # Sync with remote
+    data = c.receive()  # Get initial tournament bracket
 
     while True:
         g.make_header("Tournament Standings")
@@ -331,12 +341,13 @@ def client_side_tournament():
                 else:
                     g.make_header("Game draw! Replay game")
 
-            if winner == players[1]: # If local player won
+            if winner == players[1]:  # If local player won
                 g.make_header(winner + " has advanced to the next round!")
-            else:                    # If remote player won
+            else:  # If remote player won
                 g.make_header(players[0] + " has advanced to the next round!")
 
         data = c.receive()
+
 
 def get_local_names():
     """
@@ -348,7 +359,7 @@ def get_local_names():
     humans = []
 
     for i in range(2):
-        name = input("Name player " + str(i+1) + ": ")
+        name = input("Name player " + str(i + 1) + ": ")
         while True:
             human = input("Is this a human player? [" + g.color("G", "Y") + "/" + g.color("R", "N") + "]")
             if human == "Y" or human == "y":
@@ -361,6 +372,7 @@ def get_local_names():
         humans.append(human)
 
     return players, humans
+
 
 def get_online_name():
     """
@@ -380,8 +392,9 @@ def get_online_name():
 
     return name, human
 
+
 def decide_offline_tour_players():
-    player_list = [] # Strings of names
+    player_list = []  # Strings of names
     human_dict = {}  # Booleans. Key = player. True = Human, False = NPC
     # Decide nr players
     while True:
@@ -402,19 +415,21 @@ def decide_offline_tour_players():
     nr_ai = choice
 
     # Name human players
-    for player in range(nr_players-nr_ai):
-        name = input("Name player" + str(player+1) + ": ")
+    for player in range(nr_players - nr_ai):
+        name = input("Name player" + str(player + 1) + ": ")
         player_list.append(name)
         human_dict[name] = True
 
     # Name AI players
-    names = ["SKYNET", "MAX HEADROOM", "WATSON", "DEEP THOUGHT", "J.A.R.V.I.S.", "R2D2", "MU-TH-UR 6000", "TÄNKANDE AUGUST"]
+    names = ["SKYNET", "MAX HEADROOM", "WATSON", "DEEP THOUGHT", "J.A.R.V.I.S.", "R2D2", "MU-TH-UR 6000",
+             "TÄNKANDE AUGUST"]
     for nr in range(nr_ai):
         name = names[nr]
         player_list.append(name)
         human_dict[name] = False
 
     return player_list, human_dict
+
 
 def decide_online_tour_players(c, remote):
     """
@@ -440,7 +455,7 @@ def decide_online_tour_players(c, remote):
         decide_online_tour_players(c, remote)
 
     nr_players = choice
-    player_list = [] # Strings of names
+    player_list = []  # Strings of names
     human_dict = {}  # Booleans. Key = player. True = Human, False = NPC
     # Determine names and human/computer controlled
     while True:
@@ -452,19 +467,20 @@ def decide_online_tour_players(c, remote):
     nr_ai = choice
 
     # Name human players
-    for player in range(nr_players-nr_ai):
-        name = input("Name player" + str(player+1) + ": ")
+    for player in range(nr_players - nr_ai):
+        name = input("Name player" + str(player + 1) + ": ")
         player_list.append(name)
         human_dict[name] = True
 
     # Name AI players
-    names = ["SKYNET", "MAX HEADROOM", "WATSON", "DEEP THOUGHT", "J.A.R.V.I.S.", "R2D2", "MU-TH-UR 6000", "TÄNKANDE AUGUST"]
+    names = ["SKYNET", "MAX HEADROOM", "WATSON", "DEEP THOUGHT", "J.A.R.V.I.S.", "R2D2", "MU-TH-UR 6000",
+             "TÄNKANDE AUGUST"]
     for nr in range(nr_ai):
         # This is to ensure that server/client dont create players with the same name
         if remote:
-            name = names[nr]            
+            name = names[nr]
         else:
-            name = names[nr+4]
+            name = names[nr + 4]
         player_list.append(name)
         human_dict[name] = False
 
