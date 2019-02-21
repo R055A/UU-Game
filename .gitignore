@@ -4,3 +4,4 @@
 venv/
 game_engine/__pycache__/
 game_platform/__pycache__/
+communication_platform/__pycache__/

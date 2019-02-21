@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import random
-import graphics as g
+import communication_platform.graphics as g
+
 
 class Tournament:
     """

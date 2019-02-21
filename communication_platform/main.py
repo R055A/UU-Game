@@ -3,9 +3,10 @@
 import sys
 # import time as t
 import random
-import game, peer
-import graphics as g
-import tournament as tour
+import communication_platform.game as game
+import communication_platform.peer as peer
+import communication_platform.graphics as g
+import communication_platform.tournament as tour
 
 
 def main():

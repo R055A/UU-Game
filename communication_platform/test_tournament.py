@@ -1,4 +1,4 @@
-import tournament as t
+import communication_platform.tournament as t
 import random
 
 def main():
