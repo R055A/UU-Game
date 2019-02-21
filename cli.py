@@ -1,5 +1,7 @@
 from game_engine.play import Play
+from tkinter import Tk
 from game_engine.player_human import PlayerHuman
+from game_platform.game_platform import GamePlatform
 
 
 class GameEngine:
@@ -14,6 +16,7 @@ class GameEngine:
         The GameEngine CLI test class constructor
         """
         self.play = Play()  # initiates a Play class instance
+        self.gp = GamePlatform(Tk(), self.play)
         self.introduction()  # Prints to terminal an introduction to the game
 
     def introduction(self):
@@ -70,40 +73,44 @@ class GameEngine:
         self.declare_current_player()  # prints the starting player turn
 
     def play_game(self):
-        self.declare_available_pieces()  # prints game board status
-        self.declare_board_status()  # prints available pieces status
+        while True:
+            self.gp.update()
+            self.declare_available_pieces()  # prints game board status
+            self.declare_board_status()  # prints available pieces status
 
-        if isinstance(self.play.current_player, PlayerHuman):
-            while True:
-                pce = input("\nEnter number 0-15 of piece selection: ")
+            if isinstance(self.play.current_player, PlayerHuman):
+                while True:
+                    pce = input("\nEnter number 0-15 of piece selection: ")
 
-                if self.play.play_selection(pce):
-                    break
-        else:
-            self.play.play_selection()
-        self.declare_selected_piece()  # prints the selected piece
-        self.declare_current_player()  # prints the current player turn
-
-        if isinstance(self.play.current_player, PlayerHuman):
-            while True:
-                try:
-                    y, x = input("\nEnter 2 ints 0-3 separated by a space: ").\
-                        split()
-
-                    if self.play.play_placement(y, x):
+                    if self.play.play_selection(pce):
                         break
-                except:
-                    continue
-        else:
-            self.play.play_placement()
+            else:
+                self.play.play_selection()
+            self.declare_selected_piece()  # prints the selected piece
+            self.declare_current_player()  # prints the current player turn
 
-        if self.play.game.has_won_game(self.play.selected_piece):
-            self.declare_board_status()  # prints final status of board
-            print("game won by " + self.play.current_player.name)
-        elif not self.play.game.has_next_play():  # checks if turns remaining
-            self.declare_board_status()  # prints final status of board
-        else:
-            self.play_game()  # plays the next turn
+            if isinstance(self.play.current_player, PlayerHuman):
+                while True:
+                    try:
+                        y, x = input("\nEnter 2 ints 0-3 separated by a space: ").\
+                            split()
+
+                        if self.play.play_placement(y, x):
+                            break
+                    except:
+                        continue
+            else:
+                self.play.play_placement()
+
+            if self.play.game.has_won_game(self.play.selected_piece):
+                self.declare_board_status()  # prints final status of board
+                print("game won by " + self.play.current_player.name)
+                break
+            elif not self.play.game.has_next_play():  # checks if turns remaining
+                self.declare_board_status()  # prints final status of board
+                break
+        while True:
+            self.gp.update()
 
 
 if __name__ == '__main__':
