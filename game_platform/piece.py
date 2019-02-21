@@ -5,7 +5,8 @@ VERTICAL = 'snow'  # the colour of the vertical line
 SIZE = 70  # size of each shape height and width
 BORDER = 2  # size of each shape border outline
 SHAPE_MARGIN = 15  # the margin surrounding the object from x and/or y coords
-LINE_MARGIN = 30  # the margin from the x and/or y coord that the line starts
+LINE_MARGIN = 30  # the margin from the x or y coord that the line starts
+CELL_SIZE = 100  # the width and height dimension for each game board cell
 
 
 class Piece:
@@ -43,7 +44,16 @@ class Piece:
         :param pce: the piece converted to an integer value
         :return: the x and y coordinates for the placement of the piece object
         """
-        return pce + SHAPE_MARGIN, pce + SHAPE_MARGIN
+        if pce < 4:
+            return pce * CELL_SIZE + SHAPE_MARGIN, pce + SHAPE_MARGIN
+        elif pce < 8:
+            return (pce - 4) * CELL_SIZE + SHAPE_MARGIN, pce + CELL_SIZE +\
+                   SHAPE_MARGIN
+        elif pce < 12:
+            return SHAPE_MARGIN, (pce - 6) * CELL_SIZE + SHAPE_MARGIN
+        else:
+            return CELL_SIZE + SHAPE_MARGIN, (pce - 10) * CELL_SIZE +\
+                   SHAPE_MARGIN
 
     def draw_circle(self):
         """
