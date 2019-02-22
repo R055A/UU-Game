@@ -41,7 +41,7 @@ class Piece:
         if pce < 4:
             return pce * CELL_SIZE + SHAPE_MARGIN, pce + SHAPE_MARGIN
         elif pce < 8:
-            return (pce - 4) * CELL_SIZE + SHAPE_MARGIN, pce + CELL_SIZE +\
+            return (pce - 4) * CELL_SIZE + SHAPE_MARGIN, CELL_SIZE +\
                    SHAPE_MARGIN
         elif pce < 12:
             return SHAPE_MARGIN, (pce - 6) * CELL_SIZE + SHAPE_MARGIN
