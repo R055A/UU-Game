@@ -13,29 +13,23 @@ class Piece:
     """
     Creates a piece object for displaying on the game platform GUI
     Author(s): Adam Ross
-    Last-edit-date: 21/02/2019
+    Last-edit-date: 22/02/2019
     """
 
-    def __init__(self, canvas, pce):
+    def __init__(self, canvas, pce, x=None, y=None):
         """
         Initializes the piece with binary values for each characteristic
         :param canvas: widget for drawing objects
         :param pce: a string of binary values for each characteristic of piece
+        :param x: the x coordinate of the top left corner of the piece image
+        :param y: the y coordinate of the top left corner of the piece image
         """
         self.canvas = canvas
-        self.x_pos, self.y_pos = self.set_coords(int(pce, 2))
+        self.x_pos, self.y_pos = (x, y) if x else self.set_coords(int(pce, 2))
         self.colour = COLOUR_TRUE if int(pce[0]) else COLOUR_FALSE
-
-        if int(pce[1]):  # if first characteristic is circle or square
-            self.draw_circle()
-        else:
-            self.draw_square()
-
-        if int(pce[2]):  # if second characteristic is horizontal line or not
-            self.draw_horizontal()
-
-        if int(pce[3]):  # if third characteristic is vertical line or not
-            self.draw_vertical()
+        self.shape = self.draw_circle() if int(pce[1]) else self.draw_square()
+        self.horizontal = self.draw_horizontal() if int(pce[2]) else None
+        self.vertical = self.draw_vertical() if int(pce[3]) else None
 
     @staticmethod
     def set_coords(pce):
@@ -58,33 +52,40 @@ class Piece:
     def draw_circle(self):
         """
         Draws a circle shaped piece
+        :return: the drawn circle shape
         """
-        self.canvas.create_oval(self.x_pos, self.y_pos, self.x_pos + SIZE,
-                                self.y_pos + SIZE, outline=self.colour,
-                                fill=self.colour, width=BORDER)
+        return self.canvas.create_oval(self.x_pos, self.y_pos, self.x_pos +
+                                       SIZE, self.y_pos + SIZE, outline=self.
+                                       colour, fill=self.colour, width=BORDER)
 
     def draw_square(self):
         """
         Draws a square shaped piece
+        :return: the drawn square shape
         """
-        self.canvas.create_rectangle(self.x_pos, self.y_pos, self.x_pos + SIZE,
-                                     self.y_pos + SIZE, outline=self.colour,
-                                     fill=self.colour, width=BORDER)
+        return self.canvas.create_rectangle(self.x_pos, self.y_pos, self.x_pos
+                                            + SIZE, self.y_pos + SIZE,
+                                            outline=self.colour, fill=self.
+                                            colour, width=BORDER)
 
     def draw_horizontal(self):
         """
         Draws a horizontal line through a piece object
+        :return: the drawn horizontal line shape
         """
-        self.canvas.create_rectangle(self.x_pos, self.y_pos + LINE_MARGIN,
-                                     self.x_pos + SIZE, self.y_pos + SIZE -
-                                     LINE_MARGIN, outline=HORIZONTAL,
-                                     fill=HORIZONTAL, width=BORDER)
+        return self.canvas.create_rectangle(self.x_pos, self.y_pos +
+                                            LINE_MARGIN, self.x_pos + SIZE,
+                                            self.y_pos + SIZE - LINE_MARGIN,
+                                            outline=HORIZONTAL,
+                                            fill=HORIZONTAL, width=BORDER)
 
     def draw_vertical(self):
         """
         Draws a vertical line through a piece object
+        :return: the drawn vertical line shape
         """
-        self.canvas.create_rectangle(self.x_pos + LINE_MARGIN, self.y_pos,
-                                     self.x_pos + SIZE - LINE_MARGIN,
-                                     self.y_pos + SIZE, outline=VERTICAL,
-                                     fill=VERTICAL, width=BORDER)
+        return self.canvas.create_rectangle(self.x_pos + LINE_MARGIN, self.
+                                            y_pos, self.x_pos + SIZE -
+                                            LINE_MARGIN, self.y_pos + SIZE,
+                                            outline=VERTICAL, fill=VERTICAL,
+                                            width=BORDER)
