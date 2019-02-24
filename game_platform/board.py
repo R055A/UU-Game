@@ -1,13 +1,26 @@
 import tkinter as tk
 
-
 class Board(tk.Frame):
 
-    def __init__(self, x=5):
-
+    def __init__(self, canvas, s=10, x= 10, y= 10):
+        """
+        Initializes the board
+        :param canvas: widget for drawing objects
+        :param s: the size modifier
+        :param x: the x coordinate of the top left corner of the board image
+        :param y: the y coordinate of the top left corner of the board image
+        """
         super().__init__()
 
-        self.initUI(x)
+        canvas.create_rectangle(5*s+x, 5*s+y, 45*s+x, 45*s+y)
+        # create vertical lines
+        canvas.create_line(5*s+x, 15*s+y, 45*s+x, 15*s+y)
+        canvas.create_line(5*s+x, 25*s+y, 45*s+x, 25*s+y)
+        canvas.create_line(5*s+x, 35*s+y, 45*s+x, 35*s+y)
+        # create horizontal lines
+        canvas.create_line(15*s+x, 5*s+y, 15*s+x, 45*s+y)
+        canvas.create_line(25*s+x, 5*s+y, 25*s+x, 45*s+y)
+        canvas.create_line(35*s+x, 5*s+y, 35*s+x, 45*s+y)
 
     def initUI(self, x):
 

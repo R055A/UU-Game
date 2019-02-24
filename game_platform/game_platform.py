@@ -1,9 +1,10 @@
 from tkinter import Frame, Canvas
 from game_platform.piece import Piece
+from game_platform.board import Board
 
 TITLE = 'UU-Game'
-HEIGHT = 600  # test size
-WIDTH = 600  # test size
+HEIGHT = 800  # test size
+WIDTH = 800  # test size
 BACKGROUND_COLOUR = 'white'
 
 
@@ -28,3 +29,4 @@ class GamePlatform(Frame):
         self.canvas.pack()
         self.pieces = dict({i: Piece(self.canvas, self.play.game.pieces[i])
                             for i in self.play.game.pieces}.items())
+        self.board = Board(self.canvas, 10, 300, 300)
