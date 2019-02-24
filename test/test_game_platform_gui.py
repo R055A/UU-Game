@@ -50,3 +50,18 @@ class TestGamePlatform(TestCase):
         self.assertTrue(test.canvas.type(30) == 'oval')
         self.assertTrue(test.canvas.type(31) == 'rectangle')
         self.assertTrue(test.canvas.type(32) == 'rectangle')
+
+    def test_move_selected_piece(self):
+        """
+        Tests the move_selected_piece() method in game_platform GUI class
+        """
+        test = GamePlatform(Tk(), Play())
+        # self.assertTrue(len(test.pieces) == 16 and len(test.pieces) * 2
+        #                 == len(test.canvas.find_all()))
+        self.assertTrue(test.pieces['0'].x_pos == 15 and
+                        test.pieces['0'].y_pos == 15)
+        test.update()
+        test.move_selected_piece(1)
+        self.assertTrue(test.pieces['0'].x_pos == 500 and
+                        test.pieces['0'].y_pos == 50)
+        test.mainloop()
