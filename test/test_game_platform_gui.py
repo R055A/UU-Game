@@ -29,7 +29,7 @@ class TestGamePlatform(TestCase):
         """
         test = GamePlatform(Tk(), Play())
         self.assertTrue(len(test.pieces) == 16 and len(test.pieces) * 2
-                        == len(test.canvas.find_all()))
+                        <= len(test.canvas.find_all()))
         self.assertTrue(test.pieces[i].colour == 'red' and test.canvas.type(i)
                         == 'rectangle' for i in range(8))
         self.assertTrue(test.pieces[i].colour == 'gray1' for i in range(8, 16))
@@ -56,12 +56,15 @@ class TestGamePlatform(TestCase):
         Tests the move_selected_piece() method in game_platform GUI class
         """
         test = GamePlatform(Tk(), Play())
-        # self.assertTrue(len(test.pieces) == 16 and len(test.pieces) * 2
-        #                 == len(test.canvas.find_all()))
+        self.assertTrue(len(test.pieces) == 16 and len(test.pieces) * 2
+                        <= len(test.canvas.find_all()))
         self.assertTrue(test.pieces['0'].x_pos == 15 and
                         test.pieces['0'].y_pos == 15)
         test.update()
         test.move_selected_piece(1)
         self.assertTrue(test.pieces['0'].x_pos == 500 and
                         test.pieces['0'].y_pos == 50)
-        test.mainloop()
+        test.update()
+        sleep(15)
+        test.quit()
+        test.destroy()
