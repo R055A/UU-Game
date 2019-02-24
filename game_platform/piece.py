@@ -2,10 +2,10 @@ COLOUR_TRUE = 'red'  # the colour of the true first characteristic
 COLOUR_FALSE = 'gray1'  # the colour of the false first characteristic
 HORIZONTAL = 'snow'  # the colour of the horizontal line
 VERTICAL = 'snow'  # the colour of the vertical line
-SIZE = 70  # size of each shape height and width
+SIZE = 65  # size of each shape height and width
 BORDER = 2  # size of each shape border outline
-SHAPE_MARGIN = 15  # the margin surrounding the object from x and/or y coords
-LINE_MARGIN = 30  # the margin from the x or y coord that the line starts
+SHAPE_MARGIN = 17.5  # the margin surrounding the object from x and/or y coords
+LINE_MARGIN = 35  # the margin from the x or y coord that the line starts
 CELL_SIZE = 100  # the width and height dimension for each game board cell
 
 
@@ -24,29 +24,30 @@ class Piece:
         :param x: the x coordinate of the top left corner of the piece image
         :param y: the y coordinate of the top left corner of the piece image
         """
+        self.pce = int(pce, 2)
         self.canvas = canvas
-        self.x_pos, self.y_pos = (x, y) if x else self.set_coords(int(pce, 2))
+        self.x_pos, self.y_pos = (x, y) if x else self.set_coords()
         self.colour = COLOUR_TRUE if int(pce[0]) else COLOUR_FALSE
         self.shape = self.draw_circle() if int(pce[1]) else self.draw_square()
         self.horizontal = self.draw_horizontal() if int(pce[2]) else None
         self.vertical = self.draw_vertical() if int(pce[3]) else None
+        self.id = self.set_id()
 
-    @staticmethod
-    def set_coords(pce):
+    def set_coords(self):
         """
         Sets the coordinates of the piece object at initialization
         :param pce: the piece converted to an integer value
         :return: the x and y coordinates for the placement of the piece object
         """
-        if pce < 4:
-            return pce * CELL_SIZE + SHAPE_MARGIN, pce + SHAPE_MARGIN
-        elif pce < 8:
-            return (pce - 4) * CELL_SIZE + SHAPE_MARGIN, CELL_SIZE +\
+        if self.pce < 4:
+            return self.pce * CELL_SIZE + SHAPE_MARGIN, self.pce + SHAPE_MARGIN
+        elif self.pce < 8:
+            return (self.pce - 4) * CELL_SIZE + SHAPE_MARGIN, CELL_SIZE +\
                    SHAPE_MARGIN
-        elif pce < 12:
-            return SHAPE_MARGIN, (pce - 6) * CELL_SIZE + SHAPE_MARGIN
+        elif self.pce < 12:
+            return SHAPE_MARGIN, (self.pce - 6) * CELL_SIZE + SHAPE_MARGIN
         else:
-            return CELL_SIZE + SHAPE_MARGIN, (pce - 10) * CELL_SIZE +\
+            return CELL_SIZE + SHAPE_MARGIN, (self.pce - 10) * CELL_SIZE +\
                    SHAPE_MARGIN
 
     def draw_circle(self):
@@ -89,3 +90,13 @@ class Piece:
                                             LINE_MARGIN, self.y_pos + SIZE,
                                             outline=VERTICAL, fill=VERTICAL,
                                             width=BORDER)
+
+    def set_id(self):
+        """
+        Adds an ID number to the top left of each piece in the piece pool
+        :return: the piece id text
+        """
+        return self.canvas.create_text(self.x_pos - 10, self.y_pos,
+                                       fill=COLOUR_FALSE, font="Times 10",
+                                       text=str(self.pce + 1)) \
+            if (self.x_pos, self.y_pos) == self.set_coords() else None
