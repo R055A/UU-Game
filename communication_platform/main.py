@@ -23,20 +23,21 @@ class CommunicationPlatform:
         self.play = None
         self.player = None
         self.ai_names = None
+        self.players = None
 
     def new_game(self):
         """
         Creates a new Play instance for each game played
         """
-        self.ai_names = ["Ralph", "Randy", "Roger", "Rhys", "Roster",
+        self.ai_names = ["Ralph", "Randy", "Roger", "Rhys", "Rooster",
                          "Rob", "Ryan", "Richy", "Ross", "Ricky"]
+        self.players = {self.player: True}
         self.play = Play()
 
     def menu_options(self):
         """
         A menu for selecting single or tournament game play or app termination
         """
-        self.new_game()
         self.graphics.make_header("Welcome to UU-Game!")
         self.player = input("Enter player name: \n")
 
@@ -177,11 +178,9 @@ class CommunicationPlatform:
         :return: the resulting play choice for the main menu options
         """
         self.graphics.make_header("Tournament play!")
-
-        # Determine players
-        # players = \
-        self.setup_single_player_tournament()
-        return ""
+        player_num, ai_num = self.setup_tournament_players()
+        self.setup_player_names(player_num, ai_num)
+        return "R"
 
         # ____________________TO BE REFACTORED_______________________
 
@@ -405,43 +404,49 @@ class CommunicationPlatform:
 
         return self.player, human
 
-    def setup_single_player_tournament(self):
+    def setup_tournament_players(self):
         """
-        blah blah blah
+        Where the number of players are chosen and player names are entered
+        :return: the user and AI player numbers
         """
-        players = {self.player: True}  # { player name : True if user; False if AI }
-
         while True:  # Decide number of players
-            players_num = input("Choose the number of tournament players? [" +
-                                self.graphics.set_color("G", "3 - 8") + "]\n")
+            player_num = input("Choose the number of tournament players? [" +
+                               self.graphics.set_color("G", "3 - 8") + "]\n")
 
             try:
-                if type(int(players_num)) == int and 2 < int(players_num) < 9:
+                if type(int(player_num)) == int and 2 < int(player_num) < 9:
                     break
             except:
                 continue
 
         while True:  # Decide number of AI players
             ai_num = input("Choose the number of AI players? [" + self.graphics.
-                           set_color("G", "0 - " + players_num) + "]\n")
+                           set_color("G", "0 - " + player_num) + "]\n")
 
             try:
-                if type(int(ai_num)) == int and int(ai_num) <= int(players_num):
+                if type(int(ai_num)) == int and int(ai_num) <= int(player_num):
                     break
             except:
                 continue
+        return int(player_num), int(ai_num)
 
-        for i in range(2, int(players_num) - int(ai_num) + 1):  # Name players
+    def setup_player_names(self, player_num, ai_num=0):
+        """
+        Where user player names are entered and AI names randomly generated
+        ALso creates a new Play instance and resets the player and AI names
+        """
+        self.new_game()
+
+        for i in range(2, int(player_num) - int(ai_num) + 1):  # Name players
             name = input("Enter a unique player " + str(i) + " name:\n")
 
-            while name in players.keys():
+            while name in self.players.keys():
                 name = input("Enter a unique player " + str(i) + " name:\n")
-            players[name] = True
+            self.players[name] = True
 
         for j in range(int(ai_num)):
-            players[self.ai_names.pop(self.ai_names.
-                                      index(choice(self.ai_names)))] = False
-        return players
+            self.players[self.ai_names.
+                pop(self.ai_names.index(choice(self.ai_names)))] = False
 
     def decide_online_tour_players(self, c, remote):
         """
