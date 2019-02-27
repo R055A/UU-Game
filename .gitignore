@@ -3,4 +3,5 @@
 .DS_Store
 venv/
 game_engine/__pycache__/
-game_platform/__pycache__/
+game_platform_gui/__pycache__/
+communication_platform/__pycache__/
