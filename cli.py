@@ -1,7 +1,7 @@
 from game_engine.play import Play
 from tkinter import Tk
 from game_engine.player_human import PlayerHuman
-from game_platform.game_platform import GamePlatform
+from game_platform_gui.game_platform import GamePlatform
 
 
 class GameEngine:
