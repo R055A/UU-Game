@@ -20,7 +20,7 @@ class Tournament:
     def __init__(self, player_list):
         """
         Initialize the tournament class, with a list of players as input.
-        To get the opponents do as follows:
+        To get the opponents to do as follows:
         tournament1 = Tournament(player_list), opponents = tournament1.opponents_queue
 
         Attributes
@@ -74,12 +74,14 @@ class Tournament:
         self.waiting_players = player_list.copy()
         self.start_player_list = player_list.copy()
         player_list_copy = player_list.copy()
+
         if ((len(player_list) % 2) == 0) | (len(player_list) == 3):
             self.opponents_queue = make_opponents(player_list_copy)
             self.all_opponents = [self.opponents_queue.copy()]
             self.opponents = self.opponents_queue.pop(0)
             self.waiting_players.remove(self.opponents[0])
             self.waiting_players.remove(self.opponents[1])
+
             for i in range(len(self.opponents_queue)):
                 self.waiting_players.remove(self.opponents_queue[i][0])
                 self.waiting_players.remove(self.opponents_queue[i][1])
@@ -546,7 +548,7 @@ class Tournament:
             display += padding9 + "|---" + opponent12 + padding13 + "|" + "\n"
             display += opponent08 + padding8 + "|" + "\n"
 
-        return display
+        print(display)
 
 
 def make_opponents(player_list):

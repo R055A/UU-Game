@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from communication_platform.main import CommunicationPlatform
-from sys import exit
 
 
 class UUGame:
@@ -21,14 +20,13 @@ class UUGame:
         """
         Starts the communication platform with game menu options
         """
-        self.comms.menu_options()
+        self.comms.start_comms()
 
     def close_game(self):
         """
         Closes the communication platform with message before exiting program
         """
-        self.comms.closing_message()
-        exit(1)
+        self.comms.close_comms()
 
 
 if __name__ == "__main__":

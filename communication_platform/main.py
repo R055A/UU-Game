@@ -2,44 +2,51 @@
 
 import communication_platform.game as game
 import communication_platform.peer as peer
-import communication_platform.tournament as tour
+from communication_platform.tournament import Tournament
 from game_engine.play import Play
+from game_engine.player_human import PlayerHuman
 from communication_platform.graphics import Graphics
 from random import choice
+from sys import exit
+
+NAME_LENGTH = 20  # the maximum length of a player's name
 
 
 class CommunicationPlatform:
     """
     Communication platform main class
-    Refactoring/integration editor(s): Adam Ross
-    Last-edit-date: 24/02/2019
+    Refactoring/integration editor(s): Adam Ross; Viktor Enzell; Gustav From;
+                                       Pelle Ingvast
+    Last-edit-date: 27/02/2019
     """
 
     def __init__(self):
         """
         Class constructor
         """
-        self.graphics = Graphics()
-        self.play = None
-        self.player = None
-        self.ai_names = None
-        self.players = None
+        self.graphics = Graphics()  # Graphics class instance
+        self.play = None  # Play class instance - updated each game play
+        self.player = None  # the name of the user
+        self.ai_names = None  # the names of each available fictional AI player
+        self.players = None  # dictionary for the player names and if users
+        self.online = False  # Boolean for in playing multi-player online
+        self.difficulty = 0  # the AI game play difficulty; 0; 1 - 3
 
     def new_game(self):
         """
-        Creates a new Play instance for each game played
+        Creates a new Play instance for each game played by a user
         """
         self.ai_names = ["Ralph", "Randy", "Roger", "Rhys", "Rooster",
-                         "Rob", "Ryan", "Richy", "Ross", "Ricky"]
+                         "Rob", "Ryan", "Richy", "Ross", "Ricky", "Rory"]
         self.players = {self.player: True}
         self.play = Play()
 
-    def menu_options(self):
+    def start_comms(self):
         """
         A menu for selecting single or tournament game play or app termination
         """
         self.graphics.make_header("Welcome to UU-Game!")
-        self.player = input("Enter player name: \n")
+        self.player = input("Enter player name: \n")[:NAME_LENGTH].capitalize()
 
         while True:
             play_choice = None
@@ -89,8 +96,8 @@ class CommunicationPlatform:
     def game_mode_options(self, game_mode):
         """
         Prints the options for choosing to play either singles or tournament
-        :param game_mode:
-        :return:
+        :param game_mode: the selected single or multi-player game play type
+        :return: selected option of either singles, tournament, return or quit
         """
         print("Choose from the following " + self.graphics.
               set_color("Y", game_mode) + " options: ")
@@ -172,44 +179,140 @@ class CommunicationPlatform:
             else:
                 print("Invalid choice, try again")
 
+    def setup_tournament_game(self, tournament):
+        """
+        Initializes a tournament game in preparation for playing
+        :param tournament: the tournament players playing a game
+        :return: the game mode; whether player vs player, AI vs AI...
+        """
+        if self.players[tournament.opponents[0]] and \
+                self.players[tournament.opponents[1]]:
+            mode = 1
+        elif self.players[tournament.opponents[0]] or \
+                self.players[tournament.opponents[1]]:
+            if self.players[tournament.opponents[1]]:
+                tournament.opponents[0], tournament.opponents[1] = \
+                    tournament.opponents[1], tournament.opponents[0]
+            mode = 2
+        else:
+            mode = 3
+        self.play.init_players(mode, self.difficulty, tournament.opponents[0],
+                               tournament.opponents[1])
+        self.declare_current_player()  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM ---------------------------------
+        return mode
+
+    def declare_available_pieces(self):  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM ---------------------------------
+        """
+        Declares to the players the pieces available for selection
+        Temporary for the CLI testing
+        """
+        print("\nGame pieces status:")
+        print(list(self.play.game.pieces.items())[:int((len(self.play.game.
+                                                            pieces) + 1) / 2)])
+
+        if len(self.play.game.pieces) > 1:
+            print(list(self.play.game.pieces.
+                       items())[int((len(self.play.game.pieces) + 1) / 2):])
+
+    def declare_board_status(self):  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM ---------------------------------
+        """
+        Declares to the players the current status of the game board
+        Temporary for the CLI testing
+        """
+        print("\nGame board status:")
+        print(*(row for row in self.play.game.board), sep="\n")
+
+    def declare_current_player(self):  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM ---------------------------------
+        """
+        Temporary printing of current player for CLI testing and presenting
+        """
+        print("\nCurrent player: '" + self.play.current_player.name + "'")
+
+    def declare_selected_piece(self):  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM ---------------------------------
+        """
+        Temporary printing of selected piece for CLI testing and presenting
+        """
+        print("\nCurrent piece: " + str(self.play.selected_piece))
+
+    def play_manual(self):
+        """
+        Plays manual game between either player vs player or player vs AI game
+        :return: the winner's name or None for a draw
+        """
+        self.declare_available_pieces()  # prints game board status
+        self.declare_board_status()  # prints available pieces status
+
+        if isinstance(self.play.current_player, PlayerHuman):
+            while True:
+                pce = input("\nEnter number 0-15 of piece selection: ")
+
+                if self.play.play_selection(pce):
+                    break
+        else:
+            self.play.play_selection()
+        self.declare_selected_piece()  # prints the selected piece
+        self.declare_current_player()  # prints the current player turn
+
+        if isinstance(self.play.current_player, PlayerHuman):
+            while True:
+                try:
+                    y, x = input("\nEnter 2 ints 0-3 separated by a space: ").\
+                        split()
+
+                    if self.play.play_placement(y, x):
+                        break
+                except:
+                    continue
+        else:
+            self.play.play_placement()
+
+        if self.play.game.has_won_game(self.play.selected_piece):
+            self.declare_board_status()  # prints final status of board
+            return self.play.current_player.name
+        elif not self.play.game.has_next_play():  # checks if turns remaining
+            self.declare_board_status()  # prints final status of board
+            return None
+        else:
+            self.play_manual()  # plays the next turn
+
     def single_player_tournament(self):
         """
         A single-player tournament locally between players
-        :return: the resulting play choice for the main menu options
+        :return: the "Return" play choice for returning to the main menu option
         """
-        self.graphics.make_header("Tournament play!")
+        self.graphics.make_header("Single Player Tournament!")
         player_num, ai_num = self.setup_tournament_players()
         self.setup_player_names(player_num, ai_num)
+
+        if ai_num == player_num:
+            self.players.pop(self.player)
+        tournament, winner = Tournament(list(self.players.keys())), None
+
+        while True:
+            self.graphics.make_header("Tournament Standings")
+            tournament.get_scoreboard()
+
+            if tournament.winner_state == 1:  # Last game already played
+                break
+            else:
+                self.graphics.make_header("Up next: " + tournament.opponents[0]
+                                          + " vs " + tournament.opponents[1])
+                mode = self.setup_tournament_game(tournament)
+
+                while True:
+                    if mode == 3:
+                        if self.play.play_auto():
+                            break
+                    elif self.play_manual():
+                        break
+                    else:
+                        self.graphics.make_header("Draw game! Replaying game")
+                tournament.next_game(self.play.current_player.name)  # Set winner
+                self.graphics.make_header(self.play.current_player.name +
+                                          " has advanced to the next round!")
+        self.graphics.make_header(self.play.current_player.name +
+                                  " has won the tournament!")
         return "R"
-
-        # ____________________TO BE REFACTORED_______________________
-
-        # # Play tournament
-        # t = tour.Tournament(list(players.keys()))
-        #
-        # while True:
-        #     self.graphics.make_header("Tournament Standings")
-        #     print(t.get_scoreboard())
-        #     end = t.winner_state
-        #     players = t.opponents
-        #
-        #     if end == 1:  # Last game already played
-        #         break
-        #     else:
-        #         self.graphics.make_header("Up next: " + players[0] +
-        #         " vs " + players[1])
-        #         humans = [human_dict[players[0]], human_dict[players[1]]]
-        #         while True:
-        #             winner = game.local_vs(players, humans)
-        #             if winner != "DRAW":
-        #                 break
-        #             else:
-        #                 self.graphics.make_header("Draw game! Replaying game")
-        #         t.next_game(winner)  # Set winner of current game
-        #         self.graphics.make_header(winner +
-        #         " has advanced to the next round!")
-        #
-        # self.graphics.make_header(winner + " has won the tournament!")
 
     def multiplayer_tournament(self):
         """
@@ -404,6 +507,16 @@ class CommunicationPlatform:
 
         return self.player, human
 
+    def choose_ai_difficulty(self):
+        print("Choose from one of the following " + self.graphics.
+              set_color("Y", "AI difficulty") + " options:\n    [" + self.
+              graphics.set_color("G", "1") + "] - Easy difficulty\n    [" +
+              self.graphics.set_color("G", "2") +
+              "] - Medium difficulty\n    [" + self.graphics.
+              set_color("G", "3") + "] - Hard difficulty")
+        return input("Enter your " + self.graphics.
+                     set_color("G", "choice: \n")).upper()
+
     def setup_tournament_players(self):
         """
         Where the number of players are chosen and player names are entered
@@ -420,33 +533,49 @@ class CommunicationPlatform:
                 continue
 
         while True:  # Decide number of AI players
-            ai_num = input("Choose the number of AI players? [" + self.graphics.
-                           set_color("G", "0 - " + player_num) + "]\n")
+            ai_num = input("Choose the number of AI players? [" + self.
+                           graphics.set_color("G", "0 - " + player_num) +
+                           "]\n")
 
             try:
-                if type(int(ai_num)) == int and int(ai_num) <= int(player_num):
+                if 0 <= int(ai_num) <= int(player_num):
                     break
             except:
                 continue
+
+        if int(ai_num) > 0:
+            while True:
+                self.difficulty = self.choose_ai_difficulty()
+
+                try:
+                    if 1 <= int(self.difficulty) <= 3:
+                        self.difficulty = int(self.difficulty)
+                        break
+                except:
+                    continue
+        else:
+            self.difficulty = 0
         return int(player_num), int(ai_num)
 
-    def setup_player_names(self, player_num, ai_num=0):
+    def setup_player_names(self, user_num, ai_num=0):
         """
         Where user player names are entered and AI names randomly generated
         ALso creates a new Play instance and resets the player and AI names
+        :param user_num: the number of user players
+        :param ai_num: the number of AI players
         """
         self.new_game()
 
-        for i in range(2, int(player_num) - int(ai_num) + 1):  # Name players
-            name = input("Enter a unique player " + str(i) + " name:\n")
+        for i in range(len(self.players) + 1, int(user_num) - int(ai_num) + 1):
+            name = input("Enter a unique player " + str(i) +
+                         " name:\n")[:NAME_LENGTH].capitalize()
 
             while name in self.players.keys():
-                name = input("Enter a unique player " + str(i) + " name:\n")
+                name = input("Enter a unique player " + str(i) +
+                             " name:\n")[:NAME_LENGTH].capitalize()
             self.players[name] = True
-
-        for j in range(int(ai_num)):
-            self.players[self.ai_names.
-                pop(self.ai_names.index(choice(self.ai_names)))] = False
+        self.players.update(dict({self.ai_names.pop(self.ai_names.index(choice(
+            self.ai_names))): False for j in range(int(ai_num))}.items()))
 
     def decide_online_tour_players(self, c, remote):
         """
@@ -503,5 +632,6 @@ class CommunicationPlatform:
 
         return player_list, human_dict
 
-    def closing_message(self):
+    def close_comms(self):
         self.graphics.make_header("Thanks for playing!")
+        exit(1)
