@@ -1,5 +1,5 @@
 from unittest import TestCase
-from game_platform.game_platform import GamePlatform
+from game_platform_gui.game_platform import GamePlatform
 from game_engine.play import Play
 from tkinter import Tk
 from time import sleep
