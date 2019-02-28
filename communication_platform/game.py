@@ -75,7 +75,7 @@ def online_vs(nick, c, human, server):
     if server and starting_player:
         game_state = [0, 0]
     elif server and not starting_player:
-        print("Waiting to receive first gamestate")
+        print("Waiting to receive first game state")
         game_state = c.receive()
 
     # Simulate game

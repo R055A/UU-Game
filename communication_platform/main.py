@@ -280,9 +280,6 @@ class CommunicationPlatform:
         self.graphics.make_header("Single Player Tournament!")
         player_num, ai_num = self.setup_tournament_players()
         self.setup_player_names(player_num, ai_num)
-
-        if ai_num == player_num:
-            self.players.pop(self.user)
         tournament, winner = Tournament(list(self.players.keys())), None
 
         while True:
@@ -301,7 +298,7 @@ class CommunicationPlatform:
                     self.play.init_players(mode, self.difficulty,
                                            tournament.opponents[0],
                                            tournament.opponents[1])
-                    self.declare_current_player()  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM ---------------------------------
+                    self.declare_current_player()  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM -------------------------
 
                     if mode == 3:
                         if self.play.play_auto():
@@ -366,16 +363,15 @@ class CommunicationPlatform:
         self.decide_online_tour_players(c, False)
         print("Waiting for remote list of players...")
         # Sync player lists
-        opp_user = c.receive()
-
-        if opp_user in self.players.keys():
-            if self.players[opp_user]:
-                self.players[opp_user + " (User)"] = True
-            else:
-                self.players[self.ai_names.pop()] = False
-        c.send(self.user)
-        self.players.update(c.receive())
+        opp_players = c.receive()
         c.send(self.players)
+
+        for i in opp_players.keys():
+            if i in self.players.keys():
+                self.players[i + " (opponent)"] = opp_players[i]
+            else:
+                self.players[i] = opp_players[i]
+        print(self.players)
         c.receive()  # Block needed here to ensure clients are synced
         # Create tournament and setup instructions
         t = Tournament(self.players)
@@ -383,6 +379,10 @@ class CommunicationPlatform:
         data["instruction"] = None  # Instructions in the form of strings
         data["players"] = None  # players to play next game
         data["tour"] = t.get_scoreboard()  # String representing current tournament bracket
+
+        print("got here")
+        print(data)
+
         c.send(data)  # Send initial tournament bracket
         winner = ""
 
@@ -436,22 +436,19 @@ class CommunicationPlatform:
         c = peer.Peer(False)
         c.connect_to_server()
         self.decide_online_tour_players(c, True)
-
-        print("working")
-
         # Sync player lists
-        c.send(self.user)
-        opp_user = c.receive()
-
-        if opp_user in self.players.keys():
-            if self.players[opp_user]:
-                self.players[opp_user + " (User)"] = True
-            else:
-                self.players[self.ai_names.pop()] = False
         c.send(self.players)
-        self.players.update(c.receive())
+        opp_players = c.receive()
+
+        for i in opp_players.keys():
+            if i in self.players.keys():
+                self.players[i + " (opponent)"] = opp_players[i]
+            else:
+                self.players[i] = opp_players[i]
+        print(self.players)
         c.send("ACK")  # Sync with remote
         data = c.receive()  # Get initial tournament bracket
+        print(data)
 
         while True:
             self.graphics.make_header("Tournament Standings")
@@ -598,6 +595,9 @@ class CommunicationPlatform:
         self.players.update(dict({self.ai_names.pop(self.ai_names.index(choice(
             self.ai_names))): False for j in range(int(ai_num))}.items()))
 
+        if user_num == ai_num:
+            self.players.pop(self.user)
+
     def decide_online_tour_players(self, c, remote):
         """
         Sig:    Peer ==> array, dictionary
@@ -634,7 +634,7 @@ class CommunicationPlatform:
                     break
             except:
                 continue
-        self.setup_player_names(nr_players - nr_ai, nr_ai)
+        self.setup_player_names(nr_players, nr_ai)
 
     def close_comms(self):
         self.graphics.make_header("Thanks for playing!")
