@@ -28,7 +28,7 @@ def local_vs(players, humans):
         return players[1]
 
 
-def online_vs(nick, c, human, server):
+def online_vs(nick, c, human, server, play):
     """
     Simulates an online game
     nick : string
@@ -66,59 +66,103 @@ def online_vs(nick, c, human, server):
         if ack == "WAIT":
             starting_player = False
             c.send("ACK")
-            game_state = c.receive()
         else:
             starting_player = True
             c.send("ACK")
-            game_state = [0, 0]
 
-    if server and starting_player:
-        game_state = [0, 0]
-    elif server and not starting_player:
-        print("Waiting to receive first gamestate")
-        game_state = c.receive()
+    if starting_player:
+        play_game(True, True, human, play, c)
+    else:
+        play_game(False, False, human, play, c)
 
-    # Simulate game
-    i = 0
-    score = 0
-    win_limit = 30
 
-    while i < 9:
-        score += random.randint(1, 5)
-        side = random.randint(0, 1)
-        game_state[side] += score
+def play_game(my_turn, first_draw, is_human, play, c):
+    while True:
+        declare_available_pieces(play)
+        declare_board_status(play)
+        declare_current_player(play)
 
-        # Determine after game state update if this player has won, send game state to \
-        # remote so that remote can also determine that it has lost
-        if game_state[0] > win_limit:
-            if starting_player:
-                c.send(game_state)
-                return nick
+        if not my_turn:
+            play = c.receive()
+            my_turn = True
+            declare_available_pieces(play)
+            declare_board_status(play)
+            declare_current_player(play)
 
-        if game_state[1] > win_limit:
-            if not starting_player:
-                c.send(game_state)
-                return nick
+        if my_turn and not first_draw:
+            declare_selected_piece(play)
+            if is_human:
+                while True:
+                    try:
+                        y, x = input("\nEnter 2 ints 0-3 separated by a space: ").\
+                            split()
 
-        print(nick, "sent", game_state)
-        c.send(game_state)
-        game_state = c.receive()
-        if game_state == "DRAW":
-            return "DRAW"
-        print(nick, "received", game_state)
-        t.sleep(0.1)
-        score = 0
-        i += 1
+                        if play.play_placement(y, x):
+                            declare_board_status(play)
+                            break
+                    except:
+                        continue
+            else:
+                play.play_placement()
 
-        # Before updating game state, check if this player has lost
-        if game_state[0] > win_limit:
-            if not starting_player:
-                return ""
+        if my_turn:
+            if is_human:
+                while True:
+                    pce = input("\nEnter number 0-15 of piece selection: ")
 
-        if game_state[1] > win_limit:
-            if starting_player:
-                return ""
+                    if play.play_selection(pce):
+                        break
+            else:
+                play.play_selection()
+            if first_draw:
+                my_turn = False
+                first_draw = False
 
-    # Draw
-    c.send("DRAW")
-    return "DRAW"
+        declare_selected_piece(play)
+
+        c.send(play)
+        my_turn = False
+
+        if play.game.has_won_game(play.selected_piece):
+            declare_board_status(play)
+            return play.current_player.name
+        elif not play.game.has_next_play():
+            declare_board_status(play)
+            return "DRAW OR??"
+
+
+def declare_available_pieces(play):
+    """
+    Declares to the players the pieces available for selection
+    Temporary for the CLI testing
+    """
+    print("\nGame pieces status:")
+    print(list(play.game.pieces.items())[:int((len(play.game.
+                                                        pieces) + 1) / 2)])
+
+    if len(play.game.pieces) > 1:
+        print(list(play.game.pieces.
+                   items())[int((len(play.game.pieces) + 1) / 2):])
+
+
+def declare_board_status(play):
+    """
+    Declares to the players the current status of the game board
+    Temporary for the CLI testing
+    """
+    print("\nGame board status:")
+    print(*(row for row in play.game.board), sep="\n")
+
+
+def declare_selected_piece(play):
+    """
+    Temporary printing of selected piece for CLI testing and presenting
+    """
+    print("\nCurrent piece: " + play.selected_piece)
+
+
+def declare_current_player(play):
+    """
+    Temporary printing of current player for CLI testing and presenting
+    """
+    print("\nCurrent player: '" + play.current_player.name + "'")

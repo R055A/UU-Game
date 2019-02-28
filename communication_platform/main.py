@@ -135,13 +135,15 @@ class CommunicationPlatform:
             name, human = self.get_online_name()
             choice = input("Are you the first to start the game? [" + self.graphics.set_color("G", "Y") + "]es [" \
                            + self.graphics.set_color("R", "N") + "]no\n[" + self.graphics.set_color("R", "Q") + "]uit ")
+            play = Play()
+            play.init_players(1)
             if choice == "Y" or choice == "y":
                 # Create peer which will act as server
                 c = peer.Peer(True)
                 c.accept_client()
                 while True:
                     # Name, peer, Human, Server
-                    win = game.online_vs(name, c, human, True)
+                    win = game.online_vs(name, c, human, True, play)
                     if win != "DRAW":
                         break
                     else:
@@ -159,7 +161,7 @@ class CommunicationPlatform:
                 c.connect_to_server()
                 while True:
                     # Name, peer, Human, Server
-                    win = game.online_vs(name, c, human, False)
+                    win = game.online_vs(name, c, human, False, play)
                     if win != "DRAW":
                         break
                     else:
