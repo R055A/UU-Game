@@ -94,7 +94,7 @@ def play_game(my_turn, first_draw, is_human, play, c):
             if is_human:
                 while True:
                     try:
-                        y, x = input("\nEnter 2 ints 0-3 separated by a space: ").\
+                        y, x = input("\nEnter 2 ints 0-3 separated by a space: "). \
                             split()
 
                         if play.play_placement(y, x):
@@ -138,7 +138,7 @@ def declare_available_pieces(play):
     """
     print("\nGame pieces status:")
     print(list(play.game.pieces.items())[:int((len(play.game.
-                                                        pieces) + 1) / 2)])
+                                                   pieces) + 1) / 2)])
 
     if len(play.game.pieces) > 1:
         print(list(play.game.pieces.

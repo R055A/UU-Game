@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import socket as s
-import time as t
 import pickle
 
 

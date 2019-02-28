@@ -29,9 +29,10 @@ class CommunicationPlatform:
         self.player = None  # the name of the user
         self.ai_names = None  # the names of each available fictional AI player
         self.players = None  # dictionary for the player names and if users
-        self.users = []  # list for the user names
+        self.user = None  # the user name
         self.online = False  # Boolean for in playing multi-player online
         self.difficulty = 0  # the AI game play difficulty; 0; 1 - 3
+        self.server = False
 
     def new_game(self):
         """
@@ -44,8 +45,7 @@ class CommunicationPlatform:
         A menu for selecting single or tournament game play or app termination
         """
         self.graphics.make_header("Welcome to UU-Game!")
-        self.users.append(input("Enter player name: \n")[:NAME_LENGTH].
-                          capitalize())
+        self.user = input("Enter player name: \n")[:NAME_LENGTH].capitalize()
 
         while True:
             play_choice = None
@@ -77,6 +77,7 @@ class CommunicationPlatform:
 
             elif play_choice == "M":  # user has selected multi-player game
                 while True:
+                    self.server = False
                     play_choice = self.game_mode_options("multi-player")
 
                     if play_choice == "S":  # Multi-player singles game
@@ -281,7 +282,6 @@ class CommunicationPlatform:
         self.graphics.make_header("Single Player Tournament!")
         player_num, ai_num = self.setup_tournament_players()
         self.setup_player_names(player_num, ai_num)
-        [self.players.pop(i) for i in self.users if ai_num == player_num]
         tournament, winner = Tournament(list(self.players.keys())), None
 
         while True:
@@ -300,7 +300,7 @@ class CommunicationPlatform:
                     self.play.init_players(mode, self.difficulty,
                                            tournament.opponents[0],
                                            tournament.opponents[1])
-                    self.declare_current_player()  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM ---------------------------------
+                    self.declare_current_player()  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM -------------------------
 
                     if mode == 3:
                         if self.play.play_auto():
@@ -359,26 +359,32 @@ class CommunicationPlatform:
         junk messages to sync the clients
         """
         # Setup
+        self.server = True
         c = peer.Peer(True)
         c.accept_client()
-        player_list, human_dict = self.decide_online_tour_players(c, False)
+        self.decide_online_tour_players(c, False)
         print("Waiting for remote list of players...")
-
         # Sync player lists
-        remote_player_list = c.receive()
-        player_list = player_list + remote_player_list
-        c.send(player_list)
-        remote_human_dict = c.receive()
-        human_dict.update(remote_human_dict)
-        c.send(human_dict)
-        c.receive()  # Block needed here to ensure clients are synced
+        opp_players = c.receive()
+        c.send(self.players)
 
+        for i in opp_players.keys():
+            if i in self.players.keys():
+                self.players[i + " (opponent)"] = opp_players[i]
+            else:
+                self.players[i] = opp_players[i]
+        print(self.players)
+        c.receive()  # Block needed here to ensure clients are synced
         # Create tournament and setup instructions
-        t = tour.Tournament(player_list)
+        t = Tournament(self.players)
         data = dict()  # Dictionary containing various data needed by remote peer
         data["instruction"] = None  # Instructions in the form of strings
         data["players"] = None  # players to play next game
         data["tour"] = t.get_scoreboard()  # String representing current tournament bracket
+
+        print("got here")
+        print(data)
+
         c.send(data)  # Send initial tournament bracket
         winner = ""
 
@@ -398,7 +404,6 @@ class CommunicationPlatform:
                 self.graphics.make_header(winner + " Has won the tournament!")
                 c.teardown()
                 break
-
             else:
                 # Setup game
                 self.graphics.make_header("Up next: Local " + players[0] + " vs remote " + players[1])
@@ -407,7 +412,7 @@ class CommunicationPlatform:
                 c.send(data)
 
                 while True:
-                    winner = game.online_vs(players[0], c, human_dict[players[0]], True)
+                    winner = game.online_vs(players[0], c, self.players[players[0]], True)
                     if winner != "DRAW":
                         break
                     else:
@@ -420,7 +425,6 @@ class CommunicationPlatform:
                     winner = players[1]
                     winners.append(winner)
                     self.graphics.make_header(winner + " has advanced to the next round!")
-
             t.next_game(winner)
 
     def client_side_tournament(self):
@@ -430,17 +434,23 @@ class CommunicationPlatform:
         Post:   A tournament played between local, and remote players. And termination of program
         """
         # Setup
+        self.server = False
         c = peer.Peer(False)
         c.connect_to_server()
-        player_list, human_dict = self.decide_online_tour_players(c, True)
-
+        self.decide_online_tour_players(c, True)
         # Sync player lists
-        c.send(player_list)
-        player_list = c.receive()
-        c.send(human_dict)
-        human_dict = c.receive()
+        c.send(self.players)
+        opp_players = c.receive()
+
+        for i in opp_players.keys():
+            if i in self.players.keys():
+                self.players[i + " (opponent)"] = opp_players[i]
+            else:
+                self.players[i] = opp_players[i]
+        print(self.players)
         c.send("ACK")  # Sync with remote
         data = c.receive()  # Get initial tournament bracket
+        print(data)
 
         while True:
             self.graphics.make_header("Tournament Standings")
@@ -451,12 +461,11 @@ class CommunicationPlatform:
                 self.graphics.make_header(data["player"] + " has won the tournament!")
                 c.teardown()
                 break
-
             elif data["instruction"] == "PLAY":
                 players = data["players"]
                 self.graphics.make_header("Up next: Local " + players[1] + " vs remote " + players[0])
                 while True:
-                    winner = game.online_vs(players[1], c, human_dict[players[1]], False)
+                    winner = game.online_vs(players[1], c, self.players[players[1]], False)
                     if winner != "DRAW":
                         break
                     else:
@@ -466,7 +475,6 @@ class CommunicationPlatform:
                     self.graphics.make_header(winner + " has advanced to the next round!")
                 else:  # If remote player won
                     self.graphics.make_header(players[0] + " has advanced to the next round!")
-
             data = c.receive()
 
     def get_local_names(self):
@@ -506,10 +514,13 @@ class CommunicationPlatform:
             if human == "n" or human == "n":
                 human = False
                 break
-
         return self.player, human
 
     def choose_ai_difficulty(self):
+        """
+        Provides user with difficulty selection of easy, medium or hard
+        :return: the difficulty selection of 1, 2, 3 for easy, medium or hard
+        """
         print("Choose from one of the following " + self.graphics.
               set_color("Y", "AI difficulty") + " options:\n    [" + self.
               graphics.set_color("G", "1") + "] - Easy difficulty\n    [" +
@@ -566,11 +577,16 @@ class CommunicationPlatform:
         :param user_num: the number of user players
         :param ai_num: the number of AI players
         """
-        self.players = dict({i: True for i in self.users})
-        self.ai_names = ["Ralph", "Randy", "Roger", "Rhys", "Rooster",
-                         "Rob", "Ryan", "Richy", "Ross", "Ricky", "Rory"]
+        self.players = {self.user: True}
 
-        for i in range(len(self.users) + 1, int(user_num) - int(ai_num) + 1):
+        if self.server:
+            self.ai_names = ["Ralph", "Randy", "Roger", "Rhys", "Rooster", "Adam",
+                            "Rob", "Ryan", "Richy", "Ross", "Ricky", "Rory", "Maxime"]
+        else:
+            self.ai_names = ["Viktor", "Peter", "Paul", "Chris", "Charles", "Pelle",
+                            "Josh", "Steve", "Michael", "Larry", "Laurin", "Gustav"]
+
+        for i in range(2, int(user_num) - int(ai_num) + 1):
             name = input("Enter a unique player " + str(i) +
                          " name:\n")[:NAME_LENGTH].capitalize()
 
@@ -581,6 +597,9 @@ class CommunicationPlatform:
         self.players.update(dict({self.ai_names.pop(self.ai_names.index(choice(
             self.ai_names))): False for j in range(int(ai_num))}.items()))
 
+        if user_num == ai_num:
+            self.players.pop(self.user)
+
     def decide_online_tour_players(self, c, remote):
         """
         Sig:    Peer ==> array, dictionary
@@ -590,52 +609,34 @@ class CommunicationPlatform:
         """
         # Determine number of players
         while True:
-            choice = input("How many players on this computer? [" + self.graphics.set_color("G", "1-7") +
-                           "](maximum 8 total) ")
-            if type(int(choice)) == int:
-                choice = int(choice)
-                if 1 <= choice <= 7:
+            nr_players = input("How many players on this computer? [" +
+                               self.graphics.set_color("G", "1 - 8") + "]\n")
+            try:
+                if 1 <= int(nr_players) <= 8:
+                    nr_players = int(nr_players)
                     break
-
+            except:
+                continue
         # Send number of players and ensure remote and local don't exceed 8
-        c.send(choice)
+        c.send(nr_players)
         print("Confirming number of players...")
-        remote_choice = c.receive()
-        if remote_choice + choice > 8:
-            print("Your total is over 8. Try again")
+
+        if not 3 <= (c.receive() + nr_players) <= 8:
+            print("Your total is not between 3 and 8. Try again.")
             self.decide_online_tour_players(c, remote)
 
-        nr_players = choice
-        player_list = []  # Strings of names
-        human_dict = {}  # Booleans. Key = player. True = Human, False = NPC
         # Determine names and human/computer controlled
         while True:
-            choice = input("How many AI players? [" + self.graphics.set_color("G", "0-" + str(nr_players)) + "] ")
-            if type(int(choice)) == int:
-                choice = int(choice)
-                if choice <= nr_players:
+            nr_ai = input("How many AI players? [" + self.graphics.
+                          set_color("G", "0-" + str(nr_players)) + "]\n")
+
+            try:
+                if 0 <= int(nr_ai) <= nr_players:
+                    nr_ai = int(nr_ai)
                     break
-        nr_ai = choice
-
-        # Name human players
-        for player in range(nr_players - nr_ai):
-            name = input("Name player" + str(player + 1) + ": ")
-            player_list.append(name)
-            human_dict[name] = True
-
-        # Name AI players
-        names = ["SKYNET", "MAX HEADROOM", "WATSON", "DEEP THOUGHT", "J.A.R.V.I.S.", "R2D2", "MU-TH-UR 6000",
-                 "TÄNKANDE AUGUST"]
-        for nr in range(nr_ai):
-            # This is to ensure that server/client dont create players with the same name
-            if remote:
-                name = names[nr]
-            else:
-                name = names[nr + 4]
-            player_list.append(name)
-            human_dict[name] = False
-
-        return player_list, human_dict
+            except:
+                continue
+        self.setup_player_names(nr_players, nr_ai)
 
     def close_comms(self):
         self.graphics.make_header("Thanks for playing!")
