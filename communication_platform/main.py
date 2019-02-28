@@ -31,7 +31,7 @@ class CommunicationPlatform:
         self.players = None  # dictionary for the player names and if users
         self.user = None  # the user name
         self.online = False  # Boolean for in playing multi-player online
-        self.difficulty = 0  # the AI game play difficulty; 0; 1 - 3
+        self.difficulty = 2  # the AI game play difficulty; 1 - 3; default 2
         self.server = False
 
     def new_game(self):
@@ -373,18 +373,13 @@ class CommunicationPlatform:
                 self.players[i + " (opponent)"] = opp_players[i]
             else:
                 self.players[i] = opp_players[i]
-        print(self.players)
         c.receive()  # Block needed here to ensure clients are synced
         # Create tournament and setup instructions
-        t = Tournament(self.players)
+        t = Tournament(list(self.players.keys()))
         data = dict()  # Dictionary containing various data needed by remote peer
         data["instruction"] = None  # Instructions in the form of strings
         data["players"] = None  # players to play next game
         data["tour"] = t.get_scoreboard()  # String representing current tournament bracket
-
-        print("got here")
-        print(data)
-
         c.send(data)  # Send initial tournament bracket
         winner = ""
 
@@ -394,6 +389,7 @@ class CommunicationPlatform:
             print(data["tour"])
             end = t.winner_state
             players = t.opponents
+            mode = self.setup_tournament_game(t)
             winners = []
 
             # Completed tournament
@@ -406,13 +402,18 @@ class CommunicationPlatform:
                 break
             else:
                 # Setup game
-                self.graphics.make_header("Up next: Local " + players[0] + " vs remote " + players[1])
+                self.graphics.make_header("Up next: Local " + players[0] +
+                                          " vs remote " + players[1])
+                self.new_game()
+                self.play.init_players(mode, self.difficulty, t.opponents[0],
+                                       t.opponents[1])
                 data["players"] = players
                 data["instruction"] = "PLAY"
+                data["play"] = self.play
                 c.send(data)
 
                 while True:
-                    winner = game.online_vs(players[0], c, self.players[players[0]], True)
+                    winner = game.online_vs(players[0], c, self.players[players[0]], True, self.play)
                     if winner != "DRAW":
                         break
                     else:
@@ -447,10 +448,8 @@ class CommunicationPlatform:
                 self.players[i + " (opponent)"] = opp_players[i]
             else:
                 self.players[i] = opp_players[i]
-        print(self.players)
         c.send("ACK")  # Sync with remote
         data = c.receive()  # Get initial tournament bracket
-        print(data)
 
         while True:
             self.graphics.make_header("Tournament Standings")
@@ -463,9 +462,9 @@ class CommunicationPlatform:
                 break
             elif data["instruction"] == "PLAY":
                 players = data["players"]
-                self.graphics.make_header("Up next: Local " + players[1] + " vs remote " + players[0])
+                self.graphics.make_header("Up next: (local) " + players[1] + " vs (remote) " + players[0])
                 while True:
-                    winner = game.online_vs(players[1], c, self.players[players[1]], False)
+                    winner = game.online_vs(players[1], c, self.players[players[1]], False, data["play"])
                     if winner != "DRAW":
                         break
                     else:
@@ -620,8 +619,9 @@ class CommunicationPlatform:
         # Send number of players and ensure remote and local don't exceed 8
         c.send(nr_players)
         print("Confirming number of players...")
+        opp_players = c.receive()
 
-        if not 3 <= (c.receive() + nr_players) <= 8:
+        if not 3 <= (opp_players + nr_players) <= 8:
             print("Your total is not between 3 and 8. Try again.")
             self.decide_online_tour_players(c, remote)
 
@@ -631,7 +631,7 @@ class CommunicationPlatform:
                           set_color("G", "0-" + str(nr_players)) + "]\n")
 
             try:
-                if 0 <= int(nr_ai) <= nr_players:
+                if 0 <= int(nr_ai) <= (opp_players + nr_players):
                     nr_ai = int(nr_ai)
                     break
             except:

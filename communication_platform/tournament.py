@@ -75,7 +75,10 @@ class Tournament:
         self.start_player_list = player_list.copy()
         player_list_copy = player_list.copy()
 
+        print(player_list_copy)
+
         if (len(player_list) % 2) == 0 or len(player_list) == 3:
+            print("first")
             self.opponents_queue = make_opponents(player_list_copy)
             self.all_opponents = [self.opponents_queue.copy()]
             self.opponents = self.opponents_queue.pop(0)
@@ -86,6 +89,7 @@ class Tournament:
                 self.waiting_players.remove(self.opponents_queue[i][0])
                 self.waiting_players.remove(self.opponents_queue[i][1])
         else:
+            print("second")
             self.opponents_queue = make_opponents(player_list_copy)
             self.all_opponents = [self.opponents_queue.copy()]
             self.opponents = self.opponents_queue.pop(0)
