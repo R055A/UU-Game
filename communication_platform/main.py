@@ -29,6 +29,7 @@ class CommunicationPlatform:
         self.player = None  # the name of the user
         self.ai_names = None  # the names of each available fictional AI player
         self.players = None  # dictionary for the player names and if users
+        self.users = []  # list for the user names
         self.online = False  # Boolean for in playing multi-player online
         self.difficulty = 0  # the AI game play difficulty; 0; 1 - 3
 
@@ -36,9 +37,6 @@ class CommunicationPlatform:
         """
         Creates a new Play instance for each game played by a user
         """
-        self.ai_names = ["Ralph", "Randy", "Roger", "Rhys", "Rooster",
-                         "Rob", "Ryan", "Richy", "Ross", "Ricky", "Rory"]
-        self.players = {self.player: True}
         self.play = Play()
 
     def start_comms(self):
@@ -46,7 +44,8 @@ class CommunicationPlatform:
         A menu for selecting single or tournament game play or app termination
         """
         self.graphics.make_header("Welcome to UU-Game!")
-        self.player = input("Enter player name: \n")[:NAME_LENGTH].capitalize()
+        self.users.append(input("Enter player name: \n")[:NAME_LENGTH].
+                          capitalize())
 
         while True:
             play_choice = None
@@ -196,9 +195,6 @@ class CommunicationPlatform:
             mode = 2
         else:
             mode = 3
-        self.play.init_players(mode, self.difficulty, tournament.opponents[0],
-                               tournament.opponents[1])
-        self.declare_current_player()  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM ---------------------------------
         return mode
 
     def declare_available_pieces(self):  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM ---------------------------------
@@ -283,9 +279,7 @@ class CommunicationPlatform:
         self.graphics.make_header("Single Player Tournament!")
         player_num, ai_num = self.setup_tournament_players()
         self.setup_player_names(player_num, ai_num)
-
-        if ai_num == player_num:
-            self.players.pop(self.player)
+        [self.players.pop(i) for i in self.users if ai_num == player_num]
         tournament, winner = Tournament(list(self.players.keys())), None
 
         while True:
@@ -300,6 +294,12 @@ class CommunicationPlatform:
                 mode = self.setup_tournament_game(tournament)
 
                 while True:
+                    self.new_game()
+                    self.play.init_players(mode, self.difficulty,
+                                           tournament.opponents[0],
+                                           tournament.opponents[1])
+                    self.declare_current_player()  # TEMPORARY UNTIL WE HAVE A GAME PLATFORM ---------------------------------
+
                     if mode == 3:
                         if self.play.play_auto():
                             break
@@ -564,9 +564,11 @@ class CommunicationPlatform:
         :param user_num: the number of user players
         :param ai_num: the number of AI players
         """
-        self.new_game()
+        self.players = dict({i: True for i in self.users})
+        self.ai_names = ["Ralph", "Randy", "Roger", "Rhys", "Rooster",
+                         "Rob", "Ryan", "Richy", "Ross", "Ricky", "Rory"]
 
-        for i in range(len(self.players) + 1, int(user_num) - int(ai_num) + 1):
+        for i in range(len(self.users) + 1, int(user_num) - int(ai_num) + 1):
             name = input("Enter a unique player " + str(i) +
                          " name:\n")[:NAME_LENGTH].capitalize()
 
@@ -586,7 +588,8 @@ class CommunicationPlatform:
         """
         # Determine number of players
         while True:
-            choice = input("How many players on this computer? [" + self.graphics.set_color("G", "1-7") + "](maximum 8 total) ")
+            choice = input("How many players on this computer? [" + self.graphics.set_color("G", "1-7") +
+                           "](maximum 8 total) ")
             if type(int(choice)) == int:
                 choice = int(choice)
                 if 1 <= choice <= 7:
