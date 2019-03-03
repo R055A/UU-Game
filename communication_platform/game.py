@@ -1,6 +1,6 @@
-import sys
 import random
 import time as t
+from os import system
 
 
 def local_vs(players, humans):
@@ -45,10 +45,6 @@ def online_vs(nick, c, human, server, play):
     This is an example of how to use the Peer to communicate. Was used for testing \
     the communication platform
     """
-    starting_player = None
-    if not human:
-        tmp = "tmp"  # Make this player NPC
-
     t.sleep(2)
     # Decide starting player
     if server:
@@ -71,64 +67,81 @@ def online_vs(nick, c, human, server, play):
             c.send("ACK")
 
     if starting_player:
-        play_game(True, True, human, play, c)
+        return play_game(True, True, human, play, c)
     else:
-        play_game(False, False, human, play, c)
+        return play_game(False, True, human, play, c)
 
 
 def play_game(my_turn, first_draw, is_human, play, c):
     while True:
-        declare_available_pieces(play)
-        declare_board_status(play)
-        declare_current_player(play)
+        declare_pieces_and_board(play)
 
         if not my_turn:
-            play = c.receive()
-            my_turn = True
-            declare_available_pieces(play)
-            declare_board_status(play)
-            declare_current_player(play)
-
-        if my_turn and not first_draw:
-            declare_selected_piece(play)
-            if is_human:
-                while True:
-                    try:
-                        y, x = input("\nEnter 2 ints 0-3 separated by a space: "). \
-                            split()
-
-                        if play.play_placement(y, x):
-                            declare_board_status(play)
-                            break
-                    except:
-                        continue
-            else:
-                play.play_placement()
-
-        if my_turn:
-            if is_human:
-                while True:
-                    pce = input("\nEnter number 0-15 of piece selection: ")
-
-                    if play.play_selection(pce):
-                        break
-            else:
-                play.play_selection()
             if first_draw:
-                my_turn = False
-                first_draw = False
+                print("\nWait for opponent to pass a piece")
+            else:
+                print("\nWait for opponent to place the piece")
+            play = c.receive()
+            declare_pieces_and_board(play)
+            if play.game.has_won_game(play.selected_piece):
+                return play.current_player.name
+            elif not play.game.has_next_play():
+                return "DRAW OR??"
 
+            if not first_draw:
+                print("\nWait for opponent to pass a piece")
+                play = c.receive()
+                declare_pieces_and_board(play)
+            first_draw = False
+            my_turn = True
+
+        if not first_draw:
+            place(is_human, play)
+            c.send(play)
+            if play.game.has_won_game(play.selected_piece):
+                return play.current_player.name
+            elif not play.game.has_next_play():
+                return "DRAW OR??"
+
+        choose(is_human, play)
         declare_selected_piece(play)
-
+        if first_draw:
+            my_turn = False
+            first_draw = False
         c.send(play)
         my_turn = False
 
-        if play.game.has_won_game(play.selected_piece):
-            declare_board_status(play)
-            return play.current_player.name
-        elif not play.game.has_next_play():
-            declare_board_status(play)
-            return "DRAW OR??"
+
+def place(is_human, play):
+    declare_selected_piece(play)
+    if is_human:
+        while True:
+            y, x = input("\nEnter 2 ints 0-3 separated by a space: "). \
+                split()
+
+            if play.play_placement(y, x):
+                declare_pieces_and_board(play)
+                break
+    else:
+        play.play_placement()
+
+
+def choose(is_human, play):
+    if is_human:
+        while True:
+            pce = input("\nEnter number 0-15 of piece selection: ")
+
+            if play.play_selection(pce):
+                break
+    else:
+        play.play_selection()
+
+
+def declare_pieces_and_board(play):
+    system('clear')
+    declare_available_pieces(play)
+    declare_board_status(play)
+    declare_current_player(play)
 
 
 def declare_available_pieces(play):
