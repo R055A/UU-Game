@@ -15,7 +15,7 @@ class CommunicationPlatform:
     Communication platform main class
     Refactoring/integration editor(s): Adam Ross; Viktor Enzell; Gustav From;
                                        Pelle Ingvast
-    Last-edit-date: 27/02/2019
+    Last-edit-date: 04/03/2019
     """
 
     NAME_LEN = 20  # the maximum length of a player's name
@@ -161,7 +161,8 @@ class CommunicationPlatform:
         """
         The host side of an online singles game
         """
-        self.server, peer = True, Peer(self.server)  # Peer conn as server
+        self.server = True
+        peer = Peer(self.server)  # Peer conn as server
         peer.accept_client()
         peer.send("ACK")
         opp_name = peer.receive()
@@ -234,6 +235,8 @@ class CommunicationPlatform:
                 self.graphics.make_header("Up next: " + tour.opponents[0]
                                           + " vs " + tour.opponents[1])
 
+                ################################################################################################################# below can potentially go in GamePlatform
+
                 while True:
                     self.new_game([tour.opponents[0], tour.opponents[1]])
 
@@ -245,6 +248,9 @@ class CommunicationPlatform:
                         break
                     else:
                         self.graphics.make_header("Draw game! Replaying game")
+
+                ################################################################################################################# above can potentially go in GamePlatform
+
                 tour.next_game(self.play.current_player.name)  # Set winner
                 self.graphics.make_header(self.play.current_player.name +
                                           " has advanced to the next round!")

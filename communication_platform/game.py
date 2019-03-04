@@ -36,7 +36,6 @@ def online_vs(name, peer, user, server, play):
     :param server: if player is server host
     :param play: Play() class instance
     """
-
     if server:
         if play.current_player == name:
             starting_player = True
@@ -48,6 +47,7 @@ def online_vs(name, peer, user, server, play):
             peer.receive()
     else:
         ack = peer.receive()
+
         if ack == "WAIT":
             starting_player = False
             peer.send("ACK")
@@ -56,13 +56,8 @@ def online_vs(name, peer, user, server, play):
             peer.send("ACK")
 
     if starting_player:
-        peer.send(name)
-        play = peer.receive()
         return play_game(True, True, user, play, peer)
     else:
-        opponent_name = peer.receive()
-        play.init_players(1, 0, opponent_name, name)
-        peer.send(play)
         return play_game(False, True, user, play, peer)
 
 
