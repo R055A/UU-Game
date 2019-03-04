@@ -1,69 +1,38 @@
 #!/usr/bin/env python3
 
-import socket as s
-import pickle
+from socket import socket, AF_INET, SOCK_STREAM
+from pickle import loads, dumps
 
 
 class Peer:
     """
-    A class which acts as a either a server or client.
-    Only serves to send of receive data.
-    Only difference between server and client is that server is set up to\
-    accept a connection from the client.
-
-    Attributes
-    ----------
-    HOST : string
-        String containing the IP address intended to connect with. '127.0.0.1' is\
-        loop back interface
-    PORT : int
-        Port number used to connect
-    BUFSIZ : int
-        Maximum number of bytes allowed to send over socket
-    CONNECTION : socket
-        socket housing remote connection, used to send data
-    ACCEPT_SOCKET : socket
-        socket used by server in order to accept connection from client
-    SERVER : Bool
-        Boolean to determine whether peer is acting as client of server
-
-    Methods
-    -------
-    accept_client(self)
-        Method to accept client as server
-    connect_to_server(self)
-        Method to connect to server as client
-    send(self, data)
-        method to send data over connection
-    receive(self)
-        method to receive data over connection
-    teardown(self)
-        method to close sockets when peer is no longer needed
+    A class which acts as a either a server or client. Only serves to send of
+    receive data. Only difference between server and client is that server is
+    set up to accept a connection from the client.
+    Refactoring/integration editor(s): Adam Ross
+    Last-edit-date: 04/03/2019
     """
-    HOST = '127.0.0.1'
-    PORT = 65001
-    BUFSIZ = 4096
-    CONNECTION = None
-    ACCEPT_SOCKET = None
-    SERVER = False
+
+    HOST = '127.0.0.1'  # local IP address
+    PORT = 65001  # port address being used for connection
+    BUF_SIZ = 4096  # the maximum size for each byte transmission over socket
 
     def __init__(self, server):
         """
-        Setup, if not server, no setup is needed as client creates socket when \
-        connecting to server.
-        Parameters
-        ----------
-        server : Bool
-            Determine whether peer should act as server or client
+        Class constructor. Sets up connection if player is host
+        :param server: Determine whether peer should act as server or client
         """
-        if server:
+        self.connection = None  # socket housing remote connection
+        self.accept_socket = None  # socket used by server to accept connection
+        self.server = server  # Boolean to determine if player is host or not
+
+        if self.server:
             try:
                 print("Booting server")
-                self.SERVER = True
                 # AF_INET = IPv4, SOCK_STREAM = TCP Socket
-                self.ACCEPT_SOCKET = s.socket(s.AF_INET, s.SOCK_STREAM)
-                self.ACCEPT_SOCKET.bind((self.HOST, self.PORT))
-                self.ACCEPT_SOCKET.listen()
+                self.accept_socket = socket(AF_INET, SOCK_STREAM)
+                self.accept_socket.bind((self.HOST, self.PORT))
+                self.accept_socket.listen()
             except (KeyboardInterrupt, SystemExit):
                 print("\nShutting down server")
 
@@ -73,45 +42,40 @@ class Peer:
         """
         print("Waiting for incoming connection...")
         try:
-            self.CONNECTION, _ = self.ACCEPT_SOCKET.accept()
+            self.connection, _ = self.accept_socket.accept()
             print("Client connected!")
 
         except KeyboardInterrupt:
             print("\nStopped incoming connections")
-            self.ACCEPT_SOCKET.close()
-            return
+            self.accept_socket.close()
 
     def connect_to_server(self):
         """
         Connect to server as client
         """
         print("Connecting to server...")
-        self.CONNECTION = s.socket(s.AF_INET, s.SOCK_STREAM)
-        self.CONNECTION.connect((self.HOST, self.PORT))
+        self.connection = socket(AF_INET, SOCK_STREAM)
+        self.connection.connect((self.HOST, self.PORT))
         print("Connected to server")
 
     def send(self, data):
         """
         Send data over socket. pickle.dumps encodes data as byte stream
         """
-        self.CONNECTION.sendall(pickle.dumps(data))
+        self.connection.sendall(dumps(data))
 
     def receive(self):
         """
         Receive data from socket. recv() is blocking. pickle.loads preserves data types.
         """
-        data = self.CONNECTION.recv(self.BUFSIZ)
-        data = pickle.loads(data)
-        return data
+        data = self.connection.recv(self.BUF_SIZ)
+        return loads(data)
 
     def teardown(self):
         """
         Closes socket or sockets
         """
-        self.CONNECTION.close()
-        if self.SERVER:
-            self.ACCEPT_SOCKET.close()
+        self.connection.close()
 
-
-if __name__ == "__main__":
-    Peer(False)
+        if self.server:
+            self.accept_socket.close()

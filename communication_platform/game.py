@@ -1,4 +1,3 @@
-import sys
 import random
 import time as t
 
@@ -28,52 +27,37 @@ def local_vs(players, humans):
         return players[1]
 
 
-def online_vs(nick, c, human, server, play):
+def online_vs(name, peer, user, server, play):
     """
-    Simulates an online game
-    nick : string
-        String representing local player's name
-    c : Peer
-        Class Peer, connection with remote player
-    human : Boolean
-        True = Human player, False = NPC player
-    server : Boolean
-        Whether this player acts as server or not. Needed in order to properly synchronize peers
-
-    Notes
-    -----
-    This is an example of how to use the Peer to communicate. Was used for testing \
-    the communication platform
+    Plays online 1 vs 1 games
+    :param name: players name
+    :param peer:
+    :param user: if player is a user
+    :param server: if player is server host
+    :param play: Play() class instance
     """
-    starting_player = None
-    if not human:
-        tmp = "tmp"  # Make this player NPC
-
-    t.sleep(2)
-    # Decide starting player
     if server:
-        i = random.randint(0, 1)
-        if i == 1:
+        if play.current_player == name:
             starting_player = True
-            c.send("WAIT")
-            c.receive()
+            peer.send("WAIT")
+            peer.receive()
         else:
             starting_player = False
-            c.send("START")
-            c.receive()
+            peer.send("START")
+            peer.receive()
     else:
-        ack = c.receive()
+        ack = peer.receive()
         if ack == "WAIT":
             starting_player = False
-            c.send("ACK")
+            peer.send("ACK")
         else:
             starting_player = True
-            c.send("ACK")
+            peer.send("ACK")
 
     if starting_player:
-        play_game(True, True, human, play, c)
+        play_game(True, True, user, play, peer)
     else:
-        play_game(False, False, human, play, c)
+        play_game(False, False, user, play, peer)
 
 
 def play_game(my_turn, first_draw, is_human, play, c):
