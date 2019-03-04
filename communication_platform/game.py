@@ -27,7 +27,7 @@ from game_engine.player_human import PlayerHuman
 #         return players[1]
 
 
-def online_vs(name, peer, user, server, play):
+def online_vs(name, peer, user, server, play, auto):
     """
     Plays online 1 vs 1 games
     :param name: players name
@@ -35,6 +35,7 @@ def online_vs(name, peer, user, server, play):
     :param user: if player is a user
     :param server: if player is server host
     :param play: Play() class instance
+    :param auto: Boolean for if game is automated or not
     """
     if server:
         if play.current_player == name:
@@ -56,22 +57,25 @@ def online_vs(name, peer, user, server, play):
             peer.send("ACK")
 
     if starting_player:
-        return play_game(True, True, user, play, peer)
+        return play_game(True, True, user, play, peer, auto)
     else:
-        return play_game(False, True, user, play, peer)
+        return play_game(False, True, user, play, peer, auto)
 
 
-def play_game(my_turn, first_draw, is_human, play, c):
+def play_game(my_turn, first_draw, is_human, play, c, auto):
     while True:
-        declare_pieces_and_board(play)
+        if not auto:
+            declare_pieces_and_board(play)
 
         if not my_turn:
-            if first_draw:
+            if first_draw and not auto:
                 print("\nWait for opponent to pass a piece")
-            else:
+            elif not auto:
                 print("\nWait for opponent to place the piece")
             play = c.receive()
-            declare_pieces_and_board(play)
+
+            if not auto:
+                declare_pieces_and_board(play)
 
             if play.game.has_won_game(play.selected_piece):
                 return play.current_player.name
@@ -79,14 +83,17 @@ def play_game(my_turn, first_draw, is_human, play, c):
                 return "DRAW OR??"
 
             if not first_draw:
-                print("\nWait for opponent to pass a piece")
+                if not auto:
+                    print("\nWait for opponent to pass a piece")
                 play = c.receive()
-                declare_pieces_and_board(play)
+
+                if not auto:
+                    declare_pieces_and_board(play)
             first_draw = False
             my_turn = True
 
         if not first_draw:
-            place(is_human, play)
+            place(is_human, play, auto)
             c.send(play)
 
             if play.game.has_won_game(play.selected_piece):
@@ -94,7 +101,9 @@ def play_game(my_turn, first_draw, is_human, play, c):
             elif not play.game.has_next_play():
                 return "DRAW OR??"
         choose(is_human, play)
-        declare_selected_piece(play)
+
+        if not auto:
+            declare_selected_piece(play)
 
         if first_draw:
             my_turn = False
@@ -103,8 +112,10 @@ def play_game(my_turn, first_draw, is_human, play, c):
         my_turn = False
 
 
-def place(is_human, play):
-    declare_selected_piece(play)
+def place(is_human, play, auto):
+    if not auto:
+        declare_selected_piece(play)
+
     if is_human:
         while True:
             y, x = input("\nEnter 2 ints 0-3 separated by a space: "). \

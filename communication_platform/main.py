@@ -173,7 +173,8 @@ class CommunicationPlatform:
         while True:
             self.new_game([self.user, opp_name])
             peer.send(self.play)
-            win = game.online_vs(self.user, peer, True, self.server, self.play)
+            win = game.online_vs(self.user, peer, True, self.server,
+                                 self.play, self.automated)
 
             if win != "DRAW":
                 break
@@ -201,7 +202,7 @@ class CommunicationPlatform:
 
         while True:
             win = game.online_vs(self.user, peer, True, self.server,
-                                 peer.receive())
+                                 peer.receive(), self.automated)
 
             if win != "DRAW":
                 break
@@ -351,10 +352,11 @@ class CommunicationPlatform:
                     data["players"] = players
                     data["instruction"] = "PLAY"
                     data["play"] = self.play
+                    data["auto"] = self.automated
                     peer.send(data)
                     winner = game.online_vs(players[0], peer,
                                             self.players[players[0]], True,
-                                            self.play)
+                                            self.play, self.automated)
 
                     if winner != "DRAW":
                         break
@@ -412,7 +414,7 @@ class CommunicationPlatform:
                 while True:
                     winner = game.online_vs(players[1], peer,
                                             self.players[players[1]], False,
-                                            data["play"])
+                                            data["play"], data["auto"])
 
                     if winner != "DRAW":
                         break
@@ -550,6 +552,8 @@ class CommunicationPlatform:
             print("Your total is not between 3 and 8. Try again.")
             self.decide_online_tour_players(peer, remote)
         ai_num = self.setup_ai_players(nr_players)
+        peer.send("ACK")
+        peer.receive()
 
         if ai_num > 0 and self.server:
             self.setup_ai_difficulty(ai_num)
