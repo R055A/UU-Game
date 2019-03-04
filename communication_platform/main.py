@@ -46,6 +46,7 @@ class CommunicationPlatform:
         """
         self.graphics.make_header("Welcome to UU-Game!")
         self.user = input("Enter player name: \n")[:NAME_LENGTH].capitalize()
+        self.player = self.user
 
         while True:
             play_choice = None
@@ -138,6 +139,7 @@ class CommunicationPlatform:
                            + self.graphics.set_color("R", "N") + "]no\n[" + self.graphics.set_color("R", "Q") + "]uit ")
             play = Play()
             play.init_players(1)
+
             if choice == "Y" or choice == "y":
                 # Create peer which will act as server
                 c = peer.Peer(True)

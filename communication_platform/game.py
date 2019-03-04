@@ -47,9 +47,9 @@ def online_vs(nick, c, human, server, play):
     """
     t.sleep(2)
     # Decide starting player
+    i = random.randint(0, 1)
     if server:
-        i = random.randint(0, 1)
-        if i == 1:
+        if i == 0:
             starting_player = True
             c.send("WAIT")
             c.receive()
@@ -67,8 +67,14 @@ def online_vs(nick, c, human, server, play):
             c.send("ACK")
 
     if starting_player:
+        play.players[1].name = nick
+        c.send(play)
+        play = c.receive()
         return play_game(True, True, human, play, c)
     else:
+        play = c.receive()
+        play.players[0].name = nick
+        c.send(play)
         return play_game(False, True, human, play, c)
 
 
