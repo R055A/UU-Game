@@ -1,81 +1,68 @@
-import random
-import time as t
 from os import system
 
 
-def local_vs(players, humans):
-    """
-    Simulates a local game.
-    players : array
-        List of strings, which represents the players
-    humans : array
-        List of booleans, representing whether players are human or NPC
-    """
-    if humans[0]:
-        tmp = "tmp"  # Make player 1 NPC
-    elif humans[1]:
-        tmp = "tmp"  # Make player 2 NPC
+# def local_vs(players, humans):
+#     """
+#     Simulates a local game.
+#     players : array
+#         List of strings, which represents the players
+#     humans : array
+#         List of booleans, representing whether players are human or NPC
+#     """
+#     if humans[0]:
+#         tmp = "tmp"  # Make player 1 NPC
+#     elif humans[1]:
+#         tmp = "tmp"  # Make player 2 NPC
+#
+#     print("Simulating local game...")
+#     t.sleep(2)
+#     outcome = random.randrange(2)
+#     if outcome == 1:
+#         return "DRAW"
+#     outcome = random.randrange(2)
+#     if outcome == 1:
+#         return players[0]
+#     else:
+#         return players[1]
 
-    print("Simulating local game...")
-    t.sleep(2)
-    outcome = random.randrange(2)
-    if outcome == 1:
-        return "DRAW"
-    outcome = random.randrange(2)
-    if outcome == 1:
-        return players[0]
-    else:
-        return players[1]
 
-
-def online_vs(nick, c, human, server, play):
+def online_vs(name, peer, user, server, play):
     """
-    Simulates an online game
-    nick : string
-        String representing local player's name
-    c : Peer
-        Class Peer, connection with remote player
-    human : Boolean
-        True = Human player, False = NPC player
-    server : Boolean
-        Whether this player acts as server or not. Needed in order to properly synchronize peers
-
-    Notes
-    -----
-    This is an example of how to use the Peer to communicate. Was used for testing \
-    the communication platform
+    Plays online 1 vs 1 games
+    :param name: players name
+    :param peer:
+    :param user: if player is a user
+    :param server: if player is server host
+    :param play: Play() class instance
     """
-    t.sleep(2)
-    # Decide starting player
-    i = random.randint(0, 1)
+
     if server:
-        if i == 0:
+        if play.current_player == name:
             starting_player = True
-            c.send("WAIT")
-            c.receive()
+            peer.send("WAIT")
+            peer.receive()
         else:
             starting_player = False
-            c.send("START")
-            c.receive()
+            peer.send("START")
+            peer.receive()
     else:
-        ack = c.receive()
+        ack = peer.receive()
         if ack == "WAIT":
             starting_player = False
-            c.send("ACK")
+            peer.send("ACK")
         else:
             starting_player = True
-            c.send("ACK")
+            peer.send("ACK")
 
     if starting_player:
-        play.players[1].name = nick
-        c.send(play)
-        play = c.receive()
-        return play_game(True, True, human, play, c)
+        peer.send(name)
+        play = peer.receive()
+        return play_game(True, True, user, play, peer)
     else:
-        play = c.receive()
-        play.players[0].name = nick
-        c.send(play)
-        return play_game(False, True, human, play, c)
+        opponent_name = peer.receive()
+        play.init_players(1, 0, opponent_name, name)
+        peer.send(play)
+        return play_game(False, True, user, play, peer)
 
 
 def play_game(my_turn, first_draw, is_human, play, c):
@@ -89,6 +76,7 @@ def play_game(my_turn, first_draw, is_human, play, c):
                 print("\nWait for opponent to place the piece")
             play = c.receive()
             declare_pieces_and_board(play)
+
             if play.game.has_won_game(play.selected_piece):
                 return play.current_player.name
             elif not play.game.has_next_play():
@@ -104,13 +92,14 @@ def play_game(my_turn, first_draw, is_human, play, c):
         if not first_draw:
             place(is_human, play)
             c.send(play)
+
             if play.game.has_won_game(play.selected_piece):
                 return play.current_player.name
             elif not play.game.has_next_play():
                 return "DRAW OR??"
-
         choose(is_human, play)
         declare_selected_piece(play)
+
         if first_draw:
             my_turn = False
             first_draw = False

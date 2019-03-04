@@ -4,9 +4,6 @@ from game_platform.piece import Piece as PieceCLI
 from tkinter import Canvas
 
 SIZE = 600  # the height and width of the test GUI canvas
-TRUE_COL = '\033[94m'  # the fourth characteristic for each piece when true
-FALSE_COL = '\033[93m'  # the fourth characteristic for each piece when false
-END_COL = '\033[0m'  # to reset back to normal text colour
 
 
 class TestPiece(TestCase):
@@ -28,16 +25,16 @@ class TestPiece(TestCase):
         Tests the x and y coords for a piece image at initialization
         """
         test = Piece(Canvas(height=SIZE, width=SIZE), '1010')
-        self.assertTrue(test.x_pos == 15 and test.y_pos == 415)
+        self.assertTrue(test.x_pos == 17.5 and test.y_pos == 417.5)
 
         test = Piece(Canvas(height=SIZE, width=SIZE), '0000')
-        self.assertTrue(test.x_pos == 15 and test.y_pos == 15)
+        self.assertTrue(test.x_pos == 17.5 and test.y_pos == 17.5)
 
         test = Piece(Canvas(height=SIZE, width=SIZE), '0101')
-        self.assertTrue(test.x_pos == 115 and test.y_pos == 115)
+        self.assertTrue(test.x_pos == 117.5 and test.y_pos == 117.5)
 
         test = Piece(Canvas(height=SIZE, width=SIZE), '1111')
-        self.assertTrue(test.x_pos == 115 and test.y_pos == 515)
+        self.assertTrue(test.x_pos == 117.5 and test.y_pos == 517.5)
 
     def test_piece_colour(self):
         """
@@ -77,21 +74,38 @@ class TestPiece(TestCase):
         """
         Tests the CLI Piece class
         """
+        pce = PieceCLI('0000')
         test = [PieceCLI(bin(i)[2:].zfill(4)) for i in range(16)]
         self.assertTrue(isinstance(test[0], PieceCLI))
-        self.assertEqual(test[0].get_chars(), FALSE_COL + "abc" + END_COL)
-        self.assertEqual(test[1].get_chars(), TRUE_COL + "abc" + END_COL)
-        self.assertEqual(test[2].get_chars(), FALSE_COL + "abC" + END_COL)
-        self.assertEqual(test[3].get_chars(), TRUE_COL + "abC" + END_COL)
-        self.assertEqual(test[4].get_chars(), FALSE_COL + "aBc" + END_COL)
-        self.assertEqual(test[5].get_chars(), TRUE_COL + "aBc" + END_COL)
-        self.assertEqual(test[6].get_chars(), FALSE_COL + "aBC" + END_COL)
-        self.assertEqual(test[7].get_chars(), TRUE_COL + "aBC" + END_COL)
-        self.assertEqual(test[8].get_chars(), FALSE_COL + "Abc" + END_COL)
-        self.assertEqual(test[9].get_chars(), TRUE_COL + "Abc" + END_COL)
-        self.assertEqual(test[10].get_chars(), FALSE_COL + "AbC" + END_COL)
-        self.assertEqual(test[11].get_chars(), TRUE_COL + "AbC" + END_COL)
-        self.assertEqual(test[12].get_chars(), FALSE_COL + "ABc" + END_COL)
-        self.assertEqual(test[13].get_chars(), TRUE_COL + "ABc" + END_COL)
-        self.assertEqual(test[14].get_chars(), FALSE_COL + "ABC" + END_COL)
-        self.assertEqual(test[15].get_chars(), TRUE_COL + "ABC" + END_COL)
+        self.assertEqual(test[0].get_chars(), pce.FALSE_COL + "abc" +
+                         pce.END_COL)
+        self.assertEqual(test[1].get_chars(), pce.TRUE_COL + "abc" +
+                         pce.END_COL)
+        self.assertEqual(test[2].get_chars(), pce.FALSE_COL + "abC" +
+                         pce.END_COL)
+        self.assertEqual(test[3].get_chars(), pce.TRUE_COL + "abC" +
+                         pce.END_COL)
+        self.assertEqual(test[4].get_chars(), pce.FALSE_COL + "aBc" +
+                         pce.END_COL)
+        self.assertEqual(test[5].get_chars(), pce.TRUE_COL + "aBc" +
+                         pce.END_COL)
+        self.assertEqual(test[6].get_chars(), pce.FALSE_COL + "aBC" +
+                         pce.END_COL)
+        self.assertEqual(test[7].get_chars(), pce.TRUE_COL + "aBC" +
+                         pce.END_COL)
+        self.assertEqual(test[8].get_chars(), pce.FALSE_COL + "Abc" +
+                         pce.END_COL)
+        self.assertEqual(test[9].get_chars(), pce.TRUE_COL + "Abc" +
+                         pce.END_COL)
+        self.assertEqual(test[10].get_chars(), pce.FALSE_COL + "AbC" +
+                         pce.END_COL)
+        self.assertEqual(test[11].get_chars(), pce.TRUE_COL + "AbC" +
+                         pce.END_COL)
+        self.assertEqual(test[12].get_chars(), pce.FALSE_COL + "ABc" +
+                         pce.END_COL)
+        self.assertEqual(test[13].get_chars(), pce.TRUE_COL + "ABc" +
+                         pce.END_COL)
+        self.assertEqual(test[14].get_chars(), pce.FALSE_COL + "ABC" +
+                         pce.END_COL)
+        self.assertEqual(test[15].get_chars(), pce.TRUE_COL + "ABC" +
+                         pce.END_COL)

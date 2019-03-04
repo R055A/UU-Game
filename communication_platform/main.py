@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 
 import communication_platform.game as game
-import communication_platform.peer as peer
+from communication_platform.peer import Peer
 from communication_platform.tournament import Tournament
+from communication_platform.graphics import Graphics
+from game_platform.game_platform import GamePlatform
 from game_engine.play import Play
 from game_engine.player_human import PlayerHuman
-from communication_platform.graphics import Graphics
 from random import choice
 from sys import exit
-
-NAME_LENGTH = 20  # the maximum length of a player's name
 
 
 class CommunicationPlatform:
@@ -20,33 +19,34 @@ class CommunicationPlatform:
     Last-edit-date: 27/02/2019
     """
 
+    NAME_LEN = 20  # the maximum length of a player's name
+
     def __init__(self):
         """
         Class constructor
         """
         self.graphics = Graphics()  # Graphics class instance
         self.play = None  # Play class instance - updated each game play
-        self.player = None  # the name of the user
+        self.game_platform = None  # GamePlatform class instance
         self.ai_names = None  # the names of each available fictional AI player
         self.players = None  # dictionary for the player names and if users
         self.user = None  # the user name
-        self.online = False  # Boolean for in playing multi-player online
         self.difficulty = 2  # the AI game play difficulty; 1 - 3; default 2
-        self.server = False
+        self.server = False  # Boolean for playing multi-player online host
 
     def new_game(self):
         """
-        Creates a new Play instance for each game played by a user
+        Creates new Play and GamePlatform instances for each new game played
         """
         self.play = Play()
+        self.game_platform = GamePlatform(self.play)
 
     def start_comms(self):
         """
         A menu for selecting single or tournament game play or app termination
         """
         self.graphics.make_header("Welcome to UU-Game!")
-        self.user = input("Enter player name: \n")[:NAME_LENGTH].capitalize()
-        self.player = self.user
+        self.user = input("Enter player name: \n")[:self.NAME_LEN].capitalize()
 
         while True:
             play_choice = None
@@ -67,7 +67,7 @@ class CommunicationPlatform:
                     play_choice = self.game_mode_options("single player")
 
                     if play_choice == "S":  # Single player singles game
-                        self.local_vs()
+                        pass  # self.local_vs()
 
                     elif play_choice == "T":  # Single player tournament game
                         play_choice = self.single_player_tournament()
@@ -82,7 +82,7 @@ class CommunicationPlatform:
                     play_choice = self.game_mode_options("multi-player")
 
                     if play_choice == "S":  # Multi-player singles game
-                        self.online_vs()
+                        play_choice = self.online_vs()
 
                     elif play_choice == "T":  # Multi-player tournament game
                         play_choice = self.multiplayer_tournament()
@@ -112,76 +112,83 @@ class CommunicationPlatform:
         return input("Enter your " + self.graphics.
                      set_color("G", "choice: \n")).upper()
 
-    def local_vs(self):
-        """
-        Sig:    None
-        Pre:    None
-        Post:   A game played between between two players
-        """
-        players, humans = self.get_local_names()
-        while True:
-            result = game.local_vs(players, humans)
-            if result != "DRAW":
-                break
-            else:
-                g.make_header("Game draw! Replay game")
-        self.graphics.make_header(result + " has won!")
+    # def local_vs(self):
+    #     """
+    #     Sig:    None
+    #     Pre:    None
+    #     Post:   A game played between between two players
+    #     """
+    #     #players, humans = self.get_local_names()
+    #     while True:
+    #         result = game.local_vs(players, humans)
+    #         if result != "DRAW":
+    #             break
+    #         else:
+    #             g.make_header("Game draw! Replay game")
+    #     self.graphics.make_header(result + " has won!")
 
     def online_vs(self):
         """
-        Sig:    None
-        Pre:    None
-        Post:   A game played between against a remote player
+        A single player game played between against a remote player
         """
         while True:
-            name, human = self.get_online_name()
-            choice = input("Are you the first to start the game? [" + self.graphics.set_color("G", "Y") + "]es [" \
-                           + self.graphics.set_color("R", "N") + "]no\n[" + self.graphics.set_color("R", "Q") + "]uit ")
-            play = Play()
-            play.init_players(1)
+            play_choice = self.get_multiplayer_game_options()
 
-            if choice == "Y" or choice == "y":
-                # Create peer which will act as server
-                c = peer.Peer(True)
-                c.accept_client()
-                while True:
-                    # Name, peer, Human, Server
-                    win = game.online_vs(name, c, human, True, play)
-                    if win != "DRAW":
-                        break
-                    else:
-                        self.graphics.make_header("Game draw! Replay game")
-                if win == name:
-                    self.graphics.make_header("You've won!")
-                else:
-                    self.graphics.make_header("You've lost!")
-                c.teardown()
+            if play_choice == "S":
+                self.server_side_singles()
+
+            elif play_choice == "J":
+                self.client_side_singles()
+
+            elif play_choice == "Q":
+                return "Q"
+
+            if play_choice in ["S", "J", "R"]:
+                return "R"
+
+    def server_side_singles(self):
+        """
+        The host side of an online singles game
+        """
+        self.server = True
+        self.new_game()
+        peer = Peer(self.server)  # Create peer which will act as server
+        peer.accept_client()
+        peer.send(self.play)
+
+        while True:
+            win = game.online_vs(self.user, peer, True, self.server, self.play)
+
+            if win != "DRAW":
                 break
-
-            elif choice == "N" or choice == "n":
-                # Create peer which will act as client
-                c = peer.Peer(False)
-                c.connect_to_server()
-                while True:
-                    # Name, peer, Human, Server
-                    win = game.online_vs(name, c, human, False, play)
-                    if win != "DRAW":
-                        break
-                    else:
-                        self.graphics.make_header("Game draw! Replay game")
-                # Name, peer, Human = True, Server = False
-                if win == name:
-                    self.graphics.make_header("You've won!")
-                else:
-                    self.graphics.make_header("You've lost!")
-                c.teardown()
-                break
-
-            elif choice == "Q" or choice == "q":
-                break
-
             else:
-                print("Invalid choice, try again")
+                self.graphics.make_header("Game draw! Replay game")
+        if win == self.user:
+            self.graphics.make_header("You've won!")
+        else:
+            self.graphics.make_header("You've lost!")
+        peer.teardown()
+
+    def client_side_singles(self):
+        """
+        The client side of an online singles game
+        """
+        peer = Peer(self.server)  # Create peer which will act as client
+        peer.connect_to_server()
+
+        while True:
+            win = game.online_vs(self.user, peer, True, self.server,
+                                 peer.receive())
+
+            if win != "DRAW":
+                break
+            else:
+                self.graphics.make_header("Game draw! Replay game")
+        if win == self.user:
+            self.graphics.make_header("You've won!")
+        else:
+            self.graphics.make_header("You've lost!")
+        peer.teardown()
 
     def setup_tournament_game(self, tournament):
         """
@@ -240,41 +247,40 @@ class CommunicationPlatform:
         Plays manual game between either player vs player or player vs AI game
         :return: the winner's name or None for a draw
         """
-        self.declare_available_pieces()  # prints game board status
-        self.declare_board_status()  # prints available pieces status
+        while True:
+            self.declare_available_pieces()  # prints game board status
+            self.declare_board_status()  # prints available pieces status
 
-        if isinstance(self.play.current_player, PlayerHuman):
-            while True:
-                pce = input("\nEnter number 0-15 of piece selection: ")
+            if isinstance(self.play.current_player, PlayerHuman):
+                while True:
+                    pce = input("\nEnter number 0-15 of piece selection: ")
 
-                if self.play.play_selection(pce):
-                    break
-        else:
-            self.play.play_selection()
-        self.declare_selected_piece()  # prints the selected piece
-        self.declare_current_player()  # prints the current player turn
-
-        if isinstance(self.play.current_player, PlayerHuman):
-            while True:
-                try:
-                    y, x = input("\nEnter 2 ints 0-3 separated by a space: ").\
-                        split()
-
-                    if self.play.play_placement(y, x):
+                    if self.play.play_selection(pce):
                         break
-                except:
-                    continue
-        else:
-            self.play.play_placement()
+            else:
+                self.play.play_selection()
+            self.declare_selected_piece()  # prints the selected piece
+            self.declare_current_player()  # prints the current player turn
 
-        if self.play.game.has_won_game(self.play.selected_piece):
-            self.declare_board_status()  # prints final status of board
-            return self.play.current_player.name
-        elif not self.play.game.has_next_play():  # checks if turns remaining
-            self.declare_board_status()  # prints final status of board
-            return None
-        else:
-            self.play_manual()  # plays the next turn
+            if isinstance(self.play.current_player, PlayerHuman):
+                while True:
+                    try:
+                        y, x = input("\nEnter 2 ints 0-3 separated by a space: ").\
+                            split()
+
+                        if self.play.play_placement(y, x):
+                            break
+                    except:
+                        continue
+            else:
+                self.play.play_placement()
+
+            if self.play.game.has_won_game(self.play.selected_piece):
+                self.declare_board_status()  # prints final status of board
+                return self.play.current_player.name
+            elif not self.play.game.has_next_play():  # checks if turns remaining
+                self.declare_board_status()  # prints final status of board
+                return None
 
     def single_player_tournament(self):
         """
@@ -282,8 +288,7 @@ class CommunicationPlatform:
         :return: the "Return" play choice for returning to the main menu option
         """
         self.graphics.make_header("Single Player Tournament!")
-        player_num, ai_num = self.setup_tournament_players()
-        self.setup_player_names(player_num, ai_num)
+        self.setup_tournament_players()
         tournament, winner = Tournament(list(self.players.keys())), None
 
         while True:
@@ -307,7 +312,8 @@ class CommunicationPlatform:
                     if mode == 3:
                         if self.play.play_auto():
                             break
-                    elif self.play_manual():
+                    elif self.play_manual() in [tournament.opponents[0],
+                                                tournament.opponents[1]]:
                         break
                     else:
                         self.graphics.make_header("Draw game! Replaying game")
@@ -318,6 +324,21 @@ class CommunicationPlatform:
                                   " has won the tournament!")
         return "R"
 
+    def get_multiplayer_game_options(self):
+        """
+        Prompts user with multiplayer options for singles or tournament game
+        :return: the chosen option by the user
+        """
+        print("Choose from one of the following " + self.graphics.
+              set_color("Y", "multi-player") + " options:\n    [" +
+              self.graphics.set_color("G", "S") + "] - Start a new game\n"
+              "    [" + self.graphics.set_color("G", "J") + "] - Join "
+              "existing game\n    [" + self.graphics.set_color("G", "R") +
+              "] - Return to main menu\n    [" + self.graphics.
+              set_color("R", "Q") + "] - Quit")
+        return input("Enter your " + self.graphics.
+                     set_color("G", "choice: \n")).upper()
+
     def multiplayer_tournament(self):
         """
         A multi-player tournament played remotely between players
@@ -326,21 +347,13 @@ class CommunicationPlatform:
         self.graphics.make_header("Tournament play!")
 
         while True:
-            print("Choose from one of the following " + self.graphics.
-                  set_color("Y", "multi-player") + " options:\n    [" +
-                  self.graphics.set_color("G", "S") + "] - Start a new game\n"
-                  "    [" + self.graphics.set_color("G", "J") + "] - Join "
-                  "existing game\n    [" + self.graphics.set_color("G", "R") +
-                  "] - Return to main menu\n    [" + self.graphics.
-                  set_color("R", "Q") + "] - Quit")
-            play_choice = input("Enter your " + self.graphics.
-                                set_color("G", "choice: \n")).upper()
+            play_choice = self.get_multiplayer_game_options()
 
             if play_choice == "S":
-                self.server_side_tournament()  # yet to integrate/refactor
+                self.server_side_tournament()
 
             elif play_choice == "J":
-                self.client_side_tournament()  # yet to integrate/refactor
+                self.client_side_tournament()
 
             elif play_choice == "Q":
                 return "Q"
@@ -350,39 +363,32 @@ class CommunicationPlatform:
 
     def server_side_tournament(self):
         """
-        Sig:    None
-        Pre:    None
-        Post:   A tournament played between local, and remote players. And termination of program
-
-        Notes
-        -----
-        If multiple messages are sent in a row without being received, they will be concatenated in the pipeline \
-        and the receiving end will be unable to process the message. Therefor it is sometime needed to send \
-        junk messages to sync the clients
+        The host side of an online tournament game
+        If multiple messages are sent in a row without being received,
+        they will be concatenated in the pipeline and the receiving end
+        will be unable to process the message. Therefor it is sometime
+        needed to send junk messages to sync the clients.
         """
-        # Setup
-        self.server = True
-        c = peer.Peer(True)
-        c.accept_client()
-        self.decide_online_tour_players(c, False)
+        self.server = True  # Setup
+        peer = Peer(self.server)
+        peer.accept_client()
+        self.decide_online_tour_players(peer, False)
         print("Waiting for remote list of players...")
-        # Sync player lists
-        opp_players = c.receive()
-        c.send(self.players)
+        opp_players = peer.receive()  # Sync player lists
+        peer.send(self.players)
 
         for i in opp_players.keys():
             if i in self.players.keys():
                 self.players[i + " (opponent)"] = opp_players[i]
             else:
                 self.players[i] = opp_players[i]
-        c.receive()  # Block needed here to ensure clients are synced
-        # Create tournament and setup instructions
-        t = Tournament(list(self.players.keys()))
+        peer.receive()  # Block needed here to ensure clients are synced
+        t = Tournament(list(self.players.keys()))  # Create tournament
         data = dict()  # Dictionary containing various data needed by remote peer
         data["instruction"] = None  # Instructions in the form of strings
         data["players"] = None  # players to play next game
         data["tour"] = t.get_scoreboard()  # String representing current tournament bracket
-        c.send(data)  # Send initial tournament bracket
+        peer.send(data)  # Send initial tournament bracket
         winner = ""
 
         while True:
@@ -394,28 +400,27 @@ class CommunicationPlatform:
             mode = self.setup_tournament_game(t)
             winners = []
 
-            # Completed tournament
-            if end == 1:
+            if end == 1:  # Completed tournament
                 data["instruction"] = "COMPLETE"
                 data["player"] = winner
-                c.send(data)
+                peer.send(data)
                 self.graphics.make_header(winner + " Has won the tournament!")
-                c.teardown()
+                peer.teardown()
                 break
             else:
-                # Setup game
                 self.graphics.make_header("Up next: Local " + players[0] +
                                           " vs remote " + players[1])
-                self.new_game()
+                self.new_game()  # Setup game
                 self.play.init_players(mode, self.difficulty, t.opponents[0],
                                        t.opponents[1])
                 data["players"] = players
                 data["instruction"] = "PLAY"
                 data["play"] = self.play
-                c.send(data)
+                peer.send(data)
 
                 while True:
-                    winner = game.online_vs(players[0], c, self.players[players[0]], True, self.play)
+                    winner = game.online_vs(players[0], peer, self.players[players[0]], True, self.play)
+
                     if winner != "DRAW":
                         break
                     else:
@@ -432,41 +437,38 @@ class CommunicationPlatform:
 
     def client_side_tournament(self):
         """
-        Sig:    None
-        Pre:    None
-        Post:   A tournament played between local, and remote players. And termination of program
+        The client side of an online tournament game.
         """
-        # Setup
         self.server = False
-        c = peer.Peer(False)
-        c.connect_to_server()
-        self.decide_online_tour_players(c, True)
-        # Sync player lists
-        c.send(self.players)
-        opp_players = c.receive()
+        peer = Peer(False)  # Setup
+        peer.connect_to_server()
+        self.decide_online_tour_players(peer, True)
+        peer.send(self.players)  # Sync player lists
+        opp_players = peer.receive()
 
         for i in opp_players.keys():
             if i in self.players.keys():
                 self.players[i + " (opponent)"] = opp_players[i]
             else:
                 self.players[i] = opp_players[i]
-        c.send("ACK")  # Sync with remote
-        data = c.receive()  # Get initial tournament bracket
+        peer.send("ACK")  # Sync with remote
+        data = peer.receive()  # Get initial tournament bracket
 
         while True:
             self.graphics.make_header("Tournament Standings")
             print(data["tour"])
 
-            # End tournament
-            if data["instruction"] == "COMPLETE":
+            if data["instruction"] == "COMPLETE":   # End tournament
                 self.graphics.make_header(data["player"] + " has won the tournament!")
-                c.teardown()
+                peer.teardown()
                 break
             elif data["instruction"] == "PLAY":
                 players = data["players"]
                 self.graphics.make_header("Up next: (local) " + players[1] + " vs (remote) " + players[0])
+
                 while True:
-                    winner = game.online_vs(players[1], c, self.players[players[1]], False, data["play"])
+                    winner = game.online_vs(players[1], peer, self.players[players[1]], False, data["play"])
+
                     if winner != "DRAW":
                         break
                     else:
@@ -476,46 +478,46 @@ class CommunicationPlatform:
                     self.graphics.make_header(winner + " has advanced to the next round!")
                 else:  # If remote player won
                     self.graphics.make_header(players[0] + " has advanced to the next round!")
-            data = c.receive()
+            data = peer.receive()
 
-    def get_local_names(self):
-        """
-        Sig:    None
-        Pre:    None
-        Post:   List of names, and list of booleans corresponding to whether player is human or NPC
-        """
-        players = [self.player]
-        humans = []
-
-        for i in range(2):
-            if i:
-                players.append(input("Name player " + str(i + 1) + ": "))
-            while True:
-                human = input("Is this a human player? [" + self.graphics.set_color("G", "Y") + "/" + self.graphics.set_color("R", "N") + "]")
-                if human == "Y" or human == "y":
-                    human = True
-                    break
-                if human == "n" or human == "n":
-                    human = False
-                    break
-            humans.append(human)
-        return players, humans
-
-    def get_online_name(self):
-        """
-        Sig:    None
-        Pre:    None
-        Post:   Name, and boolean corresponding to whether player is human or NPC
-        """
-        while True:
-            human = input("Are you a human player? [" + self.graphics.set_color("G", "Y") + "/" + self.graphics.set_color("R", "N") + "]")
-            if human == "Y" or human == "y":
-                human = True
-                break
-            if human == "n" or human == "n":
-                human = False
-                break
-        return self.player, human
+    # def get_local_names(self):
+    #     """
+    #     Sig:    None
+    #     Pre:    None
+    #     Post:   List of names, and list of booleans corresponding to whether player is human or NPC
+    #     """
+    #     players = [self.player]
+    #     humans = []
+    #
+    #     for i in range(2):
+    #         if i:
+    #             players.append(input("Name player " + str(i + 1) + ": "))
+    #         while True:
+    #             human = input("Is this a human player? [" + self.graphics.set_color("G", "Y") + "/" + self.graphics.set_color("R", "N") + "]")
+    #             if human == "Y" or human == "y":
+    #                 human = True
+    #                 break
+    #             if human == "n" or human == "n":
+    #                 human = False
+    #                 break
+    #         humans.append(human)
+    #     return players, humans
+    #
+    # def get_online_name(self):
+    #     """
+    #     Sig:    None
+    #     Pre:    None
+    #     Post:   Name, and boolean corresponding to whether player is human or NPC
+    #     """
+    #     while True:
+    #         human = input("Are you a human player? [" + self.graphics.set_color("G", "Y") + "/" + self.graphics.set_color("R", "N") + "]")
+    #         if human == "Y" or human == "y":
+    #             human = True
+    #             break
+    #         if human == "n" or human == "n":
+    #             human = False
+    #             break
+    #     return self.player, human
 
     def choose_ai_difficulty(self):
         """
@@ -531,33 +533,12 @@ class CommunicationPlatform:
         return input("Enter your " + self.graphics.
                      set_color("G", "choice: \n")).upper()
 
-    def setup_tournament_players(self):
+    def setup_ai_difficulty(self, ai_num):
         """
-        Where the number of players are chosen and player names are entered
-        :return: the user and AI player numbers
+        User chooses an AI difficulty between 1 and 3, or 0 default
+        :param ai_num: the chosen number of AI players
         """
-        while True:  # Decide number of players
-            player_num = input("Choose the number of tournament players? [" +
-                               self.graphics.set_color("G", "3 - 8") + "]\n")
-
-            try:
-                if type(int(player_num)) == int and 2 < int(player_num) < 9:
-                    break
-            except:
-                continue
-
-        while True:  # Decide number of AI players
-            ai_num = input("Choose the number of AI players? [" + self.
-                           graphics.set_color("G", "0 - " + player_num) +
-                           "]\n")
-
-            try:
-                if 0 <= int(ai_num) <= int(player_num):
-                    break
-            except:
-                continue
-
-        if int(ai_num) > 0:
+        if ai_num > 0:
             while True:
                 self.difficulty = self.choose_ai_difficulty()
 
@@ -569,7 +550,40 @@ class CommunicationPlatform:
                     continue
         else:
             self.difficulty = 0
-        return int(player_num), int(ai_num)
+
+    def setup_ai_players(self, player_num):
+        """
+        Determine names and human/computer controlled
+        :param player_num: the number of players in the game
+        :return: the number of ai players
+        """
+        while True:  # Decide number of AI players
+            ai_num = input("Choose the number of AI players? [" + self.
+                           graphics.set_color("G", "0 - " + str(player_num)) +
+                           "]\n")
+
+            try:
+                if 0 <= int(ai_num) <= player_num:
+                    return int(ai_num)
+            except:
+                continue
+
+    def setup_tournament_players(self):
+        """
+        Where the number of players are chosen for single player tournament
+        """
+        while True:  # Decide number of players
+            player_num = input("Choose the number of tournament players? [" +
+                               self.graphics.set_color("G", "3 - 8") + "]\n")
+
+            try:
+                if 2 < int(player_num) < 9:
+                    break
+            except:
+                continue
+        ai_num = self.setup_ai_players(int(player_num))
+        self.setup_ai_difficulty(ai_num)
+        self.setup_player_names(player_num, ai_num)
 
     def setup_player_names(self, user_num, ai_num=0):
         """
@@ -589,11 +603,11 @@ class CommunicationPlatform:
 
         for i in range(2, int(user_num) - int(ai_num) + 1):
             name = input("Enter a unique player " + str(i) +
-                         " name:\n")[:NAME_LENGTH].capitalize()
+                         " name:\n")[:self.NAME_LEN].capitalize()
 
             while name in self.players.keys():
                 name = input("Enter a unique player " + str(i) +
-                             " name:\n")[:NAME_LENGTH].capitalize()
+                             " name:\n")[:self.NAME_LEN].capitalize()
             self.players[name] = True
         self.players.update(dict({self.ai_names.pop(self.ai_names.index(choice(
             self.ai_names))): False for j in range(int(ai_num))}.items()))
@@ -601,45 +615,37 @@ class CommunicationPlatform:
         if user_num == ai_num:
             self.players.pop(self.user)
 
-    def decide_online_tour_players(self, c, remote):
+    def decide_online_tour_players(self, peer, remote):
         """
-        Sig:    Peer ==> array, dictionary
-        Pre:    Peer is connected to another peer
-        Post:   Array containing list of players on this side of connection, dictionary containing whether \
-                players are human or computer controlled
+        Determines the number of players between host and client users
+        :param peer: peer is connected to another peer
+        :param remote: remote connection
         """
-        # Determine number of players
         while True:
             nr_players = input("How many players on this computer? [" +
-                               self.graphics.set_color("G", "1 - 8") + "]\n")
+                               self.graphics.set_color("G", "1 - 7") + "]\n")
             try:
-                if 1 <= int(nr_players) <= 8:
+                if 1 <= int(nr_players) <= 7:
                     nr_players = int(nr_players)
                     break
             except:
                 continue
         # Send number of players and ensure remote and local don't exceed 8
-        c.send(nr_players)
+        peer.send(nr_players)
         print("Confirming number of players...")
-        opp_players = c.receive()
+        opp_players = peer.receive()
 
         if not 3 <= (opp_players + nr_players) <= 8:
             print("Your total is not between 3 and 8. Try again.")
-            self.decide_online_tour_players(c, remote)
-
-        # Determine names and human/computer controlled
-        while True:
-            nr_ai = input("How many AI players? [" + self.graphics.
-                          set_color("G", "0-" + str(nr_players)) + "]\n")
-
-            try:
-                if 0 <= int(nr_ai) <= (opp_players + nr_players):
-                    nr_ai = int(nr_ai)
-                    break
-            except:
-                continue
-        self.setup_player_names(nr_players, nr_ai)
+            self.decide_online_tour_players(peer, remote)
+        ai_num = self.setup_ai_players(nr_players)
+        if ai_num > 0 and self.server:
+            self.setup_ai_difficulty(ai_num)
+        self.setup_player_names(nr_players, ai_num)
 
     def close_comms(self):
+        """
+        Prints a thank you message to the user and closes the program
+        """
         self.graphics.make_header("Thanks for playing!")
         exit(1)
