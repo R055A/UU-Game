@@ -1,14 +1,5 @@
 #!/usr/bin/env python3
 
-PURPLE = '\033[95m'
-BLUE = '\033[94m'
-GREEN = '\033[92m'
-YELLOW = '\033[93m'
-RED = '\033[31m'
-END_TC = '\033[0m'
-BOLD = '\033[1m'
-UNDERLINE = '\033[4m'
-
 
 class Graphics:
     """
@@ -16,6 +7,15 @@ class Graphics:
     Refactoring/integration editor(s): Adam Ross
     Last-edit-date: 24/02/2019
     """
+
+    PURPLE = '\033[95m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[31m'
+    END_TC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
     def __init__(self):
         """
@@ -63,12 +63,12 @@ class Graphics:
             self.text = text
 
         if colour == "G":
-            return GREEN + self.text + END_TC
+            return self.GREEN + self.text + self.END_TC
         elif colour == "Y":
-            return YELLOW + self.text + END_TC
+            return self.YELLOW + self.text + self.END_TC
         elif colour == "P":
-            return PURPLE + self.text + END_TC
+            return self.PURPLE + self.text + self.END_TC
         elif colour == "R":
-            return RED + self.text + END_TC
+            return self.RED + self.text + self.END_TC
         else:
             return self.text

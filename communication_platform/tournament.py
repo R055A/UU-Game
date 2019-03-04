@@ -632,7 +632,3 @@ def update_opponents(winner_list, waiting_players):
             winner_list_copy.remove(player2)
             opponents_list = make_opponents(winner_list_copy)
     return opponents_list
-
-
-if __name__ == "__main__":
-    Tournament(["Pettersson", "Undran", "Ola", "Mr.X", "Bumbi-Bu", "Pelle", "Gerald"])
