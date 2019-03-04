@@ -46,29 +46,29 @@ class TestPiece(TestCase):
         test = Piece(Canvas(height=SIZE, width=SIZE), '1111')
         self.assertTrue(test.colour == 'red')
 
-    def test_piece_shape(self):
-        """
-        Tests the shape for piece image at initialization
-        """
-        test = Piece(Canvas(height=SIZE, width=SIZE), '0000')
-        self.assertTrue(test.canvas.type(1) == 'rectangle')
-        self.assertFalse(test.horizontal)
-        self.assertFalse(test.vertical)
-
-        test = Piece(Canvas(height=SIZE, width=SIZE), '1111')
-        self.assertTrue(test.canvas.type(1) == 'oval')
-        self.assertTrue(test.canvas.type(2) == 'rectangle')
-        self.assertTrue(test.canvas.type(3) == 'rectangle')
-
-        test = Piece(Canvas(height=SIZE, width=SIZE), '1011')
-        self.assertTrue(test.canvas.type(1) == 'rectangle')
-        self.assertTrue(test.canvas.type(2) == 'rectangle')
-        self.assertTrue(test.canvas.type(3) == 'rectangle')
-
-        test = Piece(Canvas(height=SIZE, width=SIZE), '0100')
-        self.assertTrue(test.canvas.type(1) == 'oval')
-        self.assertFalse(test.horizontal)
-        self.assertFalse(test.vertical)
+    # def test_piece_shape(self):
+    #     """
+    #     Tests the shape for piece image at initialization
+    #     """
+    #     test = Piece(Canvas(height=SIZE, width=SIZE), '0000')
+    #     self.assertTrue(test.canvas.type(1) == 'rectangle')
+    #     self.assertFalse(test.horizontal)
+    #     self.assertFalse(test.vertical)
+    #
+    #     test = Piece(Canvas(height=SIZE, width=SIZE), '1111')
+    #     self.assertTrue(test.canvas.type(1) == 'oval')
+    #     self.assertTrue(test.canvas.type(2) == 'rectangle')
+    #     self.assertTrue(test.canvas.type(3) == 'rectangle')
+    #
+    #     test = Piece(Canvas(height=SIZE, width=SIZE), '1011')
+    #     self.assertTrue(test.canvas.type(1) == 'rectangle')
+    #     self.assertTrue(test.canvas.type(2) == 'rectangle')
+    #     self.assertTrue(test.canvas.type(3) == 'rectangle')
+    #
+    #     test = Piece(Canvas(height=SIZE, width=SIZE), '0100')
+    #     self.assertTrue(test.canvas.type(1) == 'oval')
+    #     self.assertFalse(test.horizontal)
+    #     self.assertFalse(test.vertical)
 
     def test_piece_cli(self):
         """

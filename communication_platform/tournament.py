@@ -75,8 +75,6 @@ class Tournament:
         self.start_player_list = player_list.copy()
         player_list_copy = player_list.copy()
 
-        print(player_list_copy)
-
         if (len(player_list) % 2) == 0 or len(player_list) == 3:
             print("first")
             self.opponents_queue = make_opponents(player_list_copy)
