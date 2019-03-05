@@ -280,8 +280,6 @@ class CommunicationPlatform:
                 self.graphics.make_header("Up next: " + tour.opponents[0]
                                           + " vs " + tour.opponents[1])
 
-                print("Tour OPPONENTS: ")
-                print(tour.opponents[0])
                 while True:
                     self.new_game([tour.opponents[0], tour.opponents[1]])
 
