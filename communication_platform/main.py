@@ -18,7 +18,7 @@ class CommunicationPlatform:
     Last-edit-date: 05/03/2019
     """
 
-    NAME_LEN = 20  # the maximum length of a player's name
+    NAME_LEN = 37  # the maximum length of a player's name
 
     def __init__(self):
         """
