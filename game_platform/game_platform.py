@@ -5,7 +5,7 @@ class GamePlatform:
     """
     The GamePlatform class
     Author(s): Adam Ross
-    Last-edit-date: 28/02/2019
+    Last-edit-date: 05/03/2019
     """
 
     def __init__(self, play):
@@ -14,29 +14,45 @@ class GamePlatform:
         :param play: instance of the Play() class
         """
         self.play = play
-        self.piece_pool = self.update_piece_pool()
-        self.board = self.update_board()
-        self.add_selected_piece()
+        self.piece_pool = None
+        self.selected_piece = None
 
-    def update_piece_pool(self):
+    def display_game_status(self):
         """
-        Updates the piece pool from the Game class instance
-        :return: dictionary containing pieces in piece pool with imagery
+        Displays the current game status of the players, board and piece pool
         """
-        return dict({i: Piece(self.play.game.pieces[i]) for i in self.play.
-                    game.pieces}.items())
+        self.display_piece_pool()
 
-    def update_board(self):
+    def display_piece_pool(self):
         """
-        Updates the board from the Game class instance
-        :return: list of lists with played pieces, or None for items
+        Displays the piece pool and selected piece in the game status display
         """
-        return self.play.game.board
+        self.piece_pool = dict({i: Piece(self.play.game.pieces[i]) for i in
+                                self.play.game.pieces}.items())
+        dsp = "#----------------------------------------------------------" \
+              "-----------------------#\n#|"
 
-    def add_selected_piece(self):
-        """
-        Checks if the selected piece is not on board and adds to piece pool
-        """
-        if len([r for r in self.board if self.play.selected_piece in r]) == 0:
-            self.piece_pool[str(int(self.play.selected_piece, 2))] = \
-                Piece(self.play.selected_piece)
+        for i in range(8):
+            dsp += "  " + str(i + 1) + ": " + self.piece_pool[str(i)].\
+                get_chars() + " |" if str(i) in self.piece_pool.keys() \
+                else "  " + str(i + 1) + ":     " + "|"
+        dsp += "#\n#|  9: " + self.piece_pool['8'].get_chars() +\
+               " |" if '8' in self.piece_pool.keys() else "\n|  9:    "
+
+        for i in range(9, 16):
+            dsp += " " + str(i + 1) + ": " + self.piece_pool[str(i)].\
+                get_chars() + " |" if str(i) in self.piece_pool.keys() \
+                else "  " + str(i + 1) + ":    " + "|"
+        dsp += "#\n#------------------------------------------------------" \
+               "---------------------------"
+
+        if self.play.selected_piece and \
+                len([r for r in self.play.game.board if
+                     self.play.selected_piece in r]) == 0:
+            self.selected_piece = Piece(self.play.selected_piece).get_chars()
+            dsp += "#\n#|                              Selected Piece: " + \
+                   self.selected_piece + "                              |#"
+            dsp += "\n#---------------------------------------------------" \
+                   "------------------------------"
+        print(dsp + "#\n##################################################"
+                    "#################################")
