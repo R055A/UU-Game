@@ -37,12 +37,12 @@ class GamePlatform:
                 get_chars() + " |" if str(i) in self.piece_pool.keys() \
                 else "  " + str(i + 1) + ":     " + "|"
         dsp += "#\n#|  9: " + self.piece_pool['8'].get_chars() +\
-               " |" if '8' in self.piece_pool.keys() else "\n|  9:    "
+               " |" if '8' in self.piece_pool.keys() else "#\n#|  9:     |"
 
         for i in range(9, 16):
             dsp += " " + str(i + 1) + ": " + self.piece_pool[str(i)].\
                 get_chars() + " |" if str(i) in self.piece_pool.keys() \
-                else "  " + str(i + 1) + ":    " + "|"
+                else " " + str(i + 1) + ":     " + "|"
         dsp += "#\n#------------------------------------------------------" \
                "---------------------------"
 

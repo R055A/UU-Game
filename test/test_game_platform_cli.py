@@ -92,3 +92,33 @@ class TestGamePlatformCLI(TestCase):
         test.play.game.board[0][0] = '0'
         test.play.game.board[2][2] = test.play.selected_piece
         test.display_piece_pool()
+
+    def test_display_game_pieces_at_fourth_selection(self):
+        """
+        Tests displaying of piece pool after fourth piece selected
+        """
+        test = GamePlatform(Play())
+        test.play.game.pieces.pop('0')
+        test.play.game.pieces.pop('11')
+        test.play.game.pieces.pop('3')
+        test.play.game.pieces.pop('8')
+        test.play.selected_piece = '1000'
+        test.play.game.board[1][3] = '1011'
+        test.play.game.board[0][0] = '0'
+        test.display_piece_pool()
+
+    def test_display_game_pieces_at_fourth_placement(self):
+        """
+        Tests displaying of pieces after fourth selected piece placed on board
+        """
+        test = GamePlatform(Play())
+        test.play.game.pieces.pop('0')
+        test.play.game.pieces.pop('11')
+        test.play.game.pieces.pop('3')
+        test.play.game.pieces.pop('8')
+        test.play.selected_piece = '1000'
+        test.play.game.board[1][3] = '1011'
+        test.play.game.board[0][0] = '0'
+        test.play.game.board[2][2] = '0011'
+        test.play.game.board[0][1] = test.play.selected_piece
+        test.display_piece_pool()
