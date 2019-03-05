@@ -41,13 +41,15 @@ class GamePlatform:
         Displays the players names, if AI with difficulty, and players turn
         """
         self.players = self.play.players
+        player_one = self.graphics.set_color("P", self.players[0].name)
+        player_two = self.graphics.set_color("P", self.players[1].name)
         dsp = "##################################################" \
               "#################################\n#|"
-        dsp += " " * ((39 - len(self.players[0].name)) // 2) + self.players[0].\
-            name + " " * ((39 - len(self.players[0].name)) // 2)
+        dsp += " " * ((39 - len(self.players[0].name)) // 2) + player_one +\
+               " " * ((39 - len(self.players[0].name)) // 2)
         dsp += "|" if len(self.players[0].name) % 2 == 1 else " |"
-        dsp += " " * ((39 - len(self.players[1].name)) // 2) + self.players[1].\
-            name + " " * ((39 - len(self.players[1].name)) // 2)
+        dsp += " " * ((39 - len(self.players[1].name)) // 2) + player_two +\
+               " " * ((39 - len(self.players[1].name)) // 2)
         dsp += "|#\n" if len(self.players[0].name) % 2 == 1 else " |#\n"
         dsp += "#----------------------------------------------------------" \
                "-----------------------#\n#|"

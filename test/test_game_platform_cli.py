@@ -122,3 +122,76 @@ class TestGamePlatformCLI(TestCase):
         test.play.game.board[2][2] = '0011'
         test.play.game.board[0][1] = test.play.selected_piece
         test.display_piece_pool()
+
+    def test_game_header_easy_ai_vs_ai(self):
+        """
+        Tests displaying of game header when easy AI vs AI
+        """
+        test = GamePlatform(Play())
+        test.play.init_players(3, 1)
+        test.display_game_header()
+
+    def test_game_header_medium_ai_vs_ai(self):
+        """
+        Tests displaying of game header when medium AI vs AI
+        """
+        test = GamePlatform(Play())
+        test.play.init_players(3, 2)
+        test.display_game_header()
+
+    def test_game_header_hard_ai_vs_ai(self):
+        """
+        Tests displaying of game header when hard AI vs AI
+        """
+        test = GamePlatform(Play())
+        test.play.init_players(3, 3)
+        test.display_game_header()
+
+    def test_game_header_user_vs_easy_ai(self):
+        """
+        Tests displaying of game header when easy AI vs user
+        """
+        test = GamePlatform(Play())
+        test.play.init_players(2, 1)
+        test.display_game_header()
+
+    def test_game_header_user_vs_medium_ai(self):
+        """
+        Tests displaying of game header when medium AI vs user
+        """
+        test = GamePlatform(Play())
+        test.play.init_players(2, 2)
+        test.display_game_header()
+
+    def test_game_header_user_vs_hard_ai(self):
+        """
+        Tests displaying of game header when hard AI vs user
+        """
+        test = GamePlatform(Play())
+        test.play.init_players(2, 3)
+        test.display_game_header()
+
+    def test_game_header_user_vs_user_selecting(self):
+        """
+        Tests displaying of game header when user vs user and selecting a piece
+        """
+        test = GamePlatform(Play())
+        test.play.init_players(1, 0)
+        test.display_game_header()
+
+    def test_game_header_user_vs_user_placing(self):
+        """
+        Tests displaying of game header when user vs user and placing a piece
+        """
+        test = GamePlatform(Play())
+        test.play.init_players(1, 0)
+        test.play.selected_piece = '0000'
+        test.display_game_header()
+
+    def test_game_display_at_user_vs_user_init(self):
+        """
+        Tests the game status display at game initialization for user vs user
+        """
+        test = GamePlatform(Play())
+        test.play.init_players(2, 2)
+        test.display_game_status()
