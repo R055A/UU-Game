@@ -78,7 +78,7 @@ class CommunicationPlatform:
                     play_choice = self.game_mode_options("single player")
 
                     if play_choice == "S":  # Single player singles game
-                        pass  # self.local_vs()
+                        self.single_player_game()  # self.local_vs()
 
                     elif play_choice == "T":  # Single player tournament game
                         play_choice = self.single_player_tournament()
@@ -210,6 +210,45 @@ class CommunicationPlatform:
     #             g.make_header("Game draw! Replay game")
     #     self.graphics.make_header(result + " has won!")
 
+    def single_player_game(self):
+        self.graphics.make_header("Single Player Match")
+
+        while True:
+            play_vs = input("Play vs Human? [y/n]")
+
+            if play_vs == "y":
+                play2_name = input("Write player2 name: ")
+                self.players = {
+                self.user: True,
+                play2_name: True
+                }
+                self.new_game([self.user, play2_name])
+                game.play_manual(self.play)
+                #self.graphics.make_header("Single Player Match")
+                break
+
+                #Code for win/loss
+
+                #if game.play_manual(self.play) in \
+                #        [self.user,play2_name]:
+                #        print("fuckkckckc")
+                    #tour, winner = Tournament(list(self.players.keys())), None
+            if play_vs == "n":
+                print("vs ai")
+                self.setup_ai_difficulty(1)
+                ainame = input("Name you ai Opponent :")
+                self.players = {
+                self.user : True,
+                ainame : False
+                }
+                self.new_game([self.user, ainame])
+                game.play_manual(self.play)
+
+
+        return "R"
+
+
+
     def single_player_tournament(self):
         """
         A single-player tournament locally between players
@@ -241,6 +280,8 @@ class CommunicationPlatform:
                 self.graphics.make_header("Up next: " + tour.opponents[0]
                                           + " vs " + tour.opponents[1])
 
+                print("Tour OPPONENTS: ")
+                print(tour.opponents[0])
                 while True:
                     self.new_game([tour.opponents[0], tour.opponents[1]])
 
