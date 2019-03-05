@@ -44,15 +44,15 @@ class GamePlatform:
         player_one = self.graphics.set_color("P", self.players[0].name)
         player_two = self.graphics.set_color("P", self.players[1].name)
         dsp = "##################################################" \
-              "#################################\n#|"
-        dsp += " " * ((39 - len(self.players[0].name)) // 2) + player_one +\
-               " " * ((39 - len(self.players[0].name)) // 2)
-        dsp += "|" if len(self.players[0].name) % 2 == 1 else " |"
-        dsp += " " * ((39 - len(self.players[1].name)) // 2) + player_two +\
-               " " * ((39 - len(self.players[1].name)) // 2)
-        dsp += "|#\n" if len(self.players[0].name) % 2 == 1 else " |#\n"
+              "#################################\n#"
+        dsp += " " * ((40 - len(self.players[0].name)) // 2) + player_one +\
+               " " * ((40 - len(self.players[0].name)) // 2)
+        dsp += "|" if (40 - len(self.players[0].name)) % 2 == 0 else " |"
+        dsp += " " * ((40 - len(self.players[1].name)) // 2) + player_two +\
+               " " * ((40 - len(self.players[1].name)) // 2)
+        dsp += "#\n" if (40 - len(self.players[1].name)) % 2 == 0 else " #\n"
         dsp += "#----------------------------------------------------------" \
-               "-----------------------#\n#|"
+               "-----------------------#\n#"
 
         if isinstance(self.players[0], PlayerHuman):
             if self.players[0].name == self.play.current_player.name:
@@ -95,12 +95,12 @@ class GamePlatform:
         else:
             player_two = self.HARD
             player_two_len = len(self.HARD)
-        dsp += " " * ((39 - player_one_len) // 2) + player_one + " " *\
-               ((39 - player_one_len) // 2)
-        dsp += "|" if player_one_len % 2 == 1 else " |"
-        dsp += " " * ((39 - player_two_len) // 2) + player_two + " " *\
-               ((39 - player_two_len) // 2)
-        dsp += "|#\n" if player_two_len % 2 == 1 else " |#\n"
+        dsp += " " * ((40 - player_one_len) // 2) + player_one + " " *\
+               ((40 - player_one_len) // 2)
+        dsp += "|" if (40 - player_one_len) % 2 == 0 else " |"
+        dsp += " " * ((40 - player_two_len) // 2) + player_two + " " *\
+               ((40 - player_two_len) // 2)
+        dsp += "#\n" if (40 - player_two_len) % 2 == 0 else " #\n"
         print(dsp + "##################################################"
                     "#################################")
 
@@ -128,10 +128,8 @@ class GamePlatform:
                "---------------------------"
 
         if self.has_selected_piece():
-            dsp += "#\n#|                              Selected Piece: " + \
-                   self.selected_piece + "                              |#"
-            dsp += "\n#---------------------------------------------------" \
-                   "------------------------------"
+            dsp += "#\n#                               Selected Piece: " + \
+                   self.selected_piece + "                               "
         print(dsp + "#\n##################################################"
                     "#################################")
 

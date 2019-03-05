@@ -193,7 +193,7 @@ class TestGamePlatformCLI(TestCase):
         Tests the game status display at game initialization for user vs user
         """
         test = GamePlatform(Play())
-        test.play.init_players(1, 0)
+        test.play.init_players(1, 0, "Henry", "Ford")
         test.display_game_status()
 
     def test_game_display_at_user_vs_user_first_turn(self):
@@ -201,7 +201,7 @@ class TestGamePlatformCLI(TestCase):
         Tests the game status display after first selection for user vs user
         """
         test = GamePlatform(Play())
-        test.play.init_players(1, 0)
+        test.play.init_players(1, 0, "Caesar", "Augustus")
         test.play.game.pieces.pop('0')
         test.play.selected_piece = '0000'
         test.display_game_status()
