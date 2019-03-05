@@ -16,6 +16,7 @@ class Peer:
     HOST = '127.0.0.1'  # local IP address
     PORT = 65001  # port address being used for connection
     BUF_SIZ = 4096  # the maximum size for each byte transmission over socket
+    TIME_OUT = 60  # the maximum time (s) a socket will listen for a connection
 
     def __init__(self, server):
         """
@@ -32,6 +33,7 @@ class Peer:
                 # AF_INET = IPv4, SOCK_STREAM = TCP Socket
                 self.accept_socket = socket(AF_INET, SOCK_STREAM)
                 self.accept_socket.bind((self.HOST, self.PORT))
+                # self.accept_socket.settimeout(self.TIME_OUT)
                 self.accept_socket.listen()
             except (KeyboardInterrupt, SystemExit):
                 print("\nShutting down server")

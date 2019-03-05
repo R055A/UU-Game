@@ -549,8 +549,7 @@ class Tournament:
             display += opponent07 + padding7 + "|" + padding14 + "|" + "\n"
             display += padding9 + "|---" + opponent12 + padding13 + "|" + "\n"
             display += opponent08 + padding8 + "|" + "\n"
-
-        print(display)
+        return display
 
 
 def make_opponents(player_list):

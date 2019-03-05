@@ -80,7 +80,7 @@ def play_game(my_turn, first_draw, is_human, play, c, auto):
             if play.game.has_won_game(play.selected_piece):
                 return play.current_player.name
             elif not play.game.has_next_play():
-                return "DRAW OR??"
+                return "DRAW"
 
             if not first_draw:
                 if not auto:
@@ -99,7 +99,7 @@ def play_game(my_turn, first_draw, is_human, play, c, auto):
             if play.game.has_won_game(play.selected_piece):
                 return play.current_player.name
             elif not play.game.has_next_play():
-                return "DRAW OR??"
+                return "DRAW"
         choose(is_human, play)
 
         if not auto:
