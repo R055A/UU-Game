@@ -15,7 +15,7 @@ class CommunicationPlatform:
     Communication platform main class
     Refactoring/integration editor(s): Adam Ross; Viktor Enzell; Gustav From;
                                        Pelle Ingvast
-    Last-edit-date: 04/03/2019
+    Last-edit-date: 05/03/2019
     """
 
     NAME_LEN = 20  # the maximum length of a player's name
@@ -233,7 +233,7 @@ class CommunicationPlatform:
 
         while True:
             self.graphics.make_header("Tournament Standings")
-            tour.get_scoreboard()
+            print(tour.get_scoreboard())
 
             if tour.winner_state == 1:  # Last game already played
                 break
@@ -518,7 +518,7 @@ class CommunicationPlatform:
             self.ai_names = ["Viktor", "Peter", "Paul", "Chris", "Charles",
                             "Josh", "Steve", "Michael", "Larry", "Laurin"]
 
-        for i in range(len(self.players), int(user_num) - int(ai_num) + 1):
+        for i in range(len(self.players), int(user_num) - int(ai_num)):
             name = input("Enter a unique player " + str(i) +
                          " name:\n")[:self.NAME_LEN].capitalize()
 
