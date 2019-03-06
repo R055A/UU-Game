@@ -130,7 +130,7 @@ class GamePlatform:
 
     def place_piece(self):
         """
-
+        Prompts user to select a board place for a piece or auto selects if AI
         """
         if isinstance(self.play.current_player, PlayerHuman):
             self.display.display_game_status()
@@ -152,7 +152,7 @@ class GamePlatform:
 
     def select_piece(self):
         """
-
+        Prompts user to select a piece, or auto selects if AI
         """
         if isinstance(self.play.current_player, PlayerHuman):
             self.display.display_game_status()

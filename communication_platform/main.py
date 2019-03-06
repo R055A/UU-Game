@@ -143,18 +143,12 @@ class CommunicationPlatform:
             play_choice = self.get_multiplayer_game_options()
 
             if play_choice == "S":
-                try:
-                    self.server_side_singles()
-                except:
-                    print("A game server has already been started")
-                    continue
+                self.server_side_singles()
+                continue
 
             elif play_choice == "J":
-                try:
-                    self.client_side_singles()
-                except:
-                    print("There is no server to join")
-                    continue
+                self.client_side_singles()
+                continue
 
             elif play_choice == "Q":
                 return "Q"
@@ -173,18 +167,12 @@ class CommunicationPlatform:
             play_choice = self.get_multiplayer_game_options()
 
             if play_choice == "S":
-                try:
-                    self.server_side_tournament()
-                except:
-                    print("A game server has already been started")
-                    continue
+                self.server_side_tournament()
+                continue
 
             elif play_choice == "J":
-                try:
-                    self.client_side_tournament()
-                except:
-                    print("There is no server to join")
-                    continue
+                self.client_side_tournament()
+                continue
 
             elif play_choice == "Q":
                 return "Q"
@@ -305,8 +293,8 @@ class CommunicationPlatform:
         while True:
             self.new_game([i for i in self.players.keys()])
             peer.send({"play": self.gp, "auto": self.automated})
-            win = self.gp.online_vs(self.user, peer, self.players[self.user],
-                                    self.server, self.automated)
+            win = self.gp.online_vs(self.user, peer, self.server,
+                                    self.automated)
 
             if win != "DRAW":
                 break
@@ -335,9 +323,8 @@ class CommunicationPlatform:
 
         while True:
             data = peer.receive()
-            win = data["play"].online_vs(self.user, peer,
-                                         self.players[self.user],
-                                         self.server, data["auto"])
+            win = data["play"].online_vs(self.user, peer, self.server,
+                                         data["auto"])
 
             if win != "DRAW":
                 break
@@ -408,8 +395,7 @@ class CommunicationPlatform:
                     data["play"] = self.gp
                     data["auto"] = self.automated
                     peer.send(data)
-                    winner = self.gp.online_vs(players[0], peer,
-                                               self.players[players[0]], True,
+                    winner = self.gp.online_vs(players[0], peer, self.server,
                                                self.automated)
 
                     if winner != "DRAW":
@@ -465,8 +451,7 @@ class CommunicationPlatform:
                     peer.send("ACK")
                     data = peer.receive()
                     winner = data["play"].online_vs(players[1], peer,
-                                                    self.players[players[1]],
-                                                    False, data["auto"])
+                                                    self.server, data["auto"])
 
                     if winner != "DRAW":
                         break
@@ -596,22 +581,29 @@ class CommunicationPlatform:
         if ai_num > 0 and self.server:
             self.setup_ai_difficulty(ai_num)
             peer.send(self.difficulty)
-        elif ai_num > 0:
-            print("Confirming the host selected AI difficulty...")
-            self.difficulty = int(peer.receive())
-            receive_diff = True
-
-            if self.difficulty == 0:
-                print("Host has not selected any AI difficulty...")
-                self.setup_ai_difficulty(ai_num)
-                peer.send(self.difficulty)
+            peer.receive()
         elif ai_num == 0 and self.server:
             peer.send(0)
-            print("Confirming the client selected AI difficulty...")
+            print("Confirming the client AI selection...")
             self.difficulty = int(peer.receive())
-            receive_diff = True
+
+            if self.difficulty != 0:
+                print("Confirming the client AI difficulty selection...")
+                receive_diff = True
         else:
-            peer.receive()
+            print("Confirming the host AI selection...")
+            self.difficulty = int(peer.receive())
+
+            if self.difficulty == 0:
+                if ai_num > 0:
+                    self.setup_ai_difficulty(ai_num)
+                    peer.send(self.difficulty)
+                else:
+                    peer.send(0)
+            else:
+                print("Confirming the host AI difficulty selection...")
+                receive_diff = True
+                peer.send(0)
 
         if receive_diff:
             if self.difficulty == 1:
