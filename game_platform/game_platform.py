@@ -9,7 +9,7 @@ class GamePlatform:
     """
     The GamePlatform class
     Author(s): Adam Ross
-    Last-edit-date: 05/03/2019
+    Last-edit-date: 06/03/2019
     """
 
     SELECTING = "selecting"
@@ -23,11 +23,11 @@ class GamePlatform:
         GamePlatform class constructor
         :param play: instance of the Play() class
         """
-        self.play = play
-        self.graphics = Graphics()
-        self.players = None
-        self.piece_pool = None
-        self.selected_piece = None
+        self.play = play  # Play class instance
+        self.graphics = Graphics()  # Graphics class instance
+        self.players = None  # the two players playing a game
+        self.piece_pool = None  # the pool of sixteen pieces
+        self.pce = None  # the selected piece in game play
 
     def display_game_status(self):
         """
@@ -41,68 +41,63 @@ class GamePlatform:
         Displays the players names, if AI with difficulty, and players turn
         """
         self.players = self.play.players
-        player_one = self.graphics.set_color("P", self.players[0].name)
-        player_two = self.graphics.set_color("P", self.players[1].name)
-        dsp = "##################################################" \
-              "#################################\n#"
-        dsp += " " * ((40 - len(self.players[0].name)) // 2) + player_one +\
-               " " * ((40 - len(self.players[0].name)) // 2)
+        p_o, p_t = (self.graphics.set_color("P", i.name) for i in self.players)
+        dsp = "#" * 83 + "\n#" + " " * ((40 - len(self.players[0].name)) // 2)\
+              + p_o + " " * ((40 - len(self.players[0].name)) // 2)
         dsp += "|" if (40 - len(self.players[0].name)) % 2 == 0 else " |"
-        dsp += " " * ((40 - len(self.players[1].name)) // 2) + player_two +\
+        dsp += " " * ((40 - len(self.players[1].name)) // 2) + p_t +\
                " " * ((40 - len(self.players[1].name)) // 2)
         dsp += "#\n" if (40 - len(self.players[1].name)) % 2 == 0 else " #\n"
-        dsp += "#----------------------------------------------------------" \
-               "-----------------------#\n#"
+        dsp += "#" + "-" * 81 + "#\n#"
 
         if isinstance(self.players[0], PlayerHuman):
             if self.players[0].name == self.play.current_player.name:
                 if self.has_selected_piece():
-                    player_one = self.graphics.set_color("G", self.PLACING)
-                    player_one_len = len(self.PLACING)
+                    p_o = self.graphics.set_color("G", self.PLACING)
+                    p_o_len = len(self.PLACING)
                 else:
-                    player_one = self.graphics.set_color("G", self.SELECTING)
-                    player_one_len = len(self.SELECTING)
+                    p_o = self.graphics.set_color("G", self.SELECTING)
+                    p_o_len = len(self.SELECTING)
             else:
-                player_one = " "
-                player_one_len = 1
+                p_o = " "
+                p_o_len = 1
         elif isinstance(self.players[0], PlayerEasyAI):
-            player_one = self.EASY
-            player_one_len = len(self.EASY)
+            p_o = self.EASY
+            p_o_len = len(self.EASY)
         elif isinstance(self.players[0], PlayerMediumAI):
-            player_one = self.MEDIUM
-            player_one_len = len(self.MEDIUM)
+            p_o = self.MEDIUM
+            p_o_len = len(self.MEDIUM)
         else:
-            player_one = self.HARD
-            player_one_len = len(self.HARD)
+            p_o = self.HARD
+            p_o_len = len(self.HARD)
 
         if isinstance(self.players[1], PlayerHuman):
             if self.players[1].name == self.play.current_player.name:
                 if self.has_selected_piece():
-                    player_two = self.graphics.set_color("G", self.PLACING)
-                    player_two_len = len(self.PLACING)
+                    p_t = self.graphics.set_color("G", self.PLACING)
+                    p_t_len = len(self.PLACING)
                 else:
-                    player_two = self.graphics.set_color("G", self.SELECTING)
-                    player_two_len = len(self.SELECTING)
+                    p_t = self.graphics.set_color("G", self.SELECTING)
+                    p_t_len = len(self.SELECTING)
             else:
-                player_two = " "
-                player_two_len = 1
+                p_t = " "
+                p_t_len = 1
         elif isinstance(self.players[1], PlayerEasyAI):
-            player_two = self.EASY
-            player_two_len = len(self.EASY)
+            p_t = self.EASY
+            p_t_len = len(self.EASY)
         elif isinstance(self.players[1], PlayerMediumAI):
-            player_two = self.MEDIUM
-            player_two_len = len(self.MEDIUM)
+            p_t = self.MEDIUM
+            p_t_len = len(self.MEDIUM)
         else:
-            player_two = self.HARD
-            player_two_len = len(self.HARD)
-        dsp += " " * ((40 - player_one_len) // 2) + player_one + " " *\
-               ((40 - player_one_len) // 2)
-        dsp += "|" if (40 - player_one_len) % 2 == 0 else " |"
-        dsp += " " * ((40 - player_two_len) // 2) + player_two + " " *\
-               ((40 - player_two_len) // 2)
-        dsp += "#\n" if (40 - player_two_len) % 2 == 0 else " #\n"
-        print(dsp + "##################################################"
-                    "#################################")
+            p_t = self.HARD
+            p_t_len = len(self.HARD)
+        dsp += " " * ((40 - p_o_len) // 2) + p_o + " " *\
+               ((40 - p_o_len) // 2)
+        dsp += "|" if (40 - p_o_len) % 2 == 0 else " |"
+        dsp += " " * ((40 - p_t_len) // 2) + p_t + " " *\
+               ((40 - p_t_len) // 2)
+        dsp += "#\n" if (40 - p_t_len) % 2 == 0 else " #\n"
+        print(dsp + "#" * 83)
 
     def display_piece_pool(self):
         """
@@ -110,8 +105,7 @@ class GamePlatform:
         """
         self.piece_pool = dict({i: Piece(self.play.game.pieces[i]) for i in
                                 self.play.game.pieces}.items())
-        dsp = "#----------------------------------------------------------" \
-              "-----------------------#\n#|"
+        dsp = "#" + "-" * 81 + "#\n#|"
 
         for i in range(8):
             dsp += "  " + str(i + 1) + ": " + self.piece_pool[str(i)].\
@@ -124,20 +118,17 @@ class GamePlatform:
             dsp += " " + str(i + 1) + ": " + self.piece_pool[str(i)].\
                 get_chars() + " |" if str(i) in self.piece_pool.keys() \
                 else " " + str(i + 1) + ":     " + "|"
-        dsp += "#\n#------------------------------------------------------" \
-               "---------------------------"
+        dsp += "#\n#" + "-" * 81
 
         if self.has_selected_piece():
-            dsp += "#\n#                               Selected Piece: " + \
-                   self.selected_piece + "                               "
-        print(dsp + "#\n##################################################"
-                    "#################################")
+            dsp += "#\n#" + " " * 31 + "Selected Piece: " + self.pce + " " * 31
+        print(dsp + "#\n" + "#" * 83)
 
     def has_selected_piece(self):
         if self.play.selected_piece and \
                 len([r for r in self.play.game.board if
                      self.play.selected_piece in r]) == 0:
-            self.selected_piece = Piece(self.play.selected_piece).get_chars()
+            self.pce = Piece(self.play.selected_piece).get_chars()
         else:
-            self.selected_piece = None
-        return self.selected_piece
+            self.pce = None
+        return self.pce

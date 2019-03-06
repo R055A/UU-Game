@@ -195,79 +195,54 @@ class CommunicationPlatform:
             if play_choice in ["S", "J", "R"]:
                 return "R"
 
-    # def local_vs(self):
-    #     """
-    #     Sig:    None
-    #     Pre:    None
-    #     Post:   A game played between between two players
-    #     """
-    #     #players, humans = self.get_local_names()
-    #     while True:
-    #         result = game.local_vs(players, humans)
-    #         if result != "DRAW":
-    #             break
-    #         else:
-    #             g.make_header("Game draw! Replay game")
-    #     self.graphics.make_header(result + " has won!")
-
     def single_player_game(self):
+        """
+
+        :return:
+        """
         self.graphics.make_header("Single Player Match")
 
         while True:
             choice = self.setup_single_choice()
-            #play_vs = input("Play vs Human? [y/n]")
 
             if choice == "1":
-                play2_name = input("Write player2 name: ")
-                self.players = {
-                self.user: True,
-                play2_name: True
-                }
+                play2_name = input("Enter opponent's name: ")[:self.NAME_LEN]
+                self.players = {self.user: True, play2_name: True}
                 self.new_game([self.user, play2_name])
                 winner = game.play_manual(self.play)
-                if winner == None:
+
+                if not winner:
                     self.graphics.make_header("Draw!")
                 else:
                     self.graphics.make_header(winner + " won the game!")
                 return "R"
-                break
             
-            if choice == "2":
-                print("HumanVsAI")
+            elif choice == "2":
+                print("User vs AI")
                 self.setup_ai_difficulty(1)
-                ainame = input("Name you ai Opponent: ")
-                self.players = {
-                self.user : True,
-                ainame : False
-                }
-                self.new_game([self.user, ainame])
+                ai_name = input("Enter opponent AI name: ")[:self.NAME_LEN]
+                self.players = {self.user: True, ai_name: False}
+                self.new_game([self.user, ai_name])
                 winner = game.play_manual(self.play)
-                if winner == None:
+
+                if not winner:
                     self.graphics.make_header("Draw!\n")
                 else:
                     self.graphics.make_header(winner + " won the game!")
                 return "R"
-                break
                 
-            if choice == "3": ##IMPLIMENT REAL AIvsAI, right now: HUMAN VS AI
-                print("AIvsAI")
+            elif choice == "3":
+                print("AI vs AI")
                 self.setup_ai_difficulty(2)
-                ainame = "AI_Opponent"
-                #ainame = input("Name you ai Opponent: ")
-                self.players = {
-                self.user : True,
-                ainame : False
-                }
-                self.new_game([self.user, ainame])
-                winner = game.play_manual(self.play)
-                if winner == None:
+                self.players = {"Player One": False, "Player Two": False}
+                self.new_game(["Player One", "Player Two"])
+                winner = self.play.play_auto()
+
+                if not winner:
                     self.graphics.make_header("Draw!")
                 else:
                     self.graphics.make_header(winner + " won the game!")
                 return "R"
-                break
-
-
 
     def single_player_tournament(self):
         """
@@ -545,21 +520,22 @@ class CommunicationPlatform:
             
     def setup_single_choice(self):
         """
-        User chooses an option of gamemode between 1 and 3, huvshu, huvsai or aivsai
-        :return: The chooses of gamemode
+        User chooses an option of gamemode between 1 and 3,
+         huvshu, huvsai or aivsai ????
+        :return: The chooses of game mode
         """
-        choice = 0
         while True:
-            print("Choose from one of the following " + " options:\n    [" + self.
-              graphics.set_color("G", "1") + "] - Human vs Human\n    [" +
-              self.graphics.set_color("G", "2") +
-              "] - Human vs AI\n    [" + self.graphics.
-              set_color("G", "3") + "] - AI vs AI")
-            choice = input("Enter your " + self.graphics.set_color("G", "choice: \n")).upper()
+            print("Choose from one of the following " + self.graphics.
+                  set_color("Y", "Single Player") + " options:\n    [" + self.
+                  graphics.set_color("G", "1") + "] - User vs User\n    [" +
+                  self.graphics.set_color("G", "2") + "] - User vs AI\n    [" +
+                  self.graphics.set_color("G", "3") + "] - AI vs AI")
+            choice = input("Enter your " + self.graphics.
+                           set_color("G", "choice: \n")).upper()
+
             try:
                 if 1 <= int(choice) <= 3:
                     return choice
-                    break
             except:
                 continue
 
