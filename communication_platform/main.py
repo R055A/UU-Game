@@ -214,9 +214,10 @@ class CommunicationPlatform:
         self.graphics.make_header("Single Player Match")
 
         while True:
-            play_vs = input("Play vs Human? [y/n]")
+            choice = self.setup_single_choice()
+            #play_vs = input("Play vs Human? [y/n]")
 
-            if play_vs == "y":
+            if choice == "1":
                 play2_name = input("Write player2 name: ")
                 self.players = {
                 self.user: True,
@@ -233,10 +234,23 @@ class CommunicationPlatform:
                 #        [self.user,play2_name]:
                 #        print("fuckkckckc")
                     #tour, winner = Tournament(list(self.players.keys())), None
-            if play_vs == "n":
-                print("vs ai")
+            
+            if choice == "2":
+                print("HumanVsAI")
                 self.setup_ai_difficulty(1)
-                ainame = input("Name you ai Opponent :")
+                ainame = input("Name you ai Opponent: ")
+                self.players = {
+                self.user : True,
+                ainame : False
+                }
+                self.new_game([self.user, ainame])
+                game.play_manual(self.play)
+                
+            if choice == "3":
+                print("AIvsAI")
+                self.setup_ai_difficulty(2)
+                ainame = "AI_Opponent"
+                #ainame = input("Name you ai Opponent: ")
                 self.players = {
                 self.user : True,
                 ainame : False
@@ -522,6 +536,27 @@ class CommunicationPlatform:
                     continue
         else:
             self.difficulty = 0
+            
+    def setup_single_choice(self):
+        """
+        User chooses an option of gamemode between 1 and 3, huvshu, huvsai or aivsai
+        :return: The chooses of gamemode
+        """
+        #Gustav
+        choice = 0
+        while True:
+            print("Choose from one of the following " + " options:\n    [" + self.
+              graphics.set_color("G", "1") + "] - Human vs Human\n    [" +
+              self.graphics.set_color("G", "2") +
+              "] - Human vs AI\n    [" + self.graphics.
+              set_color("G", "3") + "] - AI vs AI")
+            choice = input("Enter your " + self.graphics.set_color("G", "choice: \n")).upper()
+            try:
+                if 1 <= int(choice) <= 3:
+                    return choice
+                    break
+            except:
+                continue
 
     def setup_ai_players(self, player_num):
         """
