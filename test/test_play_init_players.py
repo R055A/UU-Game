@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from unittest import TestCase
 from game_engine.play import Play
 from game_engine.player_human import PlayerHuman

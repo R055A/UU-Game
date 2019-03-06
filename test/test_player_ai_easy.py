@@ -1,5 +1,6 @@
+#!/usr/bin/env python3
+
 from unittest import TestCase
-from game_engine.play import Play
 from game_engine.game import Game
 from game_platform.game_platform import GamePlatform
 from game_engine.player_ai_medium import PlayerMediumAI

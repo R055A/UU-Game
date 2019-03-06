@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from game_engine.game import Game
 from game_engine.player_human import PlayerHuman
 from game_engine.player_ai_easy import PlayerEasyAI
@@ -50,20 +52,6 @@ class Play:
             return self.current_player.place_piece(self.selected_piece, y, x)
         else:
             self.current_player.place_piece(self.selected_piece)  # place piece
-
-    # def play_auto(self):
-    #     """
-    #     Where the game turns are played automatically until game won or drawn
-    #     :return: the winning player if game won, or None if game drawn
-    #     """
-    #     while True:
-    #         self.play_selection()  # current player selects a piece, play swaps
-    #         self.play_placement()  # new current player places piece on board
-    #
-    #         if self.game.has_won_game(self.selected_piece):  # if game is won
-    #             return self.current_player.name  # returns game winner name
-    #         elif not self.game.has_next_play():  # checks if play turns remain
-    #             return None  # returns no game winner
 
     def init_players(self, mod, dif=0, p_one="Player One", p_two="Player Two"):
         """

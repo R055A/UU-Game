@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from unittest import TestCase
 from communication_platform.main import CommunicationPlatform
 

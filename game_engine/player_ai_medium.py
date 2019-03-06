@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from game_engine.player_ai import PlayerAI
 from random import choice
 

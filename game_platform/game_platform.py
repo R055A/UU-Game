@@ -12,12 +12,6 @@ class GamePlatform:
     Last-edit-date: 06/03/2019
     """
 
-    SELECTING = "selecting"
-    PLACING = "placing"
-    HARD = "AI - hard"
-    MEDIUM = "AI - medium"
-    EASY = "AI - easy"
-
     def __init__(self):
         """
         GamePlatform class constructor

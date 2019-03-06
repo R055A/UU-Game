@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 class Node:
     """
     A node in the evaluation tree used in the Minimax algorithm

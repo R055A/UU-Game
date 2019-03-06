@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from game_engine.node import Node
 
 

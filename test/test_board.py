@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from unittest import TestCase
 from game_platform_gui.board import Board
 from tkinter import Canvas

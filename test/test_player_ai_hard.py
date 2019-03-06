@@ -1,11 +1,10 @@
-from unittest import TestCase
+#!/usr/bin/env python3
 
-from game_engine.play import Play
+from unittest import TestCase
 from game_engine.player_ai_easy import PlayerEasyAI
 from game_engine.player_ai_hard import PlayerHardAI
 from game_engine.game import Game
 from random import choice
-
 from game_platform.game_platform import GamePlatform
 
 

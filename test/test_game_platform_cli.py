@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from game_platform.game_platform import GamePlatform
 from unittest import TestCase
 

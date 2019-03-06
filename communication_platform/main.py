@@ -24,7 +24,6 @@ class CommunicationPlatform:
         """
         self.graphics = Graphics()  # Graphics class instance
         self.gp = None  # Play class instance - updated each game play
-        self.game_platform = None  # GamePlatform class instance
         self.ai_names = None  # the names of each available fictional AI player
         self.players = None  # dictionary for the player names and if users
         self.user = None  # the user name

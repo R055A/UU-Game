@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from unittest import TestCase
 from game_platform_gui.piece import Piece
 from game_platform.piece import Piece as PieceCLI
