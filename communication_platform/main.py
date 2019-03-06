@@ -224,16 +224,13 @@ class CommunicationPlatform:
                 play2_name: True
                 }
                 self.new_game([self.user, play2_name])
-                game.play_manual(self.play)
-                #self.graphics.make_header("Single Player Match")
+                winner = game.play_manual(self.play)
+                if winner == None:
+                    self.graphics.make_header("Draw!")
+                else:
+                    self.graphics.make_header(winner + " won the game!")
+                return "R"
                 break
-
-                #Code for win/loss
-
-                #if game.play_manual(self.play) in \
-                #        [self.user,play2_name]:
-                #        print("fuckkckckc")
-                    #tour, winner = Tournament(list(self.players.keys())), None
             
             if choice == "2":
                 print("HumanVsAI")
@@ -244,9 +241,15 @@ class CommunicationPlatform:
                 ainame : False
                 }
                 self.new_game([self.user, ainame])
-                game.play_manual(self.play)
+                winner = game.play_manual(self.play)
+                if winner == None:
+                    self.graphics.make_header("Draw!\n")
+                else:
+                    self.graphics.make_header(winner + " won the game!")
+                return "R"
+                break
                 
-            if choice == "3":
+            if choice == "3": ##IMPLIMENT REAL AIvsAI, right now: HUMAN VS AI
                 print("AIvsAI")
                 self.setup_ai_difficulty(2)
                 ainame = "AI_Opponent"
@@ -256,10 +259,13 @@ class CommunicationPlatform:
                 ainame : False
                 }
                 self.new_game([self.user, ainame])
-                game.play_manual(self.play)
-
-
-        return "R"
+                winner = game.play_manual(self.play)
+                if winner == None:
+                    self.graphics.make_header("Draw!")
+                else:
+                    self.graphics.make_header(winner + " won the game!")
+                return "R"
+                break
 
 
 
@@ -542,7 +548,6 @@ class CommunicationPlatform:
         User chooses an option of gamemode between 1 and 3, huvshu, huvsai or aivsai
         :return: The chooses of gamemode
         """
-        #Gustav
         choice = 0
         while True:
             print("Choose from one of the following " + " options:\n    [" + self.
