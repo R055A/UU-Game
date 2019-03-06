@@ -9,19 +9,19 @@ class TestGamePlatform(TestCase):
     """
     Tests the GamePlatform class GUI
     Author(s): Adam Ross
-    Last-edit-date: 22/02/2019
+    Last-edit-date: 06/03/2019
     """
 
-    def test_game_platform_class(self):
-        """
-        Tests GamePlatform class instance
-        """
-        test = GamePlatform(Tk(), Play())
-        self.assertTrue(isinstance(test, GamePlatform))
-        test.update()
-        sleep(2)
-        test.quit()
-        test.destroy()
+    # def test_game_platform_class(self):
+    #     """
+    #     Tests GamePlatform class instance
+    #     """
+    #     test = GamePlatform(Tk(), Play())
+    #     self.assertTrue(isinstance(test, GamePlatform))
+    #     test.update()
+    #     sleep(2)
+    #     test.quit()
+    #     test.destroy()
 
     # def test_pieces_created(self):
     #     """
@@ -81,21 +81,21 @@ class TestGamePlatform(TestCase):
     #     self.assertTrue(test.canvas.type(47) == 'rectangle')
     #     self.assertTrue(test.canvas.type(48) == 'text')
 
-    def test_move_selected_piece(self):
-        """
-        Tests the move_selected_piece() method in game_platform GUI class
-        """
-        test = GamePlatform(Tk(), Play())
-        self.assertTrue(len(test.pieces) == 16 and len(test.pieces) * 2
-                        <= len(test.canvas.find_all()))
-        self.assertTrue(test.pieces['0'].x_pos == 17.5 and
-                        test.pieces['0'].y_pos == 17.5)
-        test.update()
-        sleep(2)
-        test.move_selected_piece(1)
-        self.assertTrue(test.pieces['0'].x_pos == 500 and
-                        test.pieces['0'].y_pos == 50)
-        test.update()
-        sleep(2)
-        test.quit()
-        test.destroy()
+    # def test_move_selected_piece(self):
+    #     """
+    #     Tests the move_selected_piece() method in game_platform GUI class
+    #     """
+    #     test = GamePlatform(Tk(), Play())
+    #     self.assertTrue(len(test.pieces) == 16 and len(test.pieces) * 2
+    #                     <= len(test.canvas.find_all()))
+    #     self.assertTrue(test.pieces['0'].x_pos == 17.5 and
+    #                     test.pieces['0'].y_pos == 17.5)
+    #     test.update()
+    #     sleep(2)
+    #     test.move_selected_piece(1)
+    #     self.assertTrue(test.pieces['0'].x_pos == 500 and
+    #                     test.pieces['0'].y_pos == 50)
+    #     test.update()
+    #     sleep(2)
+    #     test.quit()
+    #     test.destroy()

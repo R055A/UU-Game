@@ -16,7 +16,7 @@ class TestBoard(TestCase):
         """
         Tests board class instance
         """
-        test = Board(Canvas(height=SIZE, width=SIZE), 10 , 10, 10)
+        test = Board(Canvas(height=SIZE, width=SIZE), 10, 10, 10)
         self.assertTrue(isinstance(test, Board))
 
 

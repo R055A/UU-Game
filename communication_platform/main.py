@@ -11,8 +11,8 @@ from sys import exit
 class CommunicationPlatform:
     """
     Communication platform main class
-    Refactoring/integration editor(s): Adam Ross; Viktor Enzell; Gustav From;
-                                       Pelle Ingvast
+    Refactoring/integration editor(s): Adam Ross; Viktor Enzell;
+                                       Gustav From; Pelle Ingvast
     Last-edit-date: 06/03/2019
     """
 

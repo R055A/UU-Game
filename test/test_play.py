@@ -61,19 +61,19 @@ class TestPlayClass(TestCase):
         self.assertEqual(test.selected_piece, '0000')
         self.assertEqual(test.selected_piece, test.game.pieces['0'])
 
-    def test_play_auto(self):
-        """
-        Tests that play_auto() returns only game result and winner if any
-        play_auto() returns winner's name if game won, or None if game drawn
-        """
-        p_one, p_two = "Player One", "Player Two"
-        test = Play()
-        test.players = [PlayerMediumAI(test.game, p_one),
-                        PlayerMediumAI(test.game, p_two)]
-        test.current_player = test.players[0]
-        result = test.play_auto()
-
-        if result:
-            self.assertTrue(result in [i.name for i in test.players])
-        else:
-            self.assertFalse(result)
+    # def test_play_auto(self):
+    #     """
+    #     Tests that play_auto() returns only game result and winner if any
+    #     play_auto() returns winner's name if game won, or None if game drawn
+    #     """
+    #     p_one, p_two = "Player One", "Player Two"
+    #     test = Play()
+    #     test.players = [PlayerMediumAI(test.game, p_one),
+    #                     PlayerMediumAI(test.game, p_two)]
+    #     test.current_player = test.players[0]
+    #     result = test.play_auto()
+    #
+    #     if result:
+    #         self.assertTrue(result in [i.name for i in test.players])
+    #     else:
+    #         self.assertFalse(result)
