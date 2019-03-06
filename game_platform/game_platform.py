@@ -1,8 +1,8 @@
-from game_platform.piece import Piece
-from communication_platform.graphics import Graphics
+#!/usr/bin/env python3
+
+from game_engine.play import Play
+from game_platform.game_display import GameDisplay
 from game_engine.player_human import PlayerHuman
-from game_engine.player_ai_easy import PlayerEasyAI
-from game_engine.player_ai_medium import PlayerMediumAI
 
 
 class GamePlatform:
@@ -18,117 +18,150 @@ class GamePlatform:
     MEDIUM = "AI - medium"
     EASY = "AI - easy"
 
-    def __init__(self, play):
+    def __init__(self):
         """
         GamePlatform class constructor
-        :param play: instance of the Play() class
         """
-        self.play = play  # Play class instance
-        self.graphics = Graphics()  # Graphics class instance
-        self.players = None  # the two players playing a game
-        self.piece_pool = None  # the pool of sixteen pieces
-        self.pce = None  # the selected piece in game play
+        self.play = Play()  # Play class instance
+        self.display = GameDisplay(self.play)  # GameDisplay class instance
+        self.board = [[i for i in range(j - 4, j)] for j in range(5, 18, 4)]
 
-    def display_game_status(self):
+    def play_local(self):
         """
-        Displays the current game status of the players, board and piece pool
+        Plays a local game between either user vs user, user vs AI, or AI vs AI
+        :return: the winner's name or None for a draw
         """
-        self.display_game_header()
-        self.display_piece_pool()
+        game_start = True  # Boolean for the start of the game
 
-    def display_game_header(self):
-        """
-        Displays the players names, if AI with difficulty, and players turn
-        """
-        self.players = self.play.players
-        p_o, p_t = (self.graphics.set_color("P", i.name) for i in self.players)
-        dsp = "#" * 83 + "\n#" + " " * ((40 - len(self.players[0].name)) // 2)\
-              + p_o + " " * ((40 - len(self.players[0].name)) // 2)
-        dsp += "|" if (40 - len(self.players[0].name)) % 2 == 0 else " |"
-        dsp += " " * ((40 - len(self.players[1].name)) // 2) + p_t +\
-               " " * ((40 - len(self.players[1].name)) // 2)
-        dsp += "#\n" if (40 - len(self.players[1].name)) % 2 == 0 else " #\n"
-        dsp += "#" + "-" * 81 + "#\n#"
+        while True:
+            if game_start:
+                self.display.display_game_status()
+                game_start = False
+            self.select_piece()
+            self.place_piece()
 
-        if isinstance(self.players[0], PlayerHuman):
-            if self.players[0].name == self.play.current_player.name:
-                if self.has_selected_piece():
-                    p_o = self.graphics.set_color("G", self.PLACING)
-                    p_o_len = len(self.PLACING)
-                else:
-                    p_o = self.graphics.set_color("G", self.SELECTING)
-                    p_o_len = len(self.SELECTING)
+            if self.play.game.has_won_game(self.play.selected_piece):
+                self.display.display_game_status()
+                return self.play.current_player.name
+            elif not self.play.game.has_next_play():  # checks if turns remain
+                self.display.display_game_status()
+                return None
+
+    def online_vs(self, name, peer, server, auto):
+        """
+        Plays online 1 vs 1 games
+        :param name: players name
+        :param peer: network connection
+        :param server: if player is server host
+        :param auto: Boolean for if game is automated or not
+        """
+        if server:
+            if self.play.current_player == name:
+                starting_player = True
+                peer.send("WAIT")
+                peer.receive()
             else:
-                p_o = " "
-                p_o_len = 1
-        elif isinstance(self.players[0], PlayerEasyAI):
-            p_o = self.EASY
-            p_o_len = len(self.EASY)
-        elif isinstance(self.players[0], PlayerMediumAI):
-            p_o = self.MEDIUM
-            p_o_len = len(self.MEDIUM)
+                starting_player = False
+                peer.send("START")
+                peer.receive()
         else:
-            p_o = self.HARD
-            p_o_len = len(self.HARD)
+            ack = peer.receive()
 
-        if isinstance(self.players[1], PlayerHuman):
-            if self.players[1].name == self.play.current_player.name:
-                if self.has_selected_piece():
-                    p_t = self.graphics.set_color("G", self.PLACING)
-                    p_t_len = len(self.PLACING)
-                else:
-                    p_t = self.graphics.set_color("G", self.SELECTING)
-                    p_t_len = len(self.SELECTING)
+            if ack == "WAIT":
+                starting_player = False
+                peer.send("ACK")
             else:
-                p_t = " "
-                p_t_len = 1
-        elif isinstance(self.players[1], PlayerEasyAI):
-            p_t = self.EASY
-            p_t_len = len(self.EASY)
-        elif isinstance(self.players[1], PlayerMediumAI):
-            p_t = self.MEDIUM
-            p_t_len = len(self.MEDIUM)
+                starting_player = True
+                peer.send("ACK")
+
+        if starting_player:
+            return self.play_game(True, True, peer, auto)
         else:
-            p_t = self.HARD
-            p_t_len = len(self.HARD)
-        dsp += " " * ((40 - p_o_len) // 2) + p_o + " " *\
-               ((40 - p_o_len) // 2)
-        dsp += "|" if (40 - p_o_len) % 2 == 0 else " |"
-        dsp += " " * ((40 - p_t_len) // 2) + p_t + " " *\
-               ((40 - p_t_len) // 2)
-        dsp += "#\n" if (40 - p_t_len) % 2 == 0 else " #\n"
-        print(dsp + "#" * 83)
+            return self.play_game(False, True, peer, auto)
 
-    def display_piece_pool(self):
+    def play_game(self, my_turn, first_draw, c, auto):
+        while True:
+            if not auto:
+                self.display.display_game_status()
+
+            if not my_turn:
+                if first_draw and not auto:
+                    print("\nWait for opponent to pass a piece")
+                elif not auto:
+                    print("\nWait for opponent to place the piece")
+                self.play = c.receive()
+
+                if not auto:
+                    self.display.display_game_status()
+
+                if self.play.game.has_won_game(self.play.selected_piece):
+                    return self.play.current_player.name
+                elif not self.play.game.has_next_play():
+                    return "DRAW"
+
+                if not first_draw:
+                    if not auto:
+                        print("\nWait for opponent to pass a piece")
+                    self.play = c.receive()
+
+                    if not auto:
+                        self.display.display_game_status()
+                first_draw = False
+                my_turn = True
+
+            if not first_draw:
+                self.place_piece()
+                c.send(self.play)
+
+                if self.play.game.has_won_game(self.play.selected_piece):
+                    return self.play.current_player.name
+                elif not self.play.game.has_next_play():
+                    return "DRAW"
+            self.select_piece()
+
+            if not auto:
+                self.display.display_game_status()
+
+            if first_draw:
+                my_turn = False
+                first_draw = False
+            c.send(self.play)
+            my_turn = False
+
+    def place_piece(self):
         """
-        Displays the piece pool and selected piece in the game status display
+
         """
-        self.piece_pool = dict({i: Piece(self.play.game.pieces[i]) for i in
-                                self.play.game.pieces}.items())
-        dsp = "#" + "-" * 81 + "#\n#|"
+        if isinstance(self.play.current_player, PlayerHuman):
+            self.display.display_game_status()
 
-        for i in range(8):
-            dsp += "  " + str(i + 1) + ": " + self.piece_pool[str(i)].\
-                get_chars() + " |" if str(i) in self.piece_pool.keys() \
-                else "  " + str(i + 1) + ":     " + "|"
-        dsp += "#\n#|  9: " + self.piece_pool['8'].get_chars() +\
-               " |" if '8' in self.piece_pool.keys() else "#\n#|  9:     |"
+            while True:
+                try:
+                    i = input("\nEnter a board number for placing a piece:\n")
 
-        for i in range(9, 16):
-            dsp += " " + str(i + 1) + ": " + self.piece_pool[str(i)].\
-                get_chars() + " |" if str(i) in self.piece_pool.keys() \
-                else " " + str(i + 1) + ":     " + "|"
-        dsp += "#\n#" + "-" * 81
+                    if 1 <= int(i) <= 16:
+                        y, x = [(k, j) for j in range(4) for k in range(4)
+                                if self.board[k][j] == int(i)][0]
 
-        if self.has_selected_piece():
-            dsp += "#\n#" + " " * 31 + "Selected Piece: " + self.pce + " " * 31
-        print(dsp + "#\n" + "#" * 83)
-
-    def has_selected_piece(self):
-        if self.play.selected_piece and \
-                len([r for r in self.play.game.board if
-                     self.play.selected_piece in r]) == 0:
-            self.pce = Piece(self.play.selected_piece).get_chars()
+                        if self.play.play_placement(int(y), int(x)):
+                            break
+                except:
+                    continue
         else:
-            self.pce = None
-        return self.pce
+            self.play.play_placement()
+
+    def select_piece(self):
+        """
+
+        """
+        if isinstance(self.play.current_player, PlayerHuman):
+            self.display.display_game_status()
+
+            while True:
+                pce = input("\nEnter a number for the piece being selected:\n")
+
+                if 1 <= int(pce) <= 16:
+                    if self.play.play_selection(str(int(pce) - 1)):
+                        break
+        else:
+            self.play.play_selection()

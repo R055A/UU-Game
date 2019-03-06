@@ -33,7 +33,7 @@ class PlayerHuman(Player):
         :return: either True if valid placement, or False to confirm invalidity
         """
         try:
-            if y and x and self.game.is_cell_empty(int(y), int(x)):
+            if self.game.is_cell_empty(int(y), int(x)):
                 self.game.board[int(y)][int(x)] = pce
                 return True
             return False

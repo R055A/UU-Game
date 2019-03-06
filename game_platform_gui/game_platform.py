@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from tkinter import Frame, Canvas
 from game_platform_gui.piece import Piece
 from game_platform_gui.board import Board

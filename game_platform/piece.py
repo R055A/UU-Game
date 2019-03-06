@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 class Piece:
     """
     Creates a piece ASCII object for displaying on the game platform CLI

@@ -2,7 +2,7 @@ import unittest
 import io
 import sys
 import communication_platform.peer as peer
-import communication_platform.graphics as g
+import util.graphics as g
 import communication_platform.tournament as tour
 from threading import Thread
 import time

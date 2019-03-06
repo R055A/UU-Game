@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 
-import communication_platform.game as game
 from communication_platform.peer import Peer
 from communication_platform.tournament import Tournament
-from communication_platform.graphics import Graphics
+from util.graphics import Graphics
 from game_platform.game_platform import GamePlatform
-from game_engine.play import Play
 from random import choice
 from sys import exit
 
@@ -15,7 +13,7 @@ class CommunicationPlatform:
     Communication platform main class
     Refactoring/integration editor(s): Adam Ross; Viktor Enzell; Gustav From;
                                        Pelle Ingvast
-    Last-edit-date: 05/03/2019
+    Last-edit-date: 06/03/2019
     """
 
     NAME_LEN = 37  # the maximum length of a player's name
@@ -25,7 +23,7 @@ class CommunicationPlatform:
         Class constructor
         """
         self.graphics = Graphics()  # Graphics class instance
-        self.play = None  # Play class instance - updated each game play
+        self.gp = None  # Play class instance - updated each game play
         self.game_platform = None  # GamePlatform class instance
         self.ai_names = None  # the names of each available fictional AI player
         self.players = None  # dictionary for the player names and if users
@@ -34,23 +32,22 @@ class CommunicationPlatform:
         self.server = False  # Boolean for playing multi-player online host
         self.automated = False  # Boolean for AI only games
 
-    def new_game(self, players):
+    def new_game(self, names):
         """
         Creates new Play and GamePlatform instances for each new game played
         """
         self.automated = False
-        self.play = Play()
-        self.game_platform = GamePlatform(self.play)
+        self.gp = GamePlatform()
 
-        if self.players[players[0]] and self.players[players[1]]:
-            self.play.init_players(1, self.difficulty, players[0], players[1])
-        elif self.players[players[1]]:
-            self.play.init_players(2, self.difficulty, players[1], players[0])
-        elif self.players[players[0]]:
-            self.play.init_players(2, self.difficulty, players[0], players[1])
+        if self.players[names[0]] and self.players[names[1]]:
+            self.gp.play.init_players(1, self.difficulty, names[0], names[1])
+        elif self.players[names[1]]:
+            self.gp.play.init_players(2, self.difficulty, names[1], names[0])
+        elif self.players[names[0]]:
+            self.gp.play.init_players(2, self.difficulty, names[0], names[1])
         else:
             self.automated = True
-            self.play.init_players(3, self.difficulty, players[0], players[1])
+            self.gp.play.init_players(3, self.difficulty, names[0], names[1])
 
     def start_comms(self):
         """
@@ -209,7 +206,7 @@ class CommunicationPlatform:
                 play2_name = input("Enter opponent's name: ")[:self.NAME_LEN]
                 self.players = {self.user: True, play2_name: True}
                 self.new_game([self.user, play2_name])
-                winner = game.play_manual(self.play)
+                winner = self.gp.play_local()
 
                 if not winner:
                     self.graphics.make_header("Draw!")
@@ -223,7 +220,7 @@ class CommunicationPlatform:
                 ai_name = input("Enter opponent AI name: ")[:self.NAME_LEN]
                 self.players = {self.user: True, ai_name: False}
                 self.new_game([self.user, ai_name])
-                winner = game.play_manual(self.play)
+                winner = self.gp.play_local()
 
                 if not winner:
                     self.graphics.make_header("Draw!\n")
@@ -236,7 +233,7 @@ class CommunicationPlatform:
                 self.setup_ai_difficulty(2)
                 self.players = {"Player One": False, "Player Two": False}
                 self.new_game(["Player One", "Player Two"])
-                winner = self.play.play_auto()
+                winner = self.gp.play_local()
 
                 if not winner:
                     self.graphics.make_header("Draw!")
@@ -278,18 +275,15 @@ class CommunicationPlatform:
                 while True:
                     self.new_game([tour.opponents[0], tour.opponents[1]])
 
-                    if self.automated:
-                        if self.play.play_auto():
-                            break
-                    elif game.play_manual(self.play) in \
-                            [tour.opponents[0], tour.opponents[1]]:
+                    if self.gp.play_local() in [tour.opponents[0],
+                                                tour.opponents[1]]:
                         break
                     else:
                         self.graphics.make_header("Draw game! Replaying game")
-                tour.next_game(self.play.current_player.name)  # Set winner
-                self.graphics.make_header(self.play.current_player.name +
+                tour.next_game(self.gp.play.current_player.name)  # Set winner
+                self.graphics.make_header(self.gp.play.current_player.name +
                                           " has advanced to the next round!")
-        self.graphics.make_header(self.play.current_player.name +
+        self.graphics.make_header(self.gp.play.current_player.name +
                                   " has won the tournament!")
         return "R"
 
@@ -310,9 +304,9 @@ class CommunicationPlatform:
 
         while True:
             self.new_game([i for i in self.players.keys()])
-            peer.send({"play": self.play, "auto": self.automated})
-            win = game.online_vs(self.user, peer, self.players[self.user],
-                                 self.server, self.play, self.automated)
+            peer.send({"play": self.gp, "auto": self.automated})
+            win = self.gp.online_vs(self.user, peer, self.players[self.user],
+                                    self.server, self.automated)
 
             if win != "DRAW":
                 break
@@ -341,8 +335,9 @@ class CommunicationPlatform:
 
         while True:
             data = peer.receive()
-            win = game.online_vs(self.user, peer, self.players[self.user],
-                                 self.server, data["play"], data["auto"])
+            win = data["play"].online_vs(self.user, peer,
+                                         self.players[self.user],
+                                         self.server, data["auto"])
 
             if win != "DRAW":
                 break
@@ -410,12 +405,12 @@ class CommunicationPlatform:
                 while True:
                     self.new_game([tour.opponents[0], tour.opponents[1]])
                     peer.receive()
-                    data["play"] = self.play
+                    data["play"] = self.gp
                     data["auto"] = self.automated
                     peer.send(data)
-                    winner = game.online_vs(players[0], peer,
-                                            self.players[players[0]], True,
-                                            self.play, self.automated)
+                    winner = self.gp.online_vs(players[0], peer,
+                                               self.players[players[0]], True,
+                                               self.automated)
 
                     if winner != "DRAW":
                         break
@@ -469,9 +464,9 @@ class CommunicationPlatform:
                 while True:
                     peer.send("ACK")
                     data = peer.receive()
-                    winner = game.online_vs(players[1], peer,
-                                            self.players[players[1]], False,
-                                            data["play"], data["auto"])
+                    winner = data["play"].online_vs(players[1], peer,
+                                                    self.players[players[1]],
+                                                    False, data["auto"])
 
                     if winner != "DRAW":
                         break
@@ -525,8 +520,7 @@ class CommunicationPlatform:
         :return: The chooses of game mode
         """
         while True:
-            print("Choose from one of the following " + self.graphics.
-                  set_color("Y", "Single Player") + " options:\n    [" + self.
+            print("Choose from one of the following options:\n    [" + self.
                   graphics.set_color("G", "1") + "] - User vs User\n    [" +
                   self.graphics.set_color("G", "2") + "] - User vs AI\n    [" +
                   self.graphics.set_color("G", "3") + "] - AI vs AI")
