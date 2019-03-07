@@ -154,7 +154,6 @@ class GameDisplay:
     def display_board(self):
         """
         Displays the current state of the board in the game status display
-        ---------- Temporary until a real version is completed ----------
         """
         dsp = "\n" + " " * 33 + "Game board status:\n" \
               + " " * 25 + "-" * 33 + "\n"
