@@ -11,8 +11,8 @@ from game_engine.player_ai_medium import PlayerMediumAI
 class GameDisplay:
     """
     The GameDisplay class
-    Author(s): Adam Ross
-    Last-edit-date: 06/03/2019
+    Author(s): Adam Ross, Viktor Enzell
+    Last-edit-date: 07/03/2019
     """
 
     SELECTING = "selecting"
@@ -31,6 +31,13 @@ class GameDisplay:
         self.players = None  # the two players playing a game
         self.piece_pool = None  # the pool of sixteen pieces
         self.pce = None  # the selected piece in game play
+
+    def change_play(self, play):
+        """
+        Updates the play instance for passing game state in multi-player
+        :param play: an instance of the play class
+        """
+        self.play = play
 
     def display_game_status(self):
         """

@@ -76,7 +76,7 @@ class GamePlatform:
     def play_game(self, my_turn, first_draw, c, auto):
         while True:
             if not auto:
-                self.display.display_game_status()
+                self.display_new_game_status()
 
             if not my_turn:
                 if first_draw and not auto:
@@ -86,7 +86,7 @@ class GamePlatform:
                 self.play = c.receive()
 
                 if not auto:
-                    self.display.display_game_status()
+                    self.display_new_game_status()
 
                 if self.play.game.has_won_game(self.play.selected_piece):
                     return self.play.current_player.name
@@ -99,7 +99,7 @@ class GamePlatform:
                     self.play = c.receive()
 
                     if not auto:
-                        self.display.display_game_status()
+                        self.display_new_game_status()
                 first_draw = False
                 my_turn = True
 
@@ -114,7 +114,7 @@ class GamePlatform:
             self.select_piece()
 
             if not auto:
-                self.display.display_game_status()
+                self.display_new_game_status()
 
             if first_draw:
                 my_turn = False
@@ -127,7 +127,7 @@ class GamePlatform:
         Prompts user to select a board place for a piece or auto selects if AI
         """
         if isinstance(self.play.current_player, PlayerHuman):
-            self.display.display_game_status()
+            self.display_new_game_status()
 
             while True:
                 try:
@@ -149,7 +149,7 @@ class GamePlatform:
         Prompts user to select a piece, or auto selects if AI
         """
         if isinstance(self.play.current_player, PlayerHuman):
-            self.display.display_game_status()
+            self.display_new_game_status()
 
             while True:
                 pce = input("\nEnter a number for the piece being selected:\n")
@@ -159,3 +159,10 @@ class GamePlatform:
                         break
         else:
             self.play.play_selection()
+
+    def display_new_game_status(self):
+        """
+        Updates passes the new play instance to display and displays the game status
+        """
+        self.display.change_play(self.play)
+        self.display.display_game_status()
