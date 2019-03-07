@@ -29,7 +29,9 @@ class GameDisplay:
         self.play = play  # Play class instance
         self.graphics = Graphics()  # Graphics class instance
         self.players = None  # the two players playing a game
-        self.piece_pool = None  # the pool of sixteen pieces
+        self.piece_pool = None  # the pool of available pieces
+        self.all_pieces = dict({i: Piece(play.game.pieces[i]) for i in
+                                play.game.pieces}.items())  # the pool of all sixteen pieces
         self.pce = None  # the selected piece in game play
 
     def change_play(self, play):
@@ -154,5 +156,20 @@ class GameDisplay:
         Displays the current state of the board in the game status display
         ---------- Temporary until a real version is completed ----------
         """
-        print("\nGame board status:")
-        print(*(row for row in self.play.game.board), sep="\n")
+        dsp = "\n" + " " * 33 + "Game board status:\n" \
+              + " " * 25 + "-" * 33 + "\n"
+        for i in range(4):
+            row = " " * 25 + "|"
+            for j in range(4):
+                if self.play.game.board[i][j]:
+                    piece = str(int(self.play.game.board[i][j], 2))
+                    row += "  " + self.all_pieces[piece].get_chars() + "  |"
+                else:
+                    cell = i * 4 + j + 1
+                    if cell > 9:
+                        row += "  " + str(cell) + "   |"
+                    else:
+                        row += "  " + str(cell) + "    |"
+            dsp += row + "\n"
+        dsp += " " * 25 + "-" * 33 + "\n\n" + "#" * 83
+        print(dsp)

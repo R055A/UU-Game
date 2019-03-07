@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from os import system
 
 from communication_platform.peer import Peer
 from communication_platform.tournament import Tournament
@@ -160,6 +161,7 @@ class CommunicationPlatform:
         A multi-player tournament played remotely between players
         :return: the resulting play choice for the main menu options
         """
+        system('clear')
         self.graphics.make_header("Tournament play!")
 
         while True:
@@ -184,6 +186,7 @@ class CommunicationPlatform:
 
         :return:
         """
+        system('clear')
         self.graphics.make_header("Single Player Match")
 
         while True:
@@ -233,6 +236,7 @@ class CommunicationPlatform:
         A single-player tournament locally between players
         :return: the "Return" play choice for returning to the main menu option
         """
+        system('clear')
         self.graphics.make_header("Single Player Tournament!")
 
         while True:  # Decide number of players
