@@ -29,7 +29,7 @@ class CommunicationPlatform:
         self.players = None  # dictionary for the player names and if users
         self.user = None  # the user name
         self.difficulty = 2  # the AI game play difficulty; 1 - 3; default 2
-        self.server = False  # Boolean for playing multi-player online host
+        self.server = False  # Boolean for playing online host
         self.automated = False  # Boolean for AI only games
 
     def new_game(self, names):
@@ -59,41 +59,41 @@ class CommunicationPlatform:
         while True:
             play_choice = None
 
-            while play_choice not in ["S", "M", "Q"]:
+            while play_choice not in ["L", "O", "Q"]:
                 print("Choose from the following " + self.graphics.
                       set_color("Y", "game play") + " options: ")
-                print("    [" + self.graphics.set_color("G", "S") +
-                      "] - Single player\n    [" +
-                      self.graphics.set_color("G", "M") +
-                      "] - Multi-player\n    [" +
+                print("    [" + self.graphics.set_color("G", "L") +
+                      "] - Local\n    [" +
+                      self.graphics.set_color("G", "O") +
+                      "] - Online\n    [" +
                       self.graphics.set_color("R", "Q") + "] - Quit ")
                 play_choice = input("Enter your " + self.graphics.
                                     set_color("G", "choice: \n")).upper()
 
-            if play_choice == "S":  # user has selected a single player game
+            if play_choice == "L":  # user has selected a local game
                 while True:
-                    play_choice = self.game_mode_options("single player")
+                    play_choice = self.game_mode_options("local")
 
-                    if play_choice == "S":  # Single player singles game
+                    if play_choice == "S":  # local singles game
                         self.single_player_game()  # self.local_vs()
 
-                    elif play_choice == "T":  # Single player tournament game
-                        play_choice = self.single_player_tournament()
+                    elif play_choice == "T":  # local tournament game
+                        play_choice = self.local_tournament()
 
                     elif play_choice != "R" and play_choice != "Q":
                         continue
                     break
 
-            elif play_choice == "M":  # user has selected multi-player game
+            elif play_choice == "O":  # user has selected online game
                 while True:
                     self.server = False
-                    play_choice = self.game_mode_options("multi-player")
+                    play_choice = self.game_mode_options("online")
 
-                    if play_choice == "S":  # Multi-player singles game
-                        play_choice = self.multiplayer_singles_options()
+                    if play_choice == "S":  # Online singles game
+                        play_choice = self.online_singles_options()
 
-                    elif play_choice == "T":  # Multi-player tournament game
-                        play_choice = self.multiplayer_tournament_options()
+                    elif play_choice == "T":  # Online tournament game
+                        play_choice = self.online_tournament_options()
 
                     elif play_choice != "R" and play_choice != "Q":
                         continue
@@ -105,7 +105,7 @@ class CommunicationPlatform:
     def game_mode_options(self, game_mode):
         """
         Prints the options for choosing to play either singles or tournament
-        :param game_mode: the selected single or multi-player game play type
+        :param game_mode: the selected local or online game play type
         :return: selected option of either singles, tournament, return or quit
         """
         print("Choose from the following " + self.graphics.
@@ -120,13 +120,13 @@ class CommunicationPlatform:
         return input("Enter your " + self.graphics.
                      set_color("G", "choice: \n")).upper()
 
-    def get_multiplayer_game_options(self):
+    def get_online_game_options(self):
         """
-        Prompts user with multiplayer options for singles or tournament game
+        Prompts user with online options for singles or tournament game
         :return: the chosen option by the user
         """
         print("Choose from one of the following " + self.graphics.
-              set_color("Y", "multi-player") + " options:\n    [" +
+              set_color("Y", "online") + " options:\n    [" +
               self.graphics.set_color("G", "S") + "] - Start a new game\n"
               "    [" + self.graphics.set_color("G", "J") + "] - Join "
               "existing game\n    [" + self.graphics.set_color("G", "R") +
@@ -135,12 +135,12 @@ class CommunicationPlatform:
         return input("Enter your " + self.graphics.
                      set_color("G", "choice: \n")).upper()
 
-    def multiplayer_singles_options(self):
+    def online_singles_options(self):
         """
         A single player game played between against a remote player
         """
         while True:
-            play_choice = self.get_multiplayer_game_options()
+            play_choice = self.get_online_game_options()
 
             if play_choice == "S":
                 self.server_side_singles()
@@ -156,16 +156,16 @@ class CommunicationPlatform:
             if play_choice in ["S", "J", "R"]:
                 return "R"
 
-    def multiplayer_tournament_options(self):
+    def online_tournament_options(self):
         """
-        A multi-player tournament played remotely between players
+        An online tournament played remotely between players
         :return: the resulting play choice for the main menu options
         """
         system('clear')
         self.graphics.make_header("Tournament play!")
 
         while True:
-            play_choice = self.get_multiplayer_game_options()
+            play_choice = self.get_online_game_options()
 
             if play_choice == "S":
                 self.server_side_tournament()
@@ -187,7 +187,7 @@ class CommunicationPlatform:
         :return:
         """
         system('clear')
-        self.graphics.make_header("Single Player Match")
+        self.graphics.make_header("Local Match")
 
         while True:
             choice = self.setup_single_choice()
@@ -231,13 +231,13 @@ class CommunicationPlatform:
                     self.graphics.make_header(winner + " won the game!")
                 return "R"
 
-    def single_player_tournament(self):
+    def local_tournament(self):
         """
-        A single-player tournament locally between players
+        A tournament locally between players
         :return: the "Return" play choice for returning to the main menu option
         """
         system('clear')
-        self.graphics.make_header("Single Player Tournament!")
+        self.graphics.make_header("Local Tournament!")
 
         while True:  # Decide number of players
             player_num = input("Choose the number of tournament players? [" +
@@ -504,7 +504,6 @@ class CommunicationPlatform:
     def setup_single_choice(self):
         """
         User chooses an option of gamemode between 1 and 3,
-         huvshu, huvsai or aivsai ????
         :return: The chooses of game mode
         """
         while True:
