@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from game_engine.play import Play
+from game_engine.play import GameEngine
 from game_platform.game_display import GameDisplay
 from game_engine.player_human import PlayerHuman
 
@@ -9,36 +9,37 @@ class GamePlatform:
     """
     The GamePlatform class
     Author(s): Adam Ross
-    Last-edit-date: 06/03/2019
+    Last-edit-date: 14/03/2019
     """
 
     def __init__(self):
         """
         GamePlatform class constructor
         """
-        self.play = Play()  # Play class instance
-        self.display = GameDisplay(self.play)  # GameDisplay class instance
+        self.play = GameEngine()  # Play class instance
+        self.display = GameDisplay()  # GameDisplay class instance
         self.board = [[i for i in range(j - 4, j)] for j in range(5, 18, 4)]
 
-    def play_local(self):
+    def play_local(self, auto):
         """
         Plays a local game between either user vs user, user vs AI, or AI vs AI
+        :param auto: Boolean for if the game is entirely automated AI vs AI
         :return: the winner's name or None for a draw
         """
         game_start = True  # Boolean for the start of the game
 
         while True:
-            if game_start:
-                self.display.display_game_status()
+            if game_start and not auto:
+                self.display.display_game_status(self.play)
                 game_start = False
             self.select_piece()
             self.place_piece()
 
             if self.play.game.has_won_game(self.play.selected_piece):
-                self.display.display_game_status()
+                self.display.display_game_status(self.play)
                 return self.play.current_player.name
             elif not self.play.game.has_next_play():  # checks if turns remain
-                self.display.display_game_status()
+                self.display.display_game_status(self.play)
                 return None
 
     def online_vs(self, name, peer, server, auto):
@@ -76,7 +77,7 @@ class GamePlatform:
     def play_game(self, my_turn, first_draw, c, auto):
         while True:
             if not auto:
-                self.display_new_game_status()
+                self.display.display_game_status(self.play)
 
             if not my_turn:
                 if first_draw and not auto:
@@ -86,7 +87,7 @@ class GamePlatform:
                 self.play = c.receive()
 
                 if not auto:
-                    self.display_new_game_status()
+                    self.display.display_game_status(self.play)
 
                 if self.play.game.has_won_game(self.play.selected_piece):
                     return self.play.current_player.name
@@ -99,7 +100,7 @@ class GamePlatform:
                     self.play = c.receive()
 
                     if not auto:
-                        self.display_new_game_status()
+                        self.display.display_game_status(self.play)
                 first_draw = False
                 my_turn = True
 
@@ -114,7 +115,7 @@ class GamePlatform:
             self.select_piece()
 
             if not auto:
-                self.display_new_game_status()
+                self.display.display_game_status(self.play)
 
             if first_draw:
                 my_turn = False
@@ -127,7 +128,7 @@ class GamePlatform:
         Prompts user to select a board place for a piece or auto selects if AI
         """
         if isinstance(self.play.current_player, PlayerHuman):
-            self.display_new_game_status()
+            self.display.display_game_status(self.play)
 
             while True:
                 try:
@@ -149,7 +150,7 @@ class GamePlatform:
         Prompts user to select a piece, or auto selects if AI
         """
         if isinstance(self.play.current_player, PlayerHuman):
-            self.display_new_game_status()
+            self.display.display_game_status(self.play)
 
             while True:
                 pce = input("\nEnter a number for the piece being selected:\n")
@@ -159,10 +160,3 @@ class GamePlatform:
                         break
         else:
             self.play.play_selection()
-
-    def display_new_game_status(self):
-        """
-        Updates passes the new play instance to display and displays the game status
-        """
-        self.display.change_play(self.play)
-        self.display.display_game_status()

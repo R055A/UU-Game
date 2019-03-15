@@ -12,7 +12,7 @@ class GameDisplay:
     """
     The GameDisplay class
     Author(s): Adam Ross, Viktor Enzell
-    Last-edit-date: 07/03/2019
+    Last-edit-date: 14/03/2019
     """
 
     SELECTING = "selecting"
@@ -21,28 +21,22 @@ class GameDisplay:
     MEDIUM = "AI - medium"
     EASY = "AI - easy"
 
-    def __init__(self, play):
+    def __init__(self):
         """
         GamePlatform class constructor
-        :param play: instance of the Play() class
         """
-        self.play = play  # Play class instance
+        self.ge = None  # for the GameEngine class instance
         self.graphics = Graphics()  # Graphics class instance
         self.players = None  # the two players playing a game
         self.piece_pool = None  # the pool of available pieces
         self.pce = None  # the selected piece in game play
 
-    def change_play(self, play):
-        """
-        Updates the play instance for passing game state in multi-player
-        :param play: an instance of the play class
-        """
-        self.play = play
-
-    def display_game_status(self):
+    def display_game_status(self, ge):
         """
         Displays the current game status of the players, board and piece pool
+        :param ge: an instance of the GameEngine class in its current state
         """
+        self.ge = ge
         system('clear')
         self.display_game_header()
         self.display_piece_pool()
@@ -52,7 +46,7 @@ class GameDisplay:
         """
         Displays the players names, if AI with difficulty, and players turn
         """
-        self.players = self.play.players
+        self.players = self.ge.players
         p_o, p_t = (self.graphics.set_color("P", i.name) for i in self.players)
         dsp = "#" * 83 + "\n#" + " " * ((40 - len(self.players[0].name)) // 2)\
               + p_o + " " * ((40 - len(self.players[0].name)) // 2)
@@ -63,7 +57,7 @@ class GameDisplay:
         dsp += "#" + "-" * 81 + "#\n#"
 
         if isinstance(self.players[0], PlayerHuman):
-            if self.players[0].name == self.play.current_player.name:
+            if self.players[0].name == self.ge.current_player.name:
                 if self.has_selected_piece():
                     p_o = self.graphics.set_color("G", self.PLACING)
                     p_o_len = len(self.PLACING)
@@ -84,7 +78,7 @@ class GameDisplay:
             p_o_len = len(self.HARD)
 
         if isinstance(self.players[1], PlayerHuman):
-            if self.players[1].name == self.play.current_player.name:
+            if self.players[1].name == self.ge.current_player.name:
                 if self.has_selected_piece():
                     p_t = self.graphics.set_color("G", self.PLACING)
                     p_t_len = len(self.PLACING)
@@ -115,8 +109,8 @@ class GameDisplay:
         """
         Displays the piece pool and selected piece in the game status display
         """
-        self.piece_pool = dict({i: Piece(self.play.game.pieces[i]) for i in
-                                self.play.game.pieces}.items())
+        self.piece_pool = dict({i: Piece(self.ge.game.pieces[i]) for i in
+                                self.ge.game.pieces}.items())
         dsp = "#" + "-" * 81 + "#\n#|"
 
         for i in range(8):
@@ -141,10 +135,10 @@ class GameDisplay:
         Checks if there is a selected piece not yet placed on the board
         :return: the selected piece if it if not on board, None otherwise
         """
-        if self.play.selected_piece and \
-                len([r for r in self.play.game.board if
-                     self.play.selected_piece in r]) == 0:
-            self.pce = Piece(self.play.selected_piece).get_chars()
+        if self.ge.selected_piece and \
+                len([r for r in self.ge.game.board if
+                     self.ge.selected_piece in r]) == 0:
+            self.pce = Piece(self.ge.selected_piece).get_chars()
         else:
             self.pce = None
         return self.pce
@@ -160,8 +154,8 @@ class GameDisplay:
             row = " " * 25 + "|"
 
             for j in range(4):
-                if self.play.game.board[i][j]:
-                    row += "  " + Piece(self.play.game.board[i][j]).\
+                if self.ge.game.board[i][j]:
+                    row += "  " + Piece(self.ge.game.board[i][j]).\
                         get_chars() + "  |"
                 else:
                     cell = i * 4 + j + 1

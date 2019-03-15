@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from os import system
 
+from os import system
 from communication_platform.peer import Peer
 from communication_platform.tournament import Tournament
 from util.graphics import Graphics
@@ -14,7 +14,7 @@ class CommunicationPlatform:
     Communication platform main class
     Refactoring/integration editor(s): Adam Ross; Viktor Enzell;
                                        Gustav From; Pelle Ingvast
-    Last-edit-date: 06/03/2019
+    Last-edit-date: 14/03/2019
     """
 
     NAME_LEN = 37  # the maximum length of a player's name
@@ -38,16 +38,8 @@ class CommunicationPlatform:
         """
         self.automated = False
         self.gp = GamePlatform()
-
-        if self.players[names[0]] and self.players[names[1]]:
-            self.gp.play.init_players(1, self.difficulty, names[0], names[1])
-        elif self.players[names[1]]:
-            self.gp.play.init_players(2, self.difficulty, names[1], names[0])
-        elif self.players[names[0]]:
-            self.gp.play.init_players(2, self.difficulty, names[0], names[1])
-        else:
-            self.automated = True
-            self.gp.play.init_players(3, self.difficulty, names[0], names[1])
+        self.gp.play.init_players({names[0]: self.players[names[0]],
+                                   names[1]: self.players[names[1]]})
 
     def start_comms(self):
         """
@@ -183,52 +175,24 @@ class CommunicationPlatform:
 
     def single_player_game(self):
         """
-
-        :return:
+        Local/Single player single (1 vs 1) game
+        :return: the "Return" play choice for returning to the main menu option
         """
         system('clear')
         self.graphics.make_header("Local Match")
 
         while True:
-            choice = self.setup_single_choice()
+            self.decide_ai_players(2, False)
 
-            if choice == "1":
-                play2_name = input("Enter opponent's name: ")[:self.NAME_LEN]
-                self.players = {self.user: True, play2_name: True}
-                self.new_game([self.user, play2_name])
-                winner = self.gp.play_local()
+            if len(self.players) == 1:
+                self.add_local_player()
+            self.new_game([i for i in self.players.keys()])
+            winner = self.gp.play_local(self.automated)
 
-                if not winner:
-                    self.graphics.make_header("Draw!")
-                else:
-                    self.graphics.make_header(winner + " won the game!")
-                return "R"
-            
-            elif choice == "2":
-                print("User vs AI")
-                self.setup_ai_difficulty(1)
-                ai_name = input("Enter opponent AI name: ")[:self.NAME_LEN]
-                self.players = {self.user: True, ai_name: False}
-                self.new_game([self.user, ai_name])
-                winner = self.gp.play_local()
-
-                if not winner:
-                    self.graphics.make_header("Draw!\n")
-                else:
-                    self.graphics.make_header(winner + " won the game!")
-                return "R"
-                
-            elif choice == "3":
-                print("AI vs AI")
-                self.setup_ai_difficulty(2)
-                self.players = {"Player One": False, "Player Two": False}
-                self.new_game(["Player One", "Player Two"])
-                winner = self.gp.play_local()
-
-                if not winner:
-                    self.graphics.make_header("Draw!")
-                else:
-                    self.graphics.make_header(winner + " won the game!")
+            if not winner:
+                self.graphics.make_header("Draw!")
+            else:
+                self.graphics.make_header(winner + " won the game!")
                 return "R"
 
     def local_tournament(self):
@@ -248,9 +212,10 @@ class CommunicationPlatform:
                     break
             except:
                 continue
-        ai_num = self.setup_ai_players(int(player_num))
-        self.setup_ai_difficulty(ai_num)
-        self.setup_player_names(player_num, ai_num)
+        self.decide_ai_players(int(player_num), False)
+
+        while int(player_num) > len(self.players):
+            self.add_local_player()
         tour, winner = Tournament(list(self.players.keys())), None
 
         while True:
@@ -266,8 +231,8 @@ class CommunicationPlatform:
                 while True:
                     self.new_game([tour.opponents[0], tour.opponents[1]])
 
-                    if self.gp.play_local() in [tour.opponents[0],
-                                                tour.opponents[1]]:
+                    if self.gp.play_local(self.automated) in \
+                            [tour.opponents[0], tour.opponents[1]]:
                         break
                     else:
                         self.graphics.make_header("Draw game! Replaying game")
@@ -286,11 +251,7 @@ class CommunicationPlatform:
         peer = Peer(self.server)  # Peer conn as server
         peer.accept_client()
         peer.send("ACK")
-
-        if self.decide_online_ai_players(peer, 1) > 0:
-            self.players = {self.user: False}
-        else:
-            self.players = {self.user: True}
+        self.decide_ai_players(1, True)
         self.players.update(peer.receive())
 
         while True:
@@ -317,11 +278,7 @@ class CommunicationPlatform:
         peer = Peer(self.server)  # Create peer which will act as client
         peer.connect_to_server()
         peer.receive()
-
-        if self.decide_online_ai_players(peer, 1) > 0:
-            self.players = {self.user: False}
-        else:
-            self.players = {self.user: True}
+        self.decide_ai_players(1, True)
         peer.send(self.players)
 
         while True:
@@ -469,6 +426,12 @@ class CommunicationPlatform:
                                               + " has advanced to next round!")
             data = peer.receive()
 
+    def add_local_player(self):
+        """
+        Prompts user to enter second user player name and adds to players dict
+        """
+        self.players[input("Enter 2nd user name")[:self.NAME_LEN]] = [True, 0]
+
     def choose_ai_difficulty(self):
         """
         Provides user with difficulty selection of easy, medium or hard
@@ -483,11 +446,43 @@ class CommunicationPlatform:
         return input("Enter your " + self.graphics.
                      set_color("G", "choice: \n")).upper()
 
-    def setup_ai_difficulty(self, ai_num):
+    def decide_ai_players(self, nr_players, online):
         """
-        User chooses an AI difficulty between 1 and 3, or 0 default
-        :param ai_num: the chosen number of AI players
+        Determines the number of AI players
+        :param nr_players: the number of players in the game
+        :param online: Boolean for if game is online or not
+        :return: the number of AI players in the game
         """
+        if online:
+            start = str(nr_players - 1)
+        else:
+            start = "0"
+
+        while True:  # Decide number of AI players
+            ai_num = input("Choose the number of AI players? [" + self.
+                           graphics.set_color("G", start + " - " +
+                                              str(nr_players)) + "]\n")
+
+            try:
+                if 0 <= int(ai_num) <= nr_players:
+                    ai_num = int(ai_num)
+                    break
+            except:
+                continue
+        self.players = {self.user: [True, 0]}
+
+        if self.server:
+            self.ai_names = ["Ralph", "Randy", "Roger", "Rhys", "Rooster",
+                             "Rob", "Ryan", "Richy", "Ross", "Ricky", "Rory"]
+        else:
+            self.ai_names = ["Viktor", "Peter", "Paul", "Chris", "Charles",
+                             "Josh", "Steve", "Michael", "Larry", "Laurin"]
+        self.players.update(dict({self.ai_names.pop(self.ai_names.index(choice(
+            self.ai_names))): [False] for j in range(ai_num)}.items()))
+
+        if nr_players == ai_num:
+            self.players.pop(self.user)
+
         if ai_num > 0:
             while True:
                 self.difficulty = self.choose_ai_difficulty()
@@ -500,122 +495,8 @@ class CommunicationPlatform:
                     continue
         else:
             self.difficulty = 0
-            
-    def setup_single_choice(self):
-        """
-        User chooses an option of gamemode between 1 and 3,
-        :return: The chooses of game mode
-        """
-        while True:
-            print("Choose from one of the following options:\n    [" + self.
-                  graphics.set_color("G", "1") + "] - User vs User\n    [" +
-                  self.graphics.set_color("G", "2") + "] - User vs AI\n    [" +
-                  self.graphics.set_color("G", "3") + "] - AI vs AI")
-            choice = input("Enter your " + self.graphics.
-                           set_color("G", "choice: \n")).upper()
-
-            try:
-                if 1 <= int(choice) <= 3:
-                    return choice
-            except:
-                continue
-
-    def setup_ai_players(self, player_num):
-        """
-        Determine names and human/computer controlled
-        :param player_num: the number of players in the game
-        :return: the number of ai players
-        """
-        while True:  # Decide number of AI players
-            ai_num = input("Choose the number of AI players? [" + self.
-                           graphics.set_color("G", "0 - " + str(player_num)) +
-                           "]\n")
-
-            try:
-                if 0 <= int(ai_num) <= player_num:
-                    print("Confirming opponents choice of AI players...")
-                    return int(ai_num)
-            except:
-                continue
-
-    def setup_player_names(self, user_num, ai_num=0):
-        """
-        Where user player names are entered and AI names randomly generated
-        ALso creates a new Play instance and resets the player and AI names
-        :param user_num: the number of user players
-        :param ai_num: the number of AI players
-        """
-        self.players = {self.user: True}
-
-        if self.server:
-            self.ai_names = ["Ralph", "Randy", "Roger", "Rhys", "Rooster",
-                            "Rob", "Ryan", "Richy", "Ross", "Ricky", "Rory"]
-        else:
-            self.ai_names = ["Viktor", "Peter", "Paul", "Chris", "Charles",
-                            "Josh", "Steve", "Michael", "Larry", "Laurin"]
-
-        for i in range(len(self.players), int(user_num) - int(ai_num)):
-            name = input("Enter a unique player " + str(i) +
-                         " name:\n")[:self.NAME_LEN].capitalize()
-
-            while name in self.players.keys():
-                name = input("Enter a unique player " + str(i) +
-                             " name:\n")[:self.NAME_LEN].capitalize()
-            self.players[name] = True
-        self.players.update(dict({self.ai_names.pop(self.ai_names.index(choice(
-            self.ai_names))): False for j in range(int(ai_num))}.items()))
-
-        if int(user_num) == int(ai_num):
-            self.players.pop(self.user)
-
-    def decide_online_ai_players(self, peer, nr_players):
-        """
-        Determines the number of AI players between host and client users
-        :param peer: connection between host and client
-        :param nr_players: the number of players in game
-        :return: the number of AI players in the game
-        """
-        ai_num = self.setup_ai_players(nr_players)
-        peer.send("ACK")
-        peer.receive()
-        receive_diff = False
-
-        if ai_num > 0 and self.server:
-            self.setup_ai_difficulty(ai_num)
-            peer.send(self.difficulty)
-            peer.receive()
-        elif ai_num == 0 and self.server:
-            peer.send(0)
-            print("Confirming the client AI selection...")
-            self.difficulty = int(peer.receive())
-
-            if self.difficulty != 0:
-                print("Confirming the client AI difficulty selection...")
-                receive_diff = True
-        else:
-            print("Confirming the host AI selection...")
-            self.difficulty = int(peer.receive())
-
-            if self.difficulty == 0:
-                if ai_num > 0:
-                    self.setup_ai_difficulty(ai_num)
-                    peer.send(self.difficulty)
-                else:
-                    peer.send(0)
-            else:
-                print("Confirming the host AI difficulty selection...")
-                receive_diff = True
-                peer.send(0)
-
-        if receive_diff:
-            if self.difficulty == 1:
-                diff = "easy"
-            elif self.difficulty == 2:
-                diff = "medium"
-            else:
-                diff = "hard"
-            print("AI difficulty is " + diff)
-        return ai_num
+        [self.players[i].append(self.difficulty)
+               for i, j in self.players.items() if not j[0]]
 
     def decide_online_tour_players(self, peer):
         """
@@ -631,9 +512,15 @@ class CommunicationPlatform:
             nr_plyrs = "7"
 
         while True:
+            if nr_plyrs == "7":
+                start = "2"
+            else:
+                start = "1"
+
             try:
-                nr = input("Choose a number of players to control: [" + self.
-                           graphics.set_color("G", "1 - " + nr_plyrs) + "]\n")
+                nr = input("Choose a number of tournament players: [" + self.
+                           graphics.set_color("G", start + " - " + nr_plyrs) +
+                           "]\n")
 
                 if 1 <= int(nr) <= int(nr_plyrs):
                     if self.server:
@@ -641,8 +528,9 @@ class CommunicationPlatform:
                     break
             except:
                 continue
-        ai_num = self.decide_online_ai_players(peer, int(nr))
-        self.setup_player_names(int(nr), ai_num)
+        peer.send("ACK")
+        peer.receive()
+        self.decide_ai_players(int(nr), True)
 
     def close_comms(self):
         """
