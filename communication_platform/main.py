@@ -252,7 +252,9 @@ class CommunicationPlatform:
         peer.accept_client()
         peer.send("ACK")
         self.decide_ai_players(1, True)
-        self.players.update(peer.receive())
+        print("Waiting for opponent...")
+        self.update_opp_players(peer.receive())  # Sync player lists
+        peer.send(self.players)
 
         while True:
             self.new_game([i for i in self.players.keys()])
@@ -279,7 +281,9 @@ class CommunicationPlatform:
         peer.connect_to_server()
         peer.receive()
         self.decide_ai_players(1, True)
+        print("Waiting for opponent...")
         peer.send(self.players)
+        self.players = peer.receive()
 
         while True:
             data = peer.receive()
@@ -308,16 +312,10 @@ class CommunicationPlatform:
         self.server = True  # Setup
         peer = Peer(self.server)
         peer.accept_client()
-        self.decide_online_tour_players(peer)
-        print("Waiting for remote list of players...")
-        opp_players = peer.receive()  # Sync player lists
+        self.decide_ai_players(self.decide_tour_players() - 1, True)
+        print("Waiting for opponent...")
+        self.update_opp_players(peer.receive())  # Sync player lists
         peer.send(self.players)
-
-        for i in opp_players.keys():
-            if i in self.players.keys():
-                self.players[i + " (opponent)"] = opp_players[i]
-            else:
-                self.players[i] = opp_players[i]
         peer.receive()  # Block needed here to ensure clients are synced
         tour = Tournament(list(self.players.keys()))  # Create tournament
         data = dict()  # Dictionary containing various data needed by remote peer
@@ -381,15 +379,10 @@ class CommunicationPlatform:
         self.server = False
         peer = Peer(False)  # Setup
         peer.connect_to_server()
-        self.decide_online_tour_players(peer)
+        self.decide_ai_players(1, True)
+        print("Waiting for opponent...")
         peer.send(self.players)  # Sync player lists
-        opp_players = peer.receive()
-
-        for i in opp_players.keys():
-            if i in self.players.keys():
-                self.players[i + " (opponent)"] = opp_players[i]
-            else:
-                self.players[i] = opp_players[i]
+        self.players = peer.receive()
         peer.send("ACK")  # Sync with remote
         data = peer.receive()  # Get initial tournament bracket
 
@@ -496,41 +489,33 @@ class CommunicationPlatform:
         else:
             self.difficulty = 0
         [self.players[i].append(self.difficulty)
-               for i, j in self.players.items() if not j[0]]
+         for i, j in self.players.items() if not j[0]]
 
-    def decide_online_tour_players(self, peer):
+    def decide_tour_players(self):
         """
-        Determines the number of players between host and client users
-        :param peer: peer is connection between host and client
+        Determines the number of players for a tournament
+        :return: the number of tournament players
         """
-        if not self.server:
-            print("Confirming number of host controlled tournament players...")
-            nr_plyrs = str(8 - int(peer.receive()))
-            print("Host player has chosen to control " + nr_plyrs +
-                  " tournament players")
-        else:
-            nr_plyrs = "7"
-
-        while True:
-            if nr_plyrs == "7":
-                start = "2"
-            else:
-                start = "1"
+        while True:  # Decide number of players
+            player_num = input("Choose the number of tournament players? [" +
+                               self.graphics.set_color("G", "3 - 8") + "]\n")
 
             try:
-                nr = input("Choose a number of tournament players: [" + self.
-                           graphics.set_color("G", start + " - " + nr_plyrs) +
-                           "]\n")
-
-                if 1 <= int(nr) <= int(nr_plyrs):
-                    if self.server:
-                        peer.send(nr)  # Send number of players to peer conn
-                    break
+                if 2 < int(player_num) < 9:
+                    return int(player_num)
             except:
                 continue
-        peer.send("ACK")
-        peer.receive()
-        self.decide_ai_players(int(nr), True)
+
+    def update_opp_players(self, opp_players):
+        """
+        Updates the player dictionary with the opponents (client) list
+        :param opp_players: client player dictionary
+        """
+        for i in opp_players.keys():
+            if i in self.players.keys():
+                self.players[i + " (guest)"] = opp_players[i]
+            else:
+                self.players[i] = opp_players[i]
 
     def close_comms(self):
         """
