@@ -182,7 +182,7 @@ class CommunicationPlatform:
         self.graphics.make_header("Local Match")
 
         while True:
-            self.decide_ai_players(2, False)
+            self.decide_ai_players(2)
 
             if len(self.players) == 1:
                 self.add_local_player()
@@ -212,10 +212,7 @@ class CommunicationPlatform:
                     break
             except:
                 continue
-        self.decide_ai_players(int(player_num), False)
-
-        while int(player_num) > len(self.players):
-            self.add_local_player()
+        self.decide_ai_players(int(player_num))
         tour, winner = Tournament(list(self.players.keys())), None
 
         while True:
@@ -251,7 +248,7 @@ class CommunicationPlatform:
         peer = Peer(self.server)  # Peer conn as server
         peer.accept_client()
         peer.send("ACK")
-        self.decide_ai_players(1, True)
+        self.decide_ai_players(1)
         print("Waiting for opponent...")
         self.update_opp_players(peer.receive())  # Sync player lists
         peer.send(self.players)
@@ -280,7 +277,7 @@ class CommunicationPlatform:
         peer = Peer(self.server)  # Create peer which will act as client
         peer.connect_to_server()
         peer.receive()
-        self.decide_ai_players(1, True)
+        self.decide_ai_players(1)
         print("Waiting for opponent...")
         peer.send(self.players)
         self.players = peer.receive()
@@ -312,7 +309,7 @@ class CommunicationPlatform:
         self.server = True  # Setup
         peer = Peer(self.server)
         peer.accept_client()
-        self.decide_ai_players(self.decide_tour_players() - 1, True)
+        self.decide_ai_players(self.decide_tour_players() - 1)
         print("Waiting for opponent...")
         self.update_opp_players(peer.receive())  # Sync player lists
         peer.send(self.players)
@@ -379,7 +376,7 @@ class CommunicationPlatform:
         self.server = False
         peer = Peer(False)  # Setup
         peer.connect_to_server()
-        self.decide_ai_players(1, True)
+        self.decide_ai_players(1)
         print("Waiting for opponent...")
         peer.send(self.players)  # Sync player lists
         self.players = peer.receive()
@@ -419,11 +416,19 @@ class CommunicationPlatform:
                                               + " has advanced to next round!")
             data = peer.receive()
 
-    def add_local_player(self):
+    def add_local_player(self, nr_players, ai_num):
         """
-        Prompts user to enter second user player name and adds to players dict
+        Prompts to enter user-controlled player names and adds to players dict
+        :param nr_players: the total number of all players in the game
+        :param ai_num: the total number of AI players in the game
         """
-        self.players[input("Enter 2nd user name")[:self.NAME_LEN]] = [True, 0]
+        name = self.user
+
+        for i in range(2, nr_players - ai_num + 1):
+            while name in self.players.keys():
+                name = input("Enter user-controlled player #" + str(i) +
+                             " name:\n")
+            self.players[name[:self.NAME_LEN].capitalize()] = [True, 0]
 
     def choose_ai_difficulty(self):
         """
@@ -439,22 +444,15 @@ class CommunicationPlatform:
         return input("Enter your " + self.graphics.
                      set_color("G", "choice: \n")).upper()
 
-    def decide_ai_players(self, nr_players, online):
+    def decide_ai_players(self, nr_players):
         """
         Determines the number of AI players
         :param nr_players: the number of players in the game
-        :param online: Boolean for if game is online or not
         :return: the number of AI players in the game
         """
-        if online:
-            start = str(nr_players - 1)
-        else:
-            start = "0"
-
         while True:  # Decide number of AI players
-            ai_num = input("Choose the number of AI players? [" + self.
-                           graphics.set_color("G", start + " - " +
-                                              str(nr_players)) + "]\n")
+            ai_num = input("Choose the number of AI players? [" + self.graphics
+                           .set_color("G", "0 - " + str(nr_players)) + "]\n")
 
             try:
                 if 0 <= int(ai_num) <= nr_players:
@@ -490,6 +488,7 @@ class CommunicationPlatform:
             self.difficulty = 0
         [self.players[i].append(self.difficulty)
          for i, j in self.players.items() if not j[0]]
+        self.add_local_player(nr_players, ai_num)
 
     def decide_tour_players(self):
         """
