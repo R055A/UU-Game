@@ -9,15 +9,16 @@ class GamePlatform:
     """
     The GamePlatform class
     Author(s): Adam Ross
-    Last-edit-date: 14/03/2019
+    Last-edit-date: 21/03/2019
     """
 
-    def __init__(self):
+    def __init__(self, header):
         """
         GamePlatform class constructor
+        :param header: a header for displaying above the game state
         """
         self.play = GameEngine()  # Play class instance
-        self.display = GameDisplay()  # GameDisplay class instance
+        self.display = GameDisplay(header)  # GameDisplay class instance
         self.board = [[i for i in range(j - 4, j)] for j in range(5, 18, 4)]
 
     def play_local(self, auto):
@@ -29,11 +30,12 @@ class GamePlatform:
         game_start = True  # Boolean for the start of the game
 
         while True:
-            if game_start and not auto:
-                self.display.display_game_status(self.play)
+            if game_start:
+                if not auto:
+                    self.display.display_game_status(self.play)
                 game_start = False
-            self.select_piece()
-            self.place_piece()
+            self.select_piece()  # player selects a piece for other player
+            self.place_piece()  # other player places selected piece on board
 
             if self.play.game.has_won_game(self.play.selected_piece):
                 self.display.display_game_status(self.play)
@@ -42,86 +44,43 @@ class GamePlatform:
                 self.display.display_game_status(self.play)
                 return None
 
-    def online_vs(self, name, peer, server, auto):
+    def play_online(self, name, conn, auto):
         """
-        Plays online 1 vs 1 games
+        Plays an online game between user vs user, user vs AI, or AI vs AI
         :param name: players name
-        :param peer: network connection
-        :param server: if player is server host
+        :param conn: network connection
         :param auto: Boolean for if game is automated or not
         """
-        if server:
-            if self.play.current_player == name:
-                starting_player = True
-                peer.send("WAIT")
-                peer.receive()
-            else:
-                starting_player = False
-                peer.send("START")
-                peer.receive()
-        else:
-            ack = peer.receive()
+        game_start = True  # Boolean for the start of the game
 
-            if ack == "WAIT":
-                starting_player = False
-                peer.send("ACK")
-            else:
-                starting_player = True
-                peer.send("ACK")
-
-        if starting_player:
-            return self.play_game(True, True, peer, auto)
-        else:
-            return self.play_game(False, True, peer, auto)
-
-    def play_game(self, my_turn, first_draw, c, auto):
         while True:
-            if not auto:
-                self.display.display_game_status(self.play)
-
-            if not my_turn:
-                if first_draw and not auto:
-                    print("\nWait for opponent to pass a piece")
-                elif not auto:
-                    print("\nWait for opponent to place the piece")
-                self.play = c.receive()
-
+            if game_start:
                 if not auto:
                     self.display.display_game_status(self.play)
+                game_start = False
 
-                if self.play.game.has_won_game(self.play.selected_piece):
-                    return self.play.current_player.name
-                elif not self.play.game.has_next_play():
-                    return "DRAW"
+            if self.play.current_player.name == name:
+                self.select_piece()  # player selects a piece for other player
+                conn.send(self.play)
+            else:
+                if not auto:
+                    print("Waiting for opponent to select a piece...")
+                self.play = conn.receive()
 
-                if not first_draw:
-                    if not auto:
-                        print("\nWait for opponent to pass a piece")
-                    self.play = c.receive()
+            if self.play.current_player.name == name:
+                self.place_piece()  # other player places piece on board
+                conn.send(self.play)
+            else:
+                if not auto:
+                    print("Waiting for opponent to place piece on board...")
+                self.play = conn.receive()
 
-                    if not auto:
-                        self.display.display_game_status(self.play)
-                first_draw = False
-                my_turn = True
-
-            if not first_draw:
-                self.place_piece()
-                c.send(self.play)
-
-                if self.play.game.has_won_game(self.play.selected_piece):
-                    return self.play.current_player.name
-                elif not self.play.game.has_next_play():
-                    return "DRAW"
-            self.select_piece()
-
-            if not auto:
+            if self.play.game.has_won_game(self.play.selected_piece):
                 self.display.display_game_status(self.play)
-
-            if first_draw:
-                my_turn = False
-                first_draw = False
-            c.send(self.play)
-            my_turn = False
+                return self.play.current_player.name
+            elif not self.play.game.has_next_play():  # checks if turns remain
+                self.display.display_game_status(self.play)
+                return None
 
     def place_piece(self):
         """

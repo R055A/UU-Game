@@ -86,7 +86,6 @@ class Tournament:
                 self.waiting_players.remove(self.opponents_queue[i][0])
                 self.waiting_players.remove(self.opponents_queue[i][1])
         else:
-            print("second")
             self.opponents_queue = make_opponents(player_list_copy)
             self.all_opponents = [self.opponents_queue.copy()]
             self.opponents = self.opponents_queue.pop(0)

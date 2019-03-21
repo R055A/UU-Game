@@ -12,7 +12,7 @@ class GameDisplay:
     """
     The GameDisplay class
     Author(s): Adam Ross, Viktor Enzell
-    Last-edit-date: 14/03/2019
+    Last-edit-date: 21/03/2019
     """
 
     SELECTING = "selecting"
@@ -21,10 +21,12 @@ class GameDisplay:
     MEDIUM = "AI - medium"
     EASY = "AI - easy"
 
-    def __init__(self):
+    def __init__(self, header):
         """
         GamePlatform class constructor
+        :param header: a header for displaying above the game state
         """
+        self.header = header  # a header for displaying above the game state
         self.ge = None  # for the GameEngine class instance
         self.graphics = Graphics()  # Graphics class instance
         self.players = None  # the two players playing a game
@@ -38,6 +40,7 @@ class GameDisplay:
         """
         self.ge = ge
         system('clear')
+        self.graphics.make_header(self.header)
         self.display_game_header()
         self.display_piece_pool()
         self.display_board()
