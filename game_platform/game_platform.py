@@ -12,6 +12,8 @@ class GamePlatform:
     Last-edit-date: 21/03/2019
     """
 
+    QUIT = "Q"
+
     def __init__(self, header):
         """
         GamePlatform class constructor
@@ -34,8 +36,12 @@ class GamePlatform:
                 if not auto:
                     self.display.display_game_status(self.play)
                 game_start = False
-            self.select_piece()  # player selects a piece for other player
-            self.place_piece()  # other player places selected piece on board
+
+            if self.select_piece():  # player selects a piece for other player
+                return self.play.current_player.name
+
+            if self.place_piece():  # other player places piece on board
+                return self.play.current_player.name
 
             if self.play.game.has_won_game(self.play.selected_piece):
                 self.display.display_game_status(self.play)
@@ -60,20 +66,30 @@ class GamePlatform:
                 game_start = False
 
             if self.play.current_player.name == name:
-                self.select_piece()  # player selects a piece for other player
+                if self.select_piece():  # player selects a piece for other player
+                    conn.send(self.play.current_player.name)
+                    return self.play.current_player.name
                 conn.send(self.play)
             else:
                 if not auto:
                     print("Waiting for opponent to select a piece...")
                 self.play = conn.receive()
 
+                if self.play == name:
+                    return name
+
             if self.play.current_player.name == name:
-                self.place_piece()  # other player places piece on board
+                if self.place_piece():  # other player places piece on board
+                    conn.send(self.play.current_player.name)
+                    return self.play.current_player.name
                 conn.send(self.play)
             else:
                 if not auto:
                     print("Waiting for opponent to place piece on board...")
                 self.play = conn.receive()
+
+                if self.play == name:
+                    return name
 
             if self.play.game.has_won_game(self.play.selected_piece):
                 self.display.display_game_status(self.play)
@@ -90,17 +106,22 @@ class GamePlatform:
             self.display.display_game_status(self.play)
 
             while True:
-                try:
-                    i = input("\nEnter a board number for placing a piece:\n")
+                i = input("\nEnter a board number for placing a piece"
+                          " (or 'Q' to forfeit):\n")
 
-                    if 1 <= int(i) <= 16:
-                        y, x = [(k, j) for j in range(4) for k in range(4)
-                                if self.board[k][j] == int(i)][0]
+                if i.upper() == self.QUIT:
+                    self.play.current_player = self.play.change_player()
+                    return self.QUIT
+                else:
+                    try:
+                        if 1 <= int(i) <= 16:
+                            y, x = [(k, j) for j in range(4) for k in range(4)
+                                    if self.board[k][j] == int(i)][0]
 
-                        if self.play.play_placement(int(y), int(x)):
-                            break
-                except:
-                    continue
+                            if self.play.play_placement(int(y), int(x)):
+                                return None
+                    except:
+                        continue
         else:
             self.play.play_placement()
 
@@ -112,10 +133,18 @@ class GamePlatform:
             self.display.display_game_status(self.play)
 
             while True:
-                pce = input("\nEnter a number for the piece being selected:\n")
+                pce = input("\nEnter a number for the piece being selected"
+                            " (or 'Q' to forfeit):\n")
 
-                if 1 <= int(pce) <= 16:
-                    if self.play.play_selection(str(int(pce) - 1)):
-                        break
+                if pce.upper() == self.QUIT:
+                    self.play.current_player = self.play.change_player()
+                    return self.QUIT
+                else:
+                    try:
+                        if 1 <= int(pce) <= 16:
+                            if self.play.play_selection(str(int(pce) - 1)):
+                                return None
+                    except:
+                        continue
         else:
             self.play.play_selection()
