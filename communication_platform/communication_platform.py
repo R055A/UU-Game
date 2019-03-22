@@ -14,7 +14,7 @@ class CommunicationPlatform:
     Communication platform main class
     Refactoring/integration editor(s): Adam Ross; Viktor Enzell;
                                        Gustav From; Pelle Ingvast
-    Last-edit-date: 21/03/2019
+    Last-edit-date: 22/03/2019
     """
 
     NAME_LEN = 37  # the maximum length of a player's name
@@ -457,22 +457,16 @@ class CommunicationPlatform:
                 continue
         self.players = {self.user: [True, 0]}
 
-        if server:
-            self.ai_names = ["Ralph", "Randy", "Roger", "Rhys", "Rooster",
-                             "Rob", "Ryan", "Richy", "Ross", "Ricky", "Rory"]
-        else:
-            self.ai_names = ["Viktor", "Peter", "Paul", "Chris", "Charles",
-                             "Josh", "Steve", "Michael", "Larry", "Laurin"]
-        self.players.update(dict({self.ai_names.pop(self.ai_names.index(choice(
-            self.ai_names))): [False] for j in range(ai_num)}.items()))
-
-        if nr_players == ai_num:
-            self.players.pop(self.user)
-            self.automated = True
-        else:
-            self.automated = False
-
         if ai_num > 0:
+            if server:
+                self.ai_names = ["Ralph", "Randy", "Roger", "Richy", "Rooster",
+                                 "Rob", "Ryan", "Rhys", "Ross", "Rick", "Rory"]
+            else:
+                self.ai_names = ["Viktor", "Peter", "Paul", "Chris", "Charles",
+                                 "Josh", "Steve", "Michael", "Larry", "Laurin"]
+            self.players.update(dict({self.ai_names.pop(self.ai_names.index(
+                choice(self.ai_names))): [False] for j in range(ai_num)}.items()))
+
             while True:
                 self.difficulty = self.choose_ai_difficulty()
 
@@ -482,10 +476,16 @@ class CommunicationPlatform:
                         break
                 except:
                     continue
+            [self.players[i].append(self.difficulty)
+             for i, j in self.players.items() if not j[0]]
         else:
             self.difficulty = 0
-        [self.players[i].append(self.difficulty)
-         for i, j in self.players.items() if not j[0]]
+
+        if nr_players == ai_num:
+            self.players.pop(self.user)
+            self.automated = True
+        else:
+            self.automated = False
         self.add_local_player(nr_players, ai_num)
 
     def decide_tour_players(self):

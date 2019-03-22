@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from communication_platform.main import CommunicationPlatform
+from communication_platform.communication_platform import CommunicationPlatform
 
 
 class UUGame:
