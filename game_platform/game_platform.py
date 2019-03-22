@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from game_engine.play import GameEngine
+from game_engine.game_engine import GameEngine
 from game_platform.game_display import GameDisplay
 from game_engine.player_human import PlayerHuman
 
