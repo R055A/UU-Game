@@ -183,8 +183,12 @@ class CommunicationPlatform:
         if len(self.players) == 1:
             self.add_local_player(2, 1)
         self.header = list(self.players)[0] + " vs " + list(self.players)[1]
+        system('clear')
 
         while True:
+            if self.difficulty == 3 and self.automated:
+                self.graphics.make_header(self.header)
+                print("Waiting for game result...")
             self.new_game([i for i in self.players.keys()])
             winner = self.gp.play_local(self.automated)
 
@@ -229,6 +233,9 @@ class CommunicationPlatform:
                               tour.opponents[1]
 
                 while True:
+                    if self.difficulty == 3 and self.automated:
+                        self.graphics.make_header(self.header)
+                        print("Waiting for game result...")
                     self.new_game([tour.opponents[0], tour.opponents[1]])
 
                     if self.gp.play_local(self.automated) in \
@@ -258,10 +265,16 @@ class CommunicationPlatform:
             self.update_opp_players(peer.receive())  # Sync player lists
             peer.send(self.players)
             self.header = list(self.players)[0] + " vs " + list(self.players)[1]
+            opp_dif = peer.receive()
+            system('clear')
 
             while True:
+                if (self.difficulty == 3 or opp_dif == 3) and self.automated:
+                    self.graphics.make_header(self.header)
+                    print("Waiting for game result...")
                 self.new_game([i for i in self.players.keys()])
-                peer.send({"play": self.gp, "auto": self.automated})
+                peer.send({"play": self.gp, "auto": self.automated,
+                           "header": self.header, "dif": self.difficulty})
                 game_result = self.gp.play_online(list(self.players)[0], peer,
                                                   self.automated)
 
@@ -290,9 +303,15 @@ class CommunicationPlatform:
             print("Waiting for opponent...")
             peer.send(self.players)
             self.players = peer.receive()
+            peer.send(self.difficulty)
+            system('clear')
 
             while True:
                 data = peer.receive()
+
+                if (self.difficulty == 3 or data['dif'] == 3) and data['auto']:
+                    self.graphics.make_header(data['header'])
+                    print("Waiting for game result...")
                 game_result = data["play"].play_online(list(self.players)[1],
                                                        peer, data["auto"])
 
@@ -325,10 +344,10 @@ class CommunicationPlatform:
             print("Waiting for opponent...")
             self.update_opp_players(peer.receive())  # Sync player lists
             peer.send(self.players)
-            peer.receive()  # Block needed here to ensure clients are synced
+            opp_dif = peer.receive()  # Block needed here to ensure clients are synced
             tour, data = Tournament(list(self.players.keys())), dict()
-            data["instruction"] = data["players"] = None
-            data["tour"], winner = tour.get_scoreboard(), ""
+            data["instruction"] = data["players"] = winner = None
+            data["tour"], data["dif"] = tour.get_scoreboard(), self.difficulty
 
             while True:
                 self.graphics.make_header("Tournament Standings")
@@ -345,11 +364,15 @@ class CommunicationPlatform:
                     break
                 else:
                     data["players"], data["instruction"] = players, "PLAY"
-                    peer.send(data)
                     self.header = "Up next: (local) " + players[0] + \
                                   " vs (remote) " + players[1]
+                    data["header"] = self.header
+                    peer.send(data)
 
                     while True:
+                        if (self.difficulty == 3 or opp_dif == 3) and self.automated:
+                            self.graphics.make_header(data['header'])
+                            print("Waiting for game result...")
                         self.new_game([tour.opponents[0], tour.opponents[1]])
                         peer.receive()
                         data["play"], data["auto"] = self.gp, self.automated
@@ -379,7 +402,7 @@ class CommunicationPlatform:
             print("Waiting for opponent...")
             peer.send(self.players)  # Sync player lists
             self.players = peer.receive()
-            peer.send(self.ACK)  # Sync with remote
+            peer.send(self.difficulty)
             data = peer.receive()  # Get initial tournament bracket
 
             while True:
@@ -397,6 +420,10 @@ class CommunicationPlatform:
                     while True:
                         peer.send(self.ACK)
                         data = peer.receive()
+
+                        if (self.difficulty == 3 or data["dif"] == 3) and data["auto"]:
+                            self.graphics.make_header(data['header'])
+                            print("Waiting for game result...")
                         game_result = data["play"].play_online(players[1],
                                                                peer,
                                                                data["auto"])
@@ -436,7 +463,7 @@ class CommunicationPlatform:
               "] - Medium difficulty\n    [" + self.graphics.
               set_color("G", "3") + "] - Hard difficulty")
         return input("Enter your " + self.graphics.
-                     set_color("G", "choice: \n")).upper()
+                     set_color("G", "choice: \n"))
 
     def decide_ai_players(self, nr_players, server=False):
         """
