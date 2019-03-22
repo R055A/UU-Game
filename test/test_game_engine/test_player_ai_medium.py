@@ -14,7 +14,7 @@ class TestPlayerAIMediumClass(TestCase):
     """
     Tests the PlayerMediumAI class
     Author(s): Adam Ross; Gustav From
-    Date: 17/02/19
+    Date: 22/03/19
     """
 
     def test_player_ai_medium(self):
@@ -79,12 +79,12 @@ class TestPlayerAIMediumClass(TestCase):
         samples = 100  # the number of samples of won games in each test
 
         while count < samples:
-            test = GamePlatform()
+            test = GamePlatform("")
             test.play.players = [PlayerMediumAI(test.play.game, p_one),
                                  PlayerMediumAI(test.play.game, p_two)]
             test.play.current_player = choice(test.play.players)
 
-            if test.play_local():
+            if test.play_local(True):
                 count += 1
 
                 if test.play.current_player.name == p_one:
@@ -100,29 +100,29 @@ class TestPlayerAIMediumClass(TestCase):
         samples = 100  # the number of samples of won games in each test
 
         for i in range(samples):
-            test = GamePlatform()
+            test = GamePlatform("")
             test.play.players = [PlayerMediumAI(test.play.game, p_one),
                                  PlayerEasyAI(test.play.game, p_two)]
             test.play.current_player = choice(test.play.players)
 
-            if test.play_local() and test.play.current_player.name == p_one:
+            if test.play_local(True) and test.play.current_player.name == p_one:
                 wins += 1
         self.assertTrue((wins / samples * 100) >= 85)
 
-    # def test_player_ai_medium_vs_ai_hard_play(self):
-    #     """
-    #     Tests average MediumAI player wins against HardAI <= 10%
-    #     Theoretically, should never win against the hard (minimax) AI
-    #     """
-    #     p_one, p_two, wins = "Player One", "Player Two", 0
-    #     samples = 100  # the number of samples of won games in each test
-    #
-    #     for i in range(samples):
-    #         test = GamePlatform()
-    #         test.play.players = [PlayerMediumAI(test.play.game, p_one),
-    #                              PlayerHardAI(test.play.game, p_two)]
-    #         test.play.current_player = choice(test.play.players)
-    #
-    #         if test.play_local() and test.play.current_player.name == p_two:
-    #             wins += 1
-    #     self.assertTrue(((samples - wins) / samples * 100) <= 10)
+    def test_player_ai_medium_vs_ai_hard_play(self):
+        """
+        Tests average MediumAI player wins against HardAI <= 10%
+        Theoretically, should never win against the hard (minimax) AI
+        """
+        p_one, p_two, wins = "Player One", "Player Two", 0
+        samples = 100  # the number of samples of won games in each test
+
+        for i in range(samples):
+            test = GamePlatform()
+            test.play.players = [PlayerMediumAI(test.play.game, p_one),
+                                 PlayerHardAI(test.play.game, p_two)]
+            test.play.current_player = choice(test.play.players)
+
+            if test.play_local() and test.play.current_player.name == p_two:
+                wins += 1
+        self.assertTrue(((samples - wins) / samples * 100) <= 10)
