@@ -93,8 +93,7 @@ class TestPlayerAIMediumClass(TestCase):
 
     def test_player_ai_medium_vs_ai_easy_play(self):
         """
-        Tests average MediumAI player wins against EasyAI >= 15%
-        Is usually above 90% win rate, but can by chance be just below 90%
+        Tests average MediumAI player wins against EasyAI >= 10%
         """
         p_one, p_two, wins = "Player One", "Player Two", 0
         samples = 100  # the number of samples of won games in each test
@@ -107,7 +106,7 @@ class TestPlayerAIMediumClass(TestCase):
 
             if test.play_local(True) and test.play.current_player.name == p_one:
                 wins += 1
-        self.assertTrue((wins / samples * 100) >= 85)
+        self.assertTrue((wins / samples * 100) >= 90)
 
     def test_player_ai_medium_vs_ai_hard_play(self):
         """
@@ -118,11 +117,11 @@ class TestPlayerAIMediumClass(TestCase):
         samples = 100  # the number of samples of won games in each test
 
         for i in range(samples):
-            test = GamePlatform()
+            test = GamePlatform("")
             test.play.players = [PlayerMediumAI(test.play.game, p_one),
                                  PlayerHardAI(test.play.game, p_two)]
             test.play.current_player = choice(test.play.players)
 
-            if test.play_local() and test.play.current_player.name == p_two:
+            if test.play_local(True) and test.play.current_player.name == p_two:
                 wins += 1
         self.assertTrue(((samples - wins) / samples * 100) <= 10)

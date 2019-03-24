@@ -59,8 +59,7 @@ class TestPlayerAIEasyClass(TestCase):
 
     def test_player_ai_easy_vs_ai_medium_play(self):
         """
-        Tests average EasyAI player wins against MediumAI player <= 15%
-        Is usually below 10% win rate, but can by chance be just above 10%
+        Tests average EasyAI player wins against MediumAI player <= 10%
         """
         p_one, p_two, wins = "Player One", "Player Two", 0
         samples = 100  # the number of samples of won games in each test

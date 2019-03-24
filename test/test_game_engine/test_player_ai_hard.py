@@ -55,32 +55,33 @@ class TestPlayerAIHardClass(TestCase):
 
     def test_player_ai_hard_play(self):
         """
-        Test HardAI for average wins against itself being <= 10%
+        Test HardAI for average wins against itself being <= 50%
         """
-        average = 0
+        average, samples = 0, 100  # samples of won games in each test
 
-        for i in range(100):
+        for i in range(samples):
             test = GamePlatform("")
             test.play.players = [PlayerHardAI(test.play.game, "Player One"),
                                  PlayerHardAI(test.play.game, "Player Two")]
             test.play.current_player = choice(test.play.players)
 
-            if test.play_local(True) and test.play.current_player == "Player One":
+            if test.play_local(True) and test.play.current_player.name == "Player One":
                 average += 1
-        self.assertTrue(average <= 10)
+        self.assertTrue((average / samples * 100) <= 50)
 
     def test_player_ai_hard_vs_ai_easy_play(self):
         """
-        Test HardAI for average wins against EasyAI being >= 95%
+        Test HardAI for average wins against EasyAI being >= 90%
         """
         average, p_one, p_two = 0, "Player One", "Player Two"
+        samples = 100  # the number of samples of won games in each test
 
-        for i in range(100):
+        for i in range(samples):
             test = GamePlatform("")
             test.play.players = [PlayerHardAI(test.play.game, p_one),
                                  PlayerEasyAI(test.play.game, p_two)]
             test.play.current_player = choice(test.play.players)
 
-            if test.play_local(True) and test.play.current_player == p_one:
+            if test.play_local(True) and test.play.current_player.name == p_one:
                 average += 1
-        self.assertTrue(average >= 95)
+        self.assertTrue((average / samples * 100) >= 95)

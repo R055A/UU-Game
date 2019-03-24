@@ -95,9 +95,14 @@ class TestGameEngineClass(TestCase):
         self.assertEqual(test.current_player, None)
         test.init_players({"KITT": [False, 3], "Michael Knight": [True, 0]})
         player_one = test.current_player
-        self.assertTrue(isinstance(player_one, PlayerHardAI))
-        player_two = test.change_player()
-        self.assertTrue(isinstance(player_two, PlayerHuman))
+        if player_one.name == "KITT":
+            self.assertTrue(isinstance(player_one, PlayerHardAI))
+            player_two = test.change_player()
+            self.assertTrue(isinstance(player_two, PlayerHuman))
+        else:
+            self.assertTrue(isinstance(player_one, PlayerHuman))
+            player_two = test.change_player()
+            self.assertTrue(isinstance(player_two, PlayerHardAI))
         self.assertNotEqual(player_one, player_two)
 
     def test_selected_piece(self):
