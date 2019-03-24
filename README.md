@@ -1,5 +1,7 @@
 # Welcome to UU-Game
 
-This is a game development project for Team-B of the Uppsala University (UU) 1DL251 Software Engineering and Project Management course
+This is an Agile development project for 1DL251 Software Engineering and Project Management course held at Uppsala University.
 
-Refer to the [UU-Game Wiki](https://github.com/R055A/UU-Game/wiki) for further information
+Refer to Group-B's [UU-Game Wiki](https://github.com/R055A/UU-Game/wiki) for further information regarding instructions and development artefacts*
+
+<I>*Requires being logged into GitHub.com to view the Wiki and the repository source code.
