@@ -24,3 +24,4 @@ Navigate to the `UU-Game/` directory and run the following instruction in Bash:
 ```
 Python3 uu_game.py
 ```
+![](https://hit.yhype.me/github/profile?user_id=14985050)
