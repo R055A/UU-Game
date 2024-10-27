@@ -1,6 +1,6 @@
 # Welcome to UU-Game
 
-The UU-game project is a collaborative git development of the quarto game using Agile SCRUM methodologies for the 1DL251 Software Engineering and Project Management course held at Uppsala University in Spring 2019. The game supports local and online single and tournament matches between users and AI players of easy, medium, and hard difficulty. It is developed as three separate integrated components, each implemented in Python:
+The UU-game project is a collaborative git development of the quarto game using Agile SCRUM methodologies for the _1DL251 Software Engineering and Project Management_ course held at _Uppsala University_ in Spring 2019. The game supports local and online single and tournament matches between users and AI players of easy, medium, and hard difficulty. It is developed as three separate integrated components, each implemented in Python:
 - game engine for modifying game state and automating AI game-play using the minimax algorithm
 - game platform for coordinating and displaying game-play between users and AI players
 - communication platform for local and online, single and tournament game management
